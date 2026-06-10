@@ -3,21 +3,16 @@ import Link from "next/link";
 import type { Language } from "@nativo/core";
 import { isSupabaseConfigured } from "@/lib/supabase/env";
 import { SupabaseNotice } from "@/components/SupabaseNotice";
+import { AppHeader } from "@/components/AppHeader";
 import { createClient } from "@/lib/supabase/server";
-import { evaluatePhase1, type Condition } from "@/lib/phase";
+import { getRoutineTasks } from "@/lib/routine";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
 
 const LANGUAGE_LABEL: Record<Language, string> = {
   english: "영어 🇺🇸",
   spanish: "스페인어 🇪🇸",
   japanese: "일본어 🇯🇵",
-};
-
-const PHASE_TITLE: Record<number, string> = {
-  1: "기초 — SRS 플래시카드",
-  2: "Chunk — 영어식 사고",
-  3: "쉐도잉 — 발음·억양",
-  4: "스피킹 — AI 롤플레이",
-  5: "번역 — 원어민 확장",
 };
 
 export default async function DashboardPage() {
@@ -37,150 +32,195 @@ export default async function DashboardPage() {
 
   const { data: profile } = await supabase
     .from("users")
-    .select("display_name, selected_language, current_phase, current_level")
+    .select("display_name, selected_language")
     .eq("id", user.id)
     .single();
 
   const language = profile?.selected_language ?? "english";
-  const phase = profile?.current_phase ?? 1;
-  const level = profile?.current_level ?? "A2";
-  const name = profile?.display_name ?? user.email ?? "학습자";
+  const name = profile?.display_name ?? user.email?.split("@")[0] ?? "학습자";
 
-  // Phase 1 진행도 (카드 수 / 최고 스트릭 — 테스트 점수는 응시 시 확인)
-  const { count: cardCount } = await supabase
-    .from("flashcards")
-    .select("id", { count: "exact", head: true })
-    .eq("user_id", user.id)
-    .eq("language", language);
-  const { data: streakRow } = await supabase
-    .from("daily_logs")
-    .select("streak_day")
-    .eq("user_id", user.id)
-    .eq("language", language)
-    .order("streak_day", { ascending: false })
-    .limit(1)
-    .maybeSingle();
-  const phase1 = evaluatePhase1({
-    cardCount: cardCount ?? 0,
-    bestStreak: streakRow?.streak_day ?? 0,
-    testScore: null,
-  });
+  const now = new Date().toISOString();
+  const todayStart = `${now.slice(0, 10)}T00:00:00.000Z`;
+
+  const [dueRes, totalRes, streakRes, shadowRes, routineRes] = await Promise.all([
+    supabase
+      .from("flashcards")
+      .select("id", { count: "exact", head: true })
+      .eq("user_id", user.id)
+      .eq("language", language)
+      .lte("next_review_at", now),
+    supabase
+      .from("flashcards")
+      .select("id", { count: "exact", head: true })
+      .eq("user_id", user.id)
+      .eq("language", language),
+    supabase
+      .from("daily_logs")
+      .select("streak_day")
+      .eq("user_id", user.id)
+      .eq("language", language)
+      .order("streak_day", { ascending: false })
+      .limit(1)
+      .maybeSingle(),
+    supabase
+      .from("shadowing_videos")
+      .select("id")
+      .eq("user_id", user.id)
+      .gte("updated_at", todayStart)
+      .limit(1),
+    supabase
+      .from("daily_logs")
+      .select("tasks_completed")
+      .eq("user_id", user.id)
+      .eq("language", language)
+      .eq("log_date", now.slice(0, 10))
+      .maybeSingle(),
+  ]);
+
+  const due = dueRes.count ?? 0;
+  const total = totalRes.count ?? 0;
+  const streak = streakRes.data?.streak_day ?? 0;
+
+  // 오늘의 코스 단계별 완료 판정 (읽기 전용)
+  const shadowingDone = (shadowRes.data?.length ?? 0) > 0;
+  const reviewDone = total > 0 && due === 0;
+  const routineTaskIds = getRoutineTasks(language).map((t) => t.id);
+  const completedToday = routineRes.data?.tasks_completed ?? [];
+  const routineDone =
+    routineTaskIds.length > 0 && routineTaskIds.every((id) => completedToday.includes(id));
+
+  const steps = [
+    {
+      icon: "🎧",
+      label: "쉐도잉",
+      sub: "영상을 따라 말하며 발음·리듬 훈련",
+      href: "/learn/shadowing",
+      done: shadowingDone,
+    },
+    {
+      icon: "✏️",
+      label: "플래시카드 복습",
+      sub: reviewDone ? "오늘 복습 완료" : `복습할 카드 ${due}장`,
+      href: "/learn/flashcards",
+      done: reviewDone,
+    },
+    {
+      icon: "✅",
+      label: "오늘의 루틴",
+      sub: routineDone ? "오늘 루틴 완료" : "학습 습관 체크",
+      href: "/learn/routine",
+      done: routineDone,
+    },
+  ];
+  const nowIndex = steps.findIndex((s) => !s.done);
 
   return (
-    <main className="mx-auto max-w-3xl px-6 py-12">
-      <header className="mb-10 flex items-start justify-between">
-        <div>
-          <p className="text-sm text-neutral-500">안녕하세요,</p>
-          <h1 className="text-2xl font-bold">{name}님</h1>
-        </div>
-        <form action="/auth/signout" method="post">
-          <button
-            type="submit"
-            className="rounded-lg border border-neutral-300 px-3 py-1.5 text-sm transition hover:bg-neutral-50"
-          >
-            로그아웃
-          </button>
-        </form>
-      </header>
-
-      <section className="mb-8 grid grid-cols-3 gap-4">
-        <StatCard label="학습 언어" value={LANGUAGE_LABEL[language]} />
-        <StatCard label="현재 Phase" value={`Phase ${phase}`} />
-        <StatCard label="레벨" value={level} />
-      </section>
-
-      <section>
-        <h2 className="mb-3 text-sm font-semibold text-neutral-500">현재 단계</h2>
-        <div className="rounded-xl border border-neutral-200 bg-white p-6">
-          <p className="text-lg font-semibold">
-            Phase {phase} — {PHASE_TITLE[phase]}
+    <>
+      <AppHeader />
+      <main className="container max-w-2xl py-10">
+        <header className="mb-6">
+          <h1 className="text-2xl font-bold">안녕하세요, {name}님</h1>
+          <p className="mt-1 text-sm text-muted-foreground">
+            {LANGUAGE_LABEL[language]} · 🔥 스트릭 {streak}일
           </p>
-          <p className="mt-1 text-sm text-neutral-600">
-            오늘의 학습을 이어가세요.
-          </p>
-          <div className="mt-4 flex gap-3">
-            <Link
-              href="/learn/flashcards"
-              className="rounded-lg bg-brand px-4 py-2 text-sm font-medium text-brand-fg transition hover:opacity-90"
-            >
-              플래시카드 학습
-            </Link>
-            <Link
-              href="/learn/routine"
-              className="rounded-lg border border-neutral-300 px-4 py-2 text-sm transition hover:bg-neutral-50"
-            >
-              오늘의 루틴
-            </Link>
-            <Link
-              href="/learn/test"
-              className="rounded-lg border border-neutral-300 px-4 py-2 text-sm transition hover:bg-neutral-50"
-            >
-              단어 테스트
-            </Link>
-            <Link
-              href="/onboarding"
-              className="rounded-lg border border-neutral-300 px-4 py-2 text-sm transition hover:bg-neutral-50"
-            >
-              설정 변경
-            </Link>
-          </div>
-        </div>
-      </section>
+        </header>
 
-      {phase === 1 && (
-        <section className="mt-8">
-          <h2 className="mb-3 text-sm font-semibold text-neutral-500">
-            Phase 1 졸업 조건
-          </h2>
-          <div className="space-y-3 rounded-xl border border-neutral-200 bg-white p-6">
-            <ProgressBar label="플래시카드" c={phase1.cards} unit="개" />
-            <ProgressBar label="루틴 스트릭" c={phase1.streak} unit="일" />
-            <p className="pt-1 text-xs text-neutral-500">
-              + 단어 테스트 70점 이상 (응시 시 확인)
-            </p>
-          </div>
-        </section>
-      )}
-    </main>
+        {total === 0 ? (
+          <Card>
+            <CardContent className="flex flex-col items-center gap-4 py-12 text-center">
+              <p className="text-5xl">📚</p>
+              <div>
+                <p className="text-lg font-semibold">먼저 단어를 담아볼까요?</p>
+                <p className="mt-1 text-sm text-muted-foreground">
+                  단어 은행에서 단어를 고르면 뜻·발음이 자동으로 채워집니다.
+                </p>
+              </div>
+              <Button asChild size="lg">
+                <Link href="/learn/wordbank">단어 은행 열기</Link>
+              </Button>
+            </CardContent>
+          </Card>
+        ) : (
+          <section>
+            <div className="mb-3 flex items-center justify-between">
+              <h2 className="text-sm font-semibold text-muted-foreground">오늘의 코스</h2>
+              <span className="text-xs text-muted-foreground">
+                {steps.filter((s) => s.done).length}/{steps.length} 완료
+              </span>
+            </div>
+            <Card>
+              <CardContent className="divide-y p-0">
+                {steps.map((s, i) => (
+                  <CourseStep
+                    key={s.href}
+                    n={i + 1}
+                    icon={s.icon}
+                    label={s.label}
+                    sub={s.sub}
+                    href={s.href}
+                    done={s.done}
+                    highlight={i === nowIndex}
+                  />
+                ))}
+              </CardContent>
+            </Card>
+
+            <div className="mt-4">
+              <Button asChild variant="outline" size="sm">
+                <Link href="/learn/wordbank">+ 단어 더 담기 (보유 {total}개)</Link>
+              </Button>
+            </div>
+          </section>
+        )}
+      </main>
+    </>
   );
 }
 
-function ProgressBar({
+function CourseStep({
+  n,
+  icon,
   label,
-  c,
-  unit,
+  sub,
+  href,
+  done,
+  highlight,
 }: {
+  n: number;
+  icon: string;
   label: string;
-  c: Condition;
-  unit: string;
+  sub: string;
+  href: string;
+  done: boolean;
+  highlight: boolean;
 }) {
-  const current = c.current ?? 0;
-  const pct = Math.min(100, Math.round((current / c.required) * 100));
   return (
-    <div>
-      <div className="mb-1 flex items-center justify-between text-sm">
-        <span>{label}</span>
-        <span className={c.met ? "text-green-600" : "text-neutral-500"}>
-          {c.met ? "✓ " : ""}
-          {current}/{c.required}
-          {unit}
+    <Link
+      href={href}
+      className="flex items-center gap-4 px-5 py-4 transition-colors hover:bg-secondary/50"
+    >
+      <span
+        className={
+          done
+            ? "flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-success text-sm font-semibold text-success-foreground"
+            : "flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-secondary text-sm font-semibold text-muted-foreground"
+        }
+      >
+        {done ? "✓" : n}
+      </span>
+      <span className="text-xl">{icon}</span>
+      <span className="flex-1">
+        <span className={done ? "block font-medium text-muted-foreground" : "block font-medium"}>
+          {label}
         </span>
-      </div>
-      <div className="h-2 overflow-hidden rounded-full bg-neutral-100">
-        <div
-          className={`h-full rounded-full ${c.met ? "bg-green-500" : "bg-brand"}`}
-          style={{ width: `${pct}%` }}
-        />
-      </div>
-    </div>
-  );
-}
-
-function StatCard({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="rounded-xl border border-neutral-200 bg-white p-4">
-      <p className="text-xs text-neutral-500">{label}</p>
-      <p className="mt-1 font-semibold">{value}</p>
-    </div>
+        <span className="block text-sm text-muted-foreground">{sub}</span>
+      </span>
+      {highlight && (
+        <span className="rounded-full bg-primary px-2.5 py-0.5 text-xs font-medium text-primary-foreground">
+          지금
+        </span>
+      )}
+      <span className="text-muted-foreground">›</span>
+    </Link>
   );
 }

@@ -17,17 +17,16 @@ export async function GET(request: Request) {
     if (!error) {
       if (next) return NextResponse.redirect(`${origin}${next}`);
 
-      // 온보딩 완료 여부 판단: occupation 이 비어 있으면 첫 로그인으로 간주
+      // 온보딩 완료 여부: 카드가 하나라도 있으면 기존 사용자로 간주
       const {
         data: { user },
       } = await supabase.auth.getUser();
       if (user) {
-        const { data: profile } = await supabase
-          .from("users")
-          .select("occupation")
-          .eq("id", user.id)
-          .single();
-        const target = profile?.occupation ? "/dashboard" : "/onboarding";
+        const { count } = await supabase
+          .from("flashcards")
+          .select("id", { count: "exact", head: true })
+          .eq("user_id", user.id);
+        const target = (count ?? 0) > 0 ? "/dashboard" : "/onboarding";
         return NextResponse.redirect(`${origin}${target}`);
       }
       return NextResponse.redirect(`${origin}/dashboard`);

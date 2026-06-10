@@ -17,11 +17,10 @@ function localDate(offsetDays = 0): string {
 
 interface Props {
   language: Language;
-  phase: number;
   tasks: RoutineTask[];
 }
 
-export function RoutineChecklist({ language, phase, tasks }: Props) {
+export function RoutineChecklist({ language, tasks }: Props) {
   const [loading, setLoading] = useState(true);
   const [completed, setCompleted] = useState<Set<DailyTaskId>>(new Set());
   const [yesterdayStreak, setYesterdayStreak] = useState(0);
@@ -93,7 +92,7 @@ export function RoutineChecklist({ language, phase, tasks }: Props) {
     const payload: TablesInsert<"daily_logs"> = {
       user_id: user.id,
       log_date: localDate(0),
-      phase,
+      phase: 1, // daily_logs.phase 는 NOT NULL (Phase 개념 제거 후 상수 유지)
       language,
       tasks_completed: completedIds,
       study_minutes: minutes,

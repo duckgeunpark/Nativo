@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
+import { Button } from "@/components/ui/button";
 
 type Provider = "google" | "github";
 
@@ -23,23 +24,23 @@ export function LoginButtons() {
   }
 
   return (
-    <div className="flex w-full max-w-xs flex-col gap-3">
-      <button
+    <div className="flex flex-col gap-3">
+      <Button
         type="button"
+        variant="outline"
         onClick={() => signIn("google")}
         disabled={loading !== null}
-        className="rounded-lg border border-neutral-300 bg-white px-4 py-3 font-medium transition hover:bg-neutral-50 disabled:opacity-60"
       >
         {loading === "google" ? "이동 중…" : "Google로 계속하기"}
-      </button>
-      <button
+      </Button>
+      <Button
         type="button"
         onClick={() => signIn("github")}
         disabled={loading !== null}
-        className="rounded-lg bg-neutral-900 px-4 py-3 font-medium text-white transition hover:bg-neutral-800 disabled:opacity-60"
+        className="bg-neutral-900 text-white hover:bg-neutral-800"
       >
         {loading === "github" ? "이동 중…" : "GitHub로 계속하기"}
-      </button>
+      </Button>
     </div>
   );
 }

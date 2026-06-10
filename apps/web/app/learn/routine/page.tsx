@@ -23,13 +23,12 @@ export default async function RoutinePage() {
 
   const { data: profile } = await supabase
     .from("users")
-    .select("selected_language, current_phase")
+    .select("selected_language")
     .eq("id", user.id)
     .single();
 
   const language = profile?.selected_language ?? "english";
-  const phase = profile?.current_phase ?? 1;
-  const tasks = getRoutineTasks(language, phase);
+  const tasks = getRoutineTasks(language);
 
   return (
     <main className="mx-auto max-w-xl px-6 py-10">
@@ -43,7 +42,7 @@ export default async function RoutinePage() {
         </p>
       </header>
 
-      <RoutineChecklist language={language} phase={phase} tasks={tasks} />
+      <RoutineChecklist language={language} tasks={tasks} />
     </main>
   );
 }
