@@ -4,6 +4,7 @@ import type { Language } from "@nativo/core";
 import { isSupabaseConfigured } from "@/lib/supabase/env";
 import { SupabaseNotice } from "@/components/SupabaseNotice";
 import { createClient } from "@/lib/supabase/server";
+import { evaluatePhase1, type Condition } from "@/lib/phase";
 
 const LANGUAGE_LABEL: Record<Language, string> = {
   english: "영어 🇺🇸",
@@ -44,6 +45,26 @@ export default async function DashboardPage() {
   const phase = profile?.current_phase ?? 1;
   const level = profile?.current_level ?? "A2";
   const name = profile?.display_name ?? user.email ?? "학습자";
+
+  // Phase 1 진행도 (카드 수 / 최고 스트릭 — 테스트 점수는 응시 시 확인)
+  const { count: cardCount } = await supabase
+    .from("flashcards")
+    .select("id", { count: "exact", head: true })
+    .eq("user_id", user.id)
+    .eq("language", language);
+  const { data: streakRow } = await supabase
+    .from("daily_logs")
+    .select("streak_day")
+    .eq("user_id", user.id)
+    .eq("language", language)
+    .order("streak_day", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+  const phase1 = evaluatePhase1({
+    cardCount: cardCount ?? 0,
+    bestStreak: streakRow?.streak_day ?? 0,
+    testScore: null,
+  });
 
   return (
     <main className="mx-auto max-w-3xl px-6 py-12">
@@ -91,6 +112,12 @@ export default async function DashboardPage() {
               오늘의 루틴
             </Link>
             <Link
+              href="/learn/test"
+              className="rounded-lg border border-neutral-300 px-4 py-2 text-sm transition hover:bg-neutral-50"
+            >
+              단어 테스트
+            </Link>
+            <Link
               href="/onboarding"
               className="rounded-lg border border-neutral-300 px-4 py-2 text-sm transition hover:bg-neutral-50"
             >
@@ -99,7 +126,53 @@ export default async function DashboardPage() {
           </div>
         </div>
       </section>
+
+      {phase === 1 && (
+        <section className="mt-8">
+          <h2 className="mb-3 text-sm font-semibold text-neutral-500">
+            Phase 1 졸업 조건
+          </h2>
+          <div className="space-y-3 rounded-xl border border-neutral-200 bg-white p-6">
+            <ProgressBar label="플래시카드" c={phase1.cards} unit="개" />
+            <ProgressBar label="루틴 스트릭" c={phase1.streak} unit="일" />
+            <p className="pt-1 text-xs text-neutral-500">
+              + 단어 테스트 70점 이상 (응시 시 확인)
+            </p>
+          </div>
+        </section>
+      )}
     </main>
+  );
+}
+
+function ProgressBar({
+  label,
+  c,
+  unit,
+}: {
+  label: string;
+  c: Condition;
+  unit: string;
+}) {
+  const current = c.current ?? 0;
+  const pct = Math.min(100, Math.round((current / c.required) * 100));
+  return (
+    <div>
+      <div className="mb-1 flex items-center justify-between text-sm">
+        <span>{label}</span>
+        <span className={c.met ? "text-green-600" : "text-neutral-500"}>
+          {c.met ? "✓ " : ""}
+          {current}/{c.required}
+          {unit}
+        </span>
+      </div>
+      <div className="h-2 overflow-hidden rounded-full bg-neutral-100">
+        <div
+          className={`h-full rounded-full ${c.met ? "bg-green-500" : "bg-brand"}`}
+          style={{ width: `${pct}%` }}
+        />
+      </div>
+    </div>
   );
 }
 
