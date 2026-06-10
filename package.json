@@ -1,0 +1,26 @@
+{
+  "name": "nativo",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Nativo — Speak your way to native. 5단계 Phase 기반 언어 학습 플랫폼",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "turbo run dev",
+    "build": "turbo run build",
+    "lint": "turbo run lint",
+    "test": "turbo run test",
+    "typecheck": "turbo run typecheck"
+  },
+  "devDependencies": {
+    "turbo": "^2.3.3",
+    "typescript": "^5.7.2",
+    "@types/node": "^22.10.2"
+  },
+  "packageManager": "npm@11.13.0",
+  "engines": {
+    "node": ">=20"
+  }
+}
