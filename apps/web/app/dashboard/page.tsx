@@ -85,6 +85,12 @@ export default async function DashboardPage() {
               플래시카드 학습
             </Link>
             <Link
+              href="/learn/routine"
+              className="rounded-lg border border-neutral-300 px-4 py-2 text-sm transition hover:bg-neutral-50"
+            >
+              오늘의 루틴
+            </Link>
+            <Link
               href="/onboarding"
               className="rounded-lg border border-neutral-300 px-4 py-2 text-sm transition hover:bg-neutral-50"
             >
