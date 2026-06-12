@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import type { Language } from "@nativo/core";
 import { createClient } from "@/lib/supabase/client";
-import { seedDefaultDeck } from "@/lib/seed";
+import { seedInitialDeck } from "./actions";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
@@ -43,9 +43,9 @@ export function OnboardingForm({ initial }: { initial: { selectedLanguage: Langu
       return;
     }
 
-    // 선택 언어의 기본 단어장 자동 채우기 (실패해도 진행)
+    // 선택 언어의 word-db 에서 초기 덱 자동 채우기 (실패해도 진행)
     try {
-      await seedDefaultDeck(supabase, user.id, language);
+      await seedInitialDeck(language);
     } catch {
       // 무시
     }

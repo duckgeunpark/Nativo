@@ -140,6 +140,7 @@ interface TableDefinitions {
           interval_days?: number;
           repetitions?: number;
           last_grade?: number | null;
+          source?: FlashcardSource;
         };
       };
 
@@ -217,6 +218,7 @@ interface TableDefinitions {
           level?: CefrLevel | null;
           review_count?: number;
           last_reviewed_at?: Timestamp | null;
+          source?: ChunkSource;
         };
       };
 

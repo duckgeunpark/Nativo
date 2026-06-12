@@ -5,11 +5,11 @@ import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 
 const NAV = [
-  { href: "/dashboard", label: "홈" },
   { href: "/learn/flashcards", label: "플래시카드" },
+  { href: "/learn/chunks", label: "청크" },
   { href: "/learn/shadowing", label: "쉐도잉" },
-  { href: "/learn/wordbank", label: "단어 은행" },
-  { href: "/learn/routine", label: "루틴" },
+  { href: "/learn/roleplay", label: "AI 대화" },
+  { href: "/learn/reading", label: "읽기" },
 ];
 
 export function AppHeader() {
@@ -43,14 +43,27 @@ export function AppHeader() {
           })}
         </nav>
 
-        <form action="/auth/signout" method="post">
-          <button
-            type="submit"
-            className="whitespace-nowrap text-sm text-muted-foreground transition-colors hover:text-foreground"
+        <div className="flex shrink-0 items-center gap-3">
+          <Link
+            href="/settings"
+            className={cn(
+              "whitespace-nowrap text-sm transition-colors",
+              pathname === "/settings"
+                ? "font-medium text-foreground"
+                : "text-muted-foreground hover:text-foreground",
+            )}
           >
-            로그아웃
-          </button>
-        </form>
+            설정
+          </Link>
+          <form action="/auth/signout" method="post">
+            <button
+              type="submit"
+              className="whitespace-nowrap text-sm text-muted-foreground transition-colors hover:text-foreground"
+            >
+              로그아웃
+            </button>
+          </form>
+        </div>
       </div>
     </header>
   );

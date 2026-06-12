@@ -6,7 +6,6 @@ import { SupabaseNotice } from "@/components/SupabaseNotice";
 import { AppHeader } from "@/components/AppHeader";
 import { createClient } from "@/lib/supabase/server";
 import { getRoutineTasks } from "@/lib/routine";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 
 const LANGUAGE_LABEL: Record<Language, string> = {
@@ -125,53 +124,30 @@ export default async function DashboardPage() {
           </p>
         </header>
 
-        {total === 0 ? (
+        <section>
+          <div className="mb-3 flex items-center justify-between">
+            <h2 className="text-sm font-semibold text-muted-foreground">오늘의 코스</h2>
+            <span className="text-xs text-muted-foreground">
+              {steps.filter((s) => s.done).length}/{steps.length} 완료
+            </span>
+          </div>
           <Card>
-            <CardContent className="flex flex-col items-center gap-4 py-12 text-center">
-              <p className="text-5xl">📚</p>
-              <div>
-                <p className="text-lg font-semibold">먼저 단어를 담아볼까요?</p>
-                <p className="mt-1 text-sm text-muted-foreground">
-                  단어 은행에서 단어를 고르면 뜻·발음이 자동으로 채워집니다.
-                </p>
-              </div>
-              <Button asChild size="lg">
-                <Link href="/learn/wordbank">단어 은행 열기</Link>
-              </Button>
+            <CardContent className="divide-y p-0">
+              {steps.map((s, i) => (
+                <CourseStep
+                  key={s.href}
+                  n={i + 1}
+                  icon={s.icon}
+                  label={s.label}
+                  sub={s.sub}
+                  href={s.href}
+                  done={s.done}
+                  highlight={i === nowIndex}
+                />
+              ))}
             </CardContent>
           </Card>
-        ) : (
-          <section>
-            <div className="mb-3 flex items-center justify-between">
-              <h2 className="text-sm font-semibold text-muted-foreground">오늘의 코스</h2>
-              <span className="text-xs text-muted-foreground">
-                {steps.filter((s) => s.done).length}/{steps.length} 완료
-              </span>
-            </div>
-            <Card>
-              <CardContent className="divide-y p-0">
-                {steps.map((s, i) => (
-                  <CourseStep
-                    key={s.href}
-                    n={i + 1}
-                    icon={s.icon}
-                    label={s.label}
-                    sub={s.sub}
-                    href={s.href}
-                    done={s.done}
-                    highlight={i === nowIndex}
-                  />
-                ))}
-              </CardContent>
-            </Card>
-
-            <div className="mt-4">
-              <Button asChild variant="outline" size="sm">
-                <Link href="/learn/wordbank">+ 단어 더 담기 (보유 {total}개)</Link>
-              </Button>
-            </div>
-          </section>
-        )}
+        </section>
       </main>
     </>
   );

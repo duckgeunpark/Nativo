@@ -2,7 +2,7 @@
   "name": "nativo",
   "private": true,
   "version": "0.1.0",
-  "description": "Nativo — Speak your way to native. 5단계 Phase 기반 언어 학습 플랫폼",
+  "description": "Nativo — Speak your way to native.",
   "workspaces": [
     "apps/*",
     "packages/*"

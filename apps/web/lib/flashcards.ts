@@ -22,6 +22,7 @@ export type StudyCard = Pick<
   | "part_of_speech"
   | "difficulty"
   | "language"
+  | "source"
   | "ease_factor"
   | "interval_days"
   | "repetitions"
@@ -29,7 +30,10 @@ export type StudyCard = Pick<
 
 /** StudyCard 가 그대로 select 되도록 컬럼 목록을 한 곳에서 관리. */
 export const STUDY_CARD_COLUMNS =
-  "id, word, meaning, meaning_en, pronunciation, example_1, example_2, part_of_speech, difficulty, language, ease_factor, interval_days, repetitions";
+  "id, word, meaning, meaning_en, pronunciation, example_1, example_2, part_of_speech, difficulty, language, source, ease_factor, interval_days, repetitions";
+
+/** 학습 완료(숙지) 기준: 정답 복습 횟수. 이 값 이상이면 '내 단어 사전'에 들어감. */
+export const COMPLETE_THRESHOLD = 5;
 
 /** 카드 행에서 SRS 상태만 추출. */
 function srsStateOf(card: StudyCard): SrsState {

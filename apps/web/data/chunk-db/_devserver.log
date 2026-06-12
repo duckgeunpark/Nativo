@@ -1,0 +1,208 @@
+
+> nativo@0.1.0 dev
+> turbo run dev
+
+• turbo 2.9.17
+
+   • Packages in scope: @nativo/core, @nativo/utils, web
+   • Running dev in 3 packages
+   • Remote caching disabled
+
+web:dev: cache bypass, force executing 92f3662e0ce236c3
+web:dev: 
+web:dev: > web@0.1.0 dev
+web:dev: > next dev
+web:dev: 
+web:dev:   ▲ Next.js 14.2.35
+web:dev:   - Local:        http://localhost:3000
+web:dev:   - Environments: .env.local
+web:dev: 
+web:dev:  ✓ Starting...
+web:dev:  ✓ Ready in 2.2s
+web:dev:  ○ Compiling /middleware ...
+web:dev:  ✓ Compiled /middleware in 508ms (129 modules)
+web:dev:  ○ Compiling / ...
+web:dev:  ✓ Compiled / in 2.2s (566 modules)
+web:dev:  GET / 307 in 2939ms
+web:dev: <w> [webpack.cache.PackFileCacheStrategy] Serializing big strings (102kiB) impacts deserialization performance (consider using Buffer instead and decode when needed)
+web:dev: <w> [webpack.cache.PackFileCacheStrategy] Serializing big strings (244kiB) impacts deserialization performance (consider using Buffer instead and decode when needed)
+web:dev:  ○ Compiling /dashboard ...
+web:dev:  ✓ Compiled /dashboard in 1442ms (593 modules)
+web:dev:  GET /dashboard 200 in 3857ms
+web:dev:  ○ Compiling /learn/chunks ...
+web:dev:  ⨯ ./lib/chunks.ts:7:1
+web:dev: Module not found: Can't resolve '../data/chunks/english.json'
+web:dev: [0m [90m  5 |[39m[0m
+web:dev: [0m [90m  6 |[39m [36mimport[39m type { [33mCefrLevel[39m[33m,[39m [33mChunkCategory[39m[33m,[39m [33mLanguage[39m } [36mfrom[39m [32m"@nativo/core"[39m[33m;[39m[0m
+web:dev: [0m[31m[1m>[22m[39m[90m  7 |[39m [36mimport[39m english [36mfrom[39m [32m"../data/chunks/english.json"[39m[33m;[39m[0m
+web:dev: [0m [90m    |[39m [31m[1m^[22m[39m[0m
+web:dev: [0m [90m  8 |[39m [36mimport[39m spanish [36mfrom[39m [32m"../data/chunks/spanish.json"[39m[33m;[39m[0m
+web:dev: [0m [90m  9 |[39m [36mimport[39m japanese [36mfrom[39m [32m"../data/chunks/japanese.json"[39m[33m;[39m[0m
+web:dev: [0m [90m 10 |[39m[0m
+web:dev: 
+web:dev: https://nextjs.org/docs/messages/module-not-found
+web:dev: 
+web:dev: Import trace for requested module:
+web:dev: ./app/learn/chunks/ChunkReviewSession.tsx
+web:dev:  ⨯ ./lib/chunks.ts:7:1
+web:dev: Module not found: Can't resolve '../data/chunks/english.json'
+web:dev: [0m [90m  5 |[39m[0m
+web:dev: [0m [90m  6 |[39m [36mimport[39m type { [33mCefrLevel[39m[33m,[39m [33mChunkCategory[39m[33m,[39m [33mLanguage[39m } [36mfrom[39m [32m"@nativo/core"[39m[33m;[39m[0m
+web:dev: [0m[31m[1m>[22m[39m[90m  7 |[39m [36mimport[39m english [36mfrom[39m [32m"../data/chunks/english.json"[39m[33m;[39m[0m
+web:dev: [0m [90m    |[39m [31m[1m^[22m[39m[0m
+web:dev: [0m [90m  8 |[39m [36mimport[39m spanish [36mfrom[39m [32m"../data/chunks/spanish.json"[39m[33m;[39m[0m
+web:dev: [0m [90m  9 |[39m [36mimport[39m japanese [36mfrom[39m [32m"../data/chunks/japanese.json"[39m[33m;[39m[0m
+web:dev: [0m [90m 10 |[39m[0m
+web:dev: 
+web:dev: https://nextjs.org/docs/messages/module-not-found
+web:dev: 
+web:dev: Import trace for requested module:
+web:dev: ./app/learn/chunks/ChunkReviewSession.tsx
+web:dev:  ⨯ ./lib/chunks.ts:7:1
+web:dev: Module not found: Can't resolve '../data/chunks/english.json'
+web:dev: [0m [90m  5 |[39m[0m
+web:dev: [0m [90m  6 |[39m [36mimport[39m type { [33mCefrLevel[39m[33m,[39m [33mChunkCategory[39m[33m,[39m [33mLanguage[39m } [36mfrom[39m [32m"@nativo/core"[39m[33m;[39m[0m
+web:dev: [0m[31m[1m>[22m[39m[90m  7 |[39m [36mimport[39m english [36mfrom[39m [32m"../data/chunks/english.json"[39m[33m;[39m[0m
+web:dev: [0m [90m    |[39m [31m[1m^[22m[39m[0m
+web:dev: [0m [90m  8 |[39m [36mimport[39m spanish [36mfrom[39m [32m"../data/chunks/spanish.json"[39m[33m;[39m[0m
+web:dev: [0m [90m  9 |[39m [36mimport[39m japanese [36mfrom[39m [32m"../data/chunks/japanese.json"[39m[33m;[39m[0m
+web:dev: [0m [90m 10 |[39m[0m
+web:dev: 
+web:dev: https://nextjs.org/docs/messages/module-not-found
+web:dev: 
+web:dev: Import trace for requested module:
+web:dev: ./app/learn/chunks/ChunkReviewSession.tsx
+web:dev:  GET /learn/chunks 500 in 13ms
+web:dev:  ✓ Compiled /_error in 237ms (1066 modules)
+web:dev:  ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+web:dev:  GET /_next/static/webpack/4ea0ccea4d012eec.webpack.hot-update.json 404 in 82ms
+web:dev:  GET /learn/chunks 200 in 1847ms
+web:dev:  ✓ Compiled /learn/chunks/dictionary in 372ms (1103 modules)
+web:dev:  POST /learn/chunks/dictionary?tab=all 200 in 2795ms
+web:dev:  POST /learn/chunks/dictionary?tab=all 200 in 2696ms
+web:dev:  ✓ Compiled /settings in 289ms (1107 modules)
+web:dev:  ✓ Compiled /learn/shadowing in 217ms (1114 modules)
+web:dev:  ○ Compiling /learn/roleplay ...
+web:dev:  ✓ Compiled /learn/roleplay in 575ms (1265 modules)
+web:dev:  ✓ Compiled /learn/reading in 236ms (1269 modules)
+web:dev:  ✓ Compiled /learn/flashcards in 321ms (1283 modules)
+web:dev:  ✓ Compiled /api/shadowing in 244ms (754 modules)
+web:dev:  POST /api/shadowing 200 in 2211ms
+web:dev:  ○ Compiling /learn/shadowing/[id] ...
+web:dev:  ✓ Compiled /learn/shadowing/[id] in 506ms (1345 modules)
+web:dev:  ✓ Compiled in 487ms (1325 modules)
+web:dev:  ⨯ app\learn\flashcards\page.tsx (51:22) @ NEW_WORDS_PER_SESSION
+web:dev:  ⨯ ReferenceError: NEW_WORDS_PER_SESSION is not defined
+web:dev:     at FlashcardsPage (./app/learn/flashcards/page.tsx:57:24)
+web:dev: digest: "2667673801"
+web:dev: [0m [90m 49 |[39m[0m
+web:dev: [0m [90m 50 |[39m   [90m// 2) 복습 카드가 적으면 word-db 에서 새 단어를 자동 투입(레벨 ±1, 미학습 우선)[39m[0m
+web:dev: [0m[31m[1m>[22m[39m[90m 51 |[39m   [36mif[39m (cards[33m.[39mlength [33m<[39m [33mNEW_WORDS_PER_SESSION[39m) {[0m
+web:dev: [0m [90m    |[39m                      [31m[1m^[22m[39m[0m
+web:dev: [0m [90m 52 |[39m     [36mconst[39m { data[33m:[39m ownedRows } [33m=[39m [36mawait[39m supabase[0m
+web:dev: [0m [90m 53 |[39m       [33m.[39m[36mfrom[39m([32m"flashcards"[39m)[0m
+web:dev: [0m [90m 54 |[39m       [33m.[39mselect([32m"word"[39m)[0m
+web:dev:  ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+web:dev:  ✓ Compiled in 267ms (1325 modules)
+web:dev:  ⨯ app\learn\flashcards\page.tsx (52:22) @ NEW_WORDS_PER_SESSION
+web:dev:  ⨯ ReferenceError: NEW_WORDS_PER_SESSION is not defined
+web:dev:     at FlashcardsPage (./app/learn/flashcards/page.tsx:57:24)
+web:dev: digest: "2667673801"
+web:dev: [0m [90m 50 |[39m[0m
+web:dev: [0m [90m 51 |[39m   [90m// 2) 복습 카드가 적으면 word-db 에서 새 단어를 자동 투입(레벨 ±1, 미학습 우선)[39m[0m
+web:dev: [0m[31m[1m>[22m[39m[90m 52 |[39m   [36mif[39m (cards[33m.[39mlength [33m<[39m [33mNEW_WORDS_PER_SESSION[39m) {[0m
+web:dev: [0m [90m    |[39m                      [31m[1m^[22m[39m[0m
+web:dev: [0m [90m 53 |[39m     [36mconst[39m { data[33m:[39m ownedRows } [33m=[39m [36mawait[39m supabase[0m
+web:dev: [0m [90m 54 |[39m       [33m.[39m[36mfrom[39m([32m"flashcards"[39m)[0m
+web:dev: [0m [90m 55 |[39m       [33m.[39mselect([32m"word"[39m)[0m
+web:dev:  ⨯ app\learn\flashcards\page.tsx (52:22) @ NEW_WORDS_PER_SESSION
+web:dev:  ⨯ ReferenceError: NEW_WORDS_PER_SESSION is not defined
+web:dev:     at FlashcardsPage (./app/learn/flashcards/page.tsx:57:24)
+web:dev: digest: "2667673801"
+web:dev: [0m [90m 50 |[39m[0m
+web:dev: [0m [90m 51 |[39m   [90m// 2) 복습 카드가 적으면 word-db 에서 새 단어를 자동 투입(레벨 ±1, 미학습 우선)[39m[0m
+web:dev: [0m[31m[1m>[22m[39m[90m 52 |[39m   [36mif[39m (cards[33m.[39mlength [33m<[39m [33mNEW_WORDS_PER_SESSION[39m) {[0m
+web:dev: [0m [90m    |[39m                      [31m[1m^[22m[39m[0m
+web:dev: [0m [90m 53 |[39m     [36mconst[39m { data[33m:[39m ownedRows } [33m=[39m [36mawait[39m supabase[0m
+web:dev: [0m [90m 54 |[39m       [33m.[39m[36mfrom[39m([32m"flashcards"[39m)[0m
+web:dev: [0m [90m 55 |[39m       [33m.[39mselect([32m"word"[39m)[0m
+web:dev:  GET /learn/flashcards 500 in 1789ms
+web:dev:  ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+web:dev:  ✓ Compiled in 267ms (1326 modules)
+web:dev:  ⨯ app\learn\flashcards\page.tsx (58:22) @ NEW_WORDS_PER_SESSION
+web:dev:  ⨯ ReferenceError: NEW_WORDS_PER_SESSION is not defined
+web:dev:     at FlashcardsPage (./app/learn/flashcards/page.tsx:63:24)
+web:dev: digest: "1041942030"
+web:dev: [0m [90m 56 |[39m[0m
+web:dev: [0m [90m 57 |[39m   [90m// 2) 복습 카드가 적으면 word-db 에서 새 단어를 자동 투입(레벨 ±1, 미학습 우선)[39m[0m
+web:dev: [0m[31m[1m>[22m[39m[90m 58 |[39m   [36mif[39m (cards[33m.[39mlength [33m<[39m [33mNEW_WORDS_PER_SESSION[39m) {[0m
+web:dev: [0m [90m    |[39m                      [31m[1m^[22m[39m[0m
+web:dev: [0m [90m 59 |[39m     [36mconst[39m { data[33m:[39m ownedRows } [33m=[39m [36mawait[39m supabase[0m
+web:dev: [0m [90m 60 |[39m       [33m.[39m[36mfrom[39m([32m"flashcards"[39m)[0m
+web:dev: [0m [90m 61 |[39m       [33m.[39mselect([32m"word"[39m)[0m
+web:dev:  ⨯ app\learn\flashcards\page.tsx (58:22) @ NEW_WORDS_PER_SESSION
+web:dev:  ⨯ ReferenceError: NEW_WORDS_PER_SESSION is not defined
+web:dev:     at FlashcardsPage (./app/learn/flashcards/page.tsx:63:24)
+web:dev: digest: "1041942030"
+web:dev: [0m [90m 56 |[39m[0m
+web:dev: [0m [90m 57 |[39m   [90m// 2) 복습 카드가 적으면 word-db 에서 새 단어를 자동 투입(레벨 ±1, 미학습 우선)[39m[0m
+web:dev: [0m[31m[1m>[22m[39m[90m 58 |[39m   [36mif[39m (cards[33m.[39mlength [33m<[39m [33mNEW_WORDS_PER_SESSION[39m) {[0m
+web:dev: [0m [90m    |[39m                      [31m[1m^[22m[39m[0m
+web:dev: [0m [90m 59 |[39m     [36mconst[39m { data[33m:[39m ownedRows } [33m=[39m [36mawait[39m supabase[0m
+web:dev: [0m [90m 60 |[39m       [33m.[39m[36mfrom[39m([32m"flashcards"[39m)[0m
+web:dev: [0m [90m 61 |[39m       [33m.[39mselect([32m"word"[39m)[0m
+web:dev:  GET /learn/flashcards 500 in 2327ms
+web:dev:  ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+web:dev:  ✓ Compiled in 228ms (1326 modules)
+web:dev:  GET /learn/flashcards 200 in 2697ms
+web:dev:  ✓ Compiled in 330ms (1326 modules)
+web:dev:  ✓ Compiled in 243ms (1326 modules)
+web:dev:  ⨯ app\learn\chunks\page.tsx (58:22) @ SESSION_NEW
+web:dev:  ⨯ ReferenceError: SESSION_NEW is not defined
+web:dev:     at ChunksPage (./app/learn/chunks/page.tsx:61:24)
+web:dev: digest: "366169484"
+web:dev: [0m [90m 56 |[39m[0m
+web:dev: [0m [90m 57 |[39m   [90m// 부족하면 chunk-db 에서 새 청크 자동 투입(레벨 ±1)[39m[0m
+web:dev: [0m[31m[1m>[22m[39m[90m 58 |[39m   [36mif[39m (cards[33m.[39mlength [33m<[39m [33mSESSION_NEW[39m) {[0m
+web:dev: [0m [90m    |[39m                      [31m[1m^[22m[39m[0m
+web:dev: [0m [90m 59 |[39m     [36mconst[39m owned [33m=[39m [36mnew[39m [33mSet[39m((allChunks [33m?[39m[33m?[39m [])[33m.[39mmap((c) [33m=>[39m c[33m.[39mexpression[33m.[39mtoLowerCase()))[33m;[39m[0m
+web:dev: [0m [90m 60 |[39m     [36mconst[39m fresh [33m=[39m nextNewChunks(language[33m,[39m level[33m,[39m owned[33m,[39m [33mSESSION_NEW[39m [33m-[39m cards[33m.[39mlength)[33m;[39m[0m
+web:dev: [0m [90m 61 |[39m     [36mif[39m (fresh[33m.[39mlength [33m>[39m [35m0[39m) {[0m
+web:dev:  ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+web:dev:  ✓ Compiled in 241ms (1326 modules)
+web:dev:  GET /learn/chunks 200 in 1493ms
+web:dev:  ✓ Compiled in 117ms (572 modules)
+web:dev:  ✓ Compiled in 92ms (572 modules)
+web:dev:  ✓ Compiled in 99ms (572 modules)
+web:dev:  ✓ Compiled in 81ms (572 modules)
+web:dev:  ✓ Compiled in 99ms (572 modules)
+web:dev:  ✓ Compiled in 157ms (573 modules)
+web:dev:  ✓ Compiled /settings in 352ms (760 modules)
+web:dev:  GET /settings 307 in 513ms
+web:dev:  ✓ Compiled /learn/reading in 268ms (758 modules)
+web:dev:  ✓ Compiled /learn/reading/[id] in 462ms (1319 modules)
+web:dev:  ✓ Compiled /api/enrich in 201ms (636 modules)
+web:dev:  POST /api/enrich 200 in 1493ms
+web:dev:  POST /api/enrich 200 in 1884ms
+web:dev:  ✓ Compiled /settings in 195ms (613 modules)
+web:dev:  ✓ Compiled in 357ms (1070 modules)
+web:dev:  ✓ Compiled in 111ms (575 modules)
+web:dev:  GET /settings 307 in 108ms
+web:dev:  ✓ Compiled in 430ms (1070 modules)
+web:dev:  ✓ Compiled in 89ms (575 modules)
+web:dev:  ✓ Compiled in 382ms (1070 modules)
+web:dev:  ✓ Compiled in 473ms (1191 modules)
+web:dev:  ✓ Compiled in 438ms (1191 modules)
+web:dev:  ✓ Compiled in 331ms (1191 modules)
+web:dev:  ✓ Compiled in 264ms (1191 modules)
+web:dev:  ✓ Compiled in 298ms (1191 modules)
+web:dev:  ✓ Compiled in 177ms (576 modules)
+web:dev:  ✓ Compiled in 159ms (576 modules)
+web:dev:  ✓ Compiled in 109ms (576 modules)
+web:dev:  ✓ Compiled in 109ms (576 modules)
+web:dev:  ✓ Compiled in 113ms (576 modules)
+web:dev:  ✓ Compiled /learn/chunks in 371ms (628 modules)
+web:dev:  POST /learn/chunks 200 in 4635ms
+web:dev:  ✓ Compiled in 461ms (1171 modules)
+web:dev:  ✓ Compiled /learn/chunks/dictionary in 113ms (603 modules)
+web:dev:  POST /learn/chunks 200 in 4221ms
