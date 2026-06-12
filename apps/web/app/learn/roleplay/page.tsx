@@ -45,6 +45,22 @@ export default async function RoleplayPage() {
         )}
 
         <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+          <li>
+            <Link href="/learn/roleplay/custom">
+              <Card className="h-full border-dashed transition-colors hover:bg-secondary/40">
+                <CardContent className="p-4">
+                  <div className="flex items-center justify-between">
+                    <span className="text-2xl">✏️</span>
+                    <Badge variant="muted">커스텀</Badge>
+                  </div>
+                  <p className="mt-2 font-medium">커스텀 상황 만들기</p>
+                  <p className="mt-1 text-sm text-muted-foreground">
+                    상황·목표를 직접 정해 대화하기
+                  </p>
+                </CardContent>
+              </Card>
+            </Link>
+          </li>
           {SCENARIOS.map((s) => (
             <li key={s.id}>
               <Link href={`/learn/roleplay/${s.id}`}>

@@ -4,6 +4,7 @@ import { isSupabaseConfigured } from "@/lib/supabase/env";
 import { SupabaseNotice } from "@/components/SupabaseNotice";
 import { AppHeader } from "@/components/AppHeader";
 import { createClient } from "@/lib/supabase/server";
+import { fetchTranscript } from "@/lib/youtube";
 import { ShadowingPlayer } from "./ShadowingPlayer";
 
 export default async function ShadowingVideoPage({
@@ -27,16 +28,18 @@ export default async function ShadowingVideoPage({
 
   const { data: video } = await supabase
     .from("shadowing_videos")
-    .select("id, youtube_video_id, title, last_position_sec, total_watch_sec")
+    .select("id, youtube_video_id, title, language, last_position_sec, total_watch_sec")
     .eq("id", params.id)
     .single();
 
   if (!video) notFound();
 
+  const transcript = await fetchTranscript(video.youtube_video_id, video.language);
+
   return (
     <>
       <AppHeader />
-      <main className="container max-w-2xl py-8">
+      <main className="container max-w-5xl py-8">
         <Link
           href="/learn/shadowing"
           className="text-sm text-muted-foreground hover:text-foreground"
@@ -51,6 +54,7 @@ export default async function ShadowingVideoPage({
           videoId={video.youtube_video_id}
           startSec={video.last_position_sec ?? 0}
           initialWatchSec={video.total_watch_sec ?? 0}
+          transcript={transcript}
         />
       </main>
     </>

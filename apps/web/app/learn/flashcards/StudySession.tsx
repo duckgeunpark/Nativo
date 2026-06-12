@@ -229,6 +229,9 @@ function FlipCard({
   }, [card.id, card.word, card.language]);
   return (
     <>
+      <div className="mb-2 flex justify-end">
+        <CardHeart card={card} />
+      </div>
       <Card>
         <CardContent className="min-h-56 p-0">
           {/* 상단: 단어 — 탭하면 발음 듣기 */}
@@ -264,7 +267,7 @@ function FlipCard({
         </CardContent>
       </Card>
       <div className="mt-4">
-        <NextBar card={card} choice="good" saving={saving} disabled={!flipped} onGrade={onGrade} />
+        <NextBar choice="good" saving={saving} disabled={!flipped} onGrade={onGrade} />
       </div>
     </>
   );
@@ -294,6 +297,9 @@ function McCard({
 
   return (
     <>
+      <div className="mb-2 flex justify-end">
+        <CardHeart card={card} />
+      </div>
       <Card>
         <CardContent className="py-8 text-center">
           <div className="flex items-center justify-center gap-3">
@@ -329,7 +335,6 @@ function McCard({
       {picked && (
         <div className="mt-4">
           <NextBar
-            card={card}
             choice={picked === card.meaning ? "good" : "hard"}
             saving={saving}
             onGrade={onGrade}
@@ -362,6 +367,9 @@ function TypeCard({
 
   return (
     <>
+      <div className="mb-2 flex justify-end">
+        <CardHeart card={card} />
+      </div>
       <Card>
         <CardContent className="py-8 text-center">
           {mode === "dictation" ? (
@@ -400,7 +408,7 @@ function TypeCard({
           disabled={checked}
         />
         {checked ? (
-          <NextBar card={card} choice={correct ? "good" : "hard"} saving={saving} onGrade={onGrade} />
+          <NextBar choice={correct ? "good" : "hard"} saving={saving} onGrade={onGrade} />
         ) : (
           <Button type="submit" className="w-full" disabled={saving || !value.trim()}>
             확인

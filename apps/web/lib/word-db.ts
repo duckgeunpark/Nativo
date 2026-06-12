@@ -38,6 +38,32 @@ export function wordDbSize(language: Language): number {
   return load(language).length;
 }
 
+/** 언어별 소문자 단어 → SeedWord 색인 (반복 조회 캐시). */
+const lookupCache = new Map<Language, Map<string, SeedWord>>();
+
+function lookupIndex(language: Language): Map<string, SeedWord> {
+  const cached = lookupCache.get(language);
+  if (cached) return cached;
+  const index = new Map<string, SeedWord>();
+  for (const w of load(language)) {
+    if (!w?.word || !w?.meaning) continue;
+    const key = w.word.toLowerCase();
+    if (!index.has(key)) index.set(key, w); // 첫(빈도 높은) 항목 우선
+  }
+  lookupCache.set(language, index);
+  return index;
+}
+
+/**
+ * 전체 사전(word-db)에서 단어를 정확히(대소문자 무시) 1건 조회.
+ * 읽기 화면의 "사전 1차 검색" 출처 — 있으면 AI 보강을 건너뛴다.
+ */
+export function lookupWordDb(language: Language, word: string): SeedWord | null {
+  const key = word.trim().toLowerCase();
+  if (!key) return null;
+  return lookupIndex(language).get(key) ?? null;
+}
+
 export interface WordDbPage {
   words: SeedWord[];
   total: number;

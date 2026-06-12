@@ -1,11 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import type { Language, TablesInsert } from "@nativo/core";
-import type { EnrichedFields } from "@/lib/dictionary";
+import type { Language } from "@nativo/core";
+import type { EnrichResult } from "@/app/api/enrich/route";
 import { createClient } from "@/lib/supabase/client";
+import { addToMyWords, removeFromMyWords } from "@/app/learn/flashcards/dictionary/actions";
+import { HeartToggle } from "@/app/learn/flashcards/dictionary/HeartToggle";
 import { speak } from "@/lib/tts";
-import { Button } from "@/components/ui/button";
 
 interface Props {
   text: string;
@@ -15,11 +16,18 @@ interface Props {
 interface Lookup {
   word: string;
   loading: boolean;
-  fields: Partial<EnrichedFields>;
-  added: boolean;
+  fields: Partial<EnrichResult>;
+  /** 이미 '내 단어'에 담겨 있는지 (하트 초기 상태). */
+  saved: boolean;
 }
 
 const cleanWord = (raw: string) => raw.replace(/^[^\p{L}'-]+|[^\p{L}'-]+$/gu, "");
+
+const SOURCE_LABEL: Record<NonNullable<EnrichResult["source"]>, string> = {
+  dictionary: "전체 사전",
+  ai: "AI 검색",
+  none: "",
+};
 
 export function Reader({ text, language }: Props) {
   const [lookup, setLookup] = useState<Lookup | null>(null);
@@ -30,43 +38,15 @@ export function Reader({ text, language }: Props) {
   async function onWordClick(raw: string) {
     const word = cleanWord(raw);
     if (!word) return;
-    setLookup({ word, loading: true, fields: {}, added: false });
+    setLookup({ word, loading: true, fields: {}, saved: false });
     speak(word, language);
 
-    try {
-      const res = await fetch("/api/enrich", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ word, language }),
-      });
-      const fields = res.ok ? ((await res.json()) as Partial<EnrichedFields>) : {};
-      setLookup({ word, loading: false, fields, added: false });
-    } catch {
-      setLookup({ word, loading: false, fields: {}, added: false });
-    }
-  }
-
-  async function addCard() {
-    if (!lookup) return;
-    const supabase = createClient();
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-    if (!user) return;
-
-    const payload: TablesInsert<"flashcards"> = {
-      user_id: user.id,
-      language,
-      word: lookup.word,
-      meaning: lookup.fields.meaning ?? lookup.word,
-      meaning_en: lookup.fields.meaning_en ?? null,
-      pronunciation: lookup.fields.pronunciation ?? null,
-      example_1: lookup.fields.example_1 ?? null,
-      part_of_speech: lookup.fields.part_of_speech ?? null,
-      source: "reading",
-    };
-    const { error } = await supabase.from("flashcards").insert(payload);
-    if (!error) setLookup({ ...lookup, added: true });
+    // 사전 보강 + 이미 담긴 단어인지 동시 확인
+    const [fields, saved] = await Promise.all([
+      fetchEnrich(word, language),
+      isInMyWords(word, language),
+    ]);
+    setLookup({ word, loading: false, fields, saved });
   }
 
   return (
@@ -106,36 +86,91 @@ export function Reader({ text, language }: Props) {
                       {lookup.fields.pronunciation}
                     </span>
                   )}
+                  {!lookup.loading && lookup.fields.source && lookup.fields.source !== "none" && (
+                    <span className="rounded bg-secondary px-1.5 py-0.5 text-[11px] text-muted-foreground">
+                      {SOURCE_LABEL[lookup.fields.source]}
+                    </span>
+                  )}
                 </div>
                 {lookup.loading ? (
                   <p className="mt-1 text-sm text-muted-foreground">찾는 중…</p>
                 ) : (
                   <p className="mt-1 text-sm text-muted-foreground">
-                    {lookup.fields.meaning ?? "뜻 정보를 찾지 못했어요 (그래도 카드로 담을 수 있어요)."}
+                    {lookup.fields.meaning ??
+                      "뜻 정보를 찾지 못했어요 (그래도 하트로 담을 수 있어요)."}
                   </p>
                 )}
               </div>
-              <button
-                type="button"
-                onClick={() => setLookup(null)}
-                className="text-muted-foreground hover:text-foreground"
-                aria-label="닫기"
-              >
-                ✕
-              </button>
-            </div>
-            <div className="mt-3">
-              {lookup.added ? (
-                <p className="text-sm font-medium text-success">✓ 플래시카드에 추가됨</p>
-              ) : (
-                <Button size="sm" onClick={addCard} disabled={lookup.loading}>
-                  📚 플래시카드에 추가
-                </Button>
-              )}
+              <div className="flex shrink-0 items-center gap-1">
+                {!lookup.loading && (
+                  <HeartToggle
+                    key={lookup.word}
+                    initialActive={lookup.saved}
+                    onAdd={() =>
+                      addToMyWords({
+                        language,
+                        word: lookup.word,
+                        meaning: lookup.fields.meaning ?? lookup.word,
+                        pronunciation: lookup.fields.pronunciation ?? null,
+                        example_1: lookup.fields.example_1 ?? null,
+                        part_of_speech: lookup.fields.part_of_speech ?? null,
+                      })
+                    }
+                    onRemove={() => removeFromMyWords({ language, word: lookup.word })}
+                  />
+                )}
+                <button
+                  type="button"
+                  onClick={() => setLookup(null)}
+                  className="text-muted-foreground hover:text-foreground"
+                  aria-label="닫기"
+                >
+                  ✕
+                </button>
+              </div>
             </div>
           </div>
         </div>
       )}
     </>
   );
+}
+
+/** enrich API 호출 — 전체 사전 1차 검색 → 없으면 AI. */
+async function fetchEnrich(
+  word: string,
+  language: Language,
+): Promise<Partial<EnrichResult>> {
+  try {
+    const res = await fetch("/api/enrich", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ word, language }),
+    });
+    return res.ok ? ((await res.json()) as Partial<EnrichResult>) : {};
+  } catch {
+    return {};
+  }
+}
+
+/** 이 단어가 이미 '내 단어'(source='manual')로 담겨 있는지. */
+async function isInMyWords(word: string, language: Language): Promise<boolean> {
+  try {
+    const supabase = createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (!user) return false;
+    const { data } = await supabase
+      .from("flashcards")
+      .select("id")
+      .eq("user_id", user.id)
+      .eq("language", language)
+      .eq("word", word)
+      .eq("source", "manual")
+      .maybeSingle();
+    return !!data;
+  } catch {
+    return false;
+  }
 }

@@ -2,11 +2,12 @@ import { NextResponse } from "next/server";
 import type OpenAI from "openai";
 import { createClient } from "@/lib/supabase/server";
 import { isOpenAIConfigured, openaiClient } from "@/lib/openai";
-import { getScenario, buildSystemPrompt } from "@/lib/roleplay";
+import { getScenario, buildFeedbackPrompt } from "@/lib/roleplay";
 import type { Language } from "@nativo/core";
 
 const LANGS = ["english", "spanish", "japanese"];
 
+/** 역할극 종료 후 모국어 피드백 생성 (표현별 평가 + 분야별 점수). */
 export async function POST(request: Request) {
   const supabase = createClient();
   const {
@@ -30,7 +31,6 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "bad request" }, { status: 400 });
   }
 
-  // 정적 시나리오 또는 사용자 커스텀 상황
   const scenario = body?.scenarioId
     ? getScenario(body.scenarioId)
     : body?.custom &&
@@ -46,26 +46,30 @@ export async function POST(request: Request) {
   }
 
   const history = Array.isArray(body?.messages) ? body.messages : [];
-  const chatMessages: OpenAI.Chat.Completions.ChatCompletionMessageParam[] = [
-    { role: "system", content: buildSystemPrompt(scenario, language as Language) },
-    ...history.slice(-20).map((m) => ({
-      role: m.role === "assistant" ? ("assistant" as const) : ("user" as const),
-      content: String(m.content ?? "").slice(0, 1000),
-    })),
-  ];
   if (history.length === 0) {
-    chatMessages.push({ role: "user", content: "Start the role-play and greet me first, in character." });
+    return NextResponse.json({ error: "empty" }, { status: 400 });
   }
+
+  const transcript = history
+    .map((m) => `${m.role === "assistant" ? "PARTNER" : "LEARNER"}: ${String(m.content ?? "").slice(0, 1000)}`)
+    .join("\n");
+
+  const messages: OpenAI.Chat.Completions.ChatCompletionMessageParam[] = [
+    { role: "system", content: buildFeedbackPrompt(scenario, language as Language) },
+    { role: "user", content: `Conversation transcript:\n${transcript}` },
+  ];
 
   try {
     const completion = await openaiClient().chat.completions.create({
       model: "gpt-4o-mini",
-      messages: chatMessages,
-      max_tokens: 200,
-      temperature: 0.8,
+      messages,
+      max_tokens: 900,
+      temperature: 0.4,
+      response_format: { type: "json_object" },
     });
-    const reply = completion.choices[0]?.message?.content ?? "";
-    return NextResponse.json({ reply });
+    const raw = completion.choices[0]?.message?.content ?? "{}";
+    const parsed = JSON.parse(raw);
+    return NextResponse.json(parsed);
   } catch {
     return NextResponse.json({ error: "ai_error" }, { status: 502 });
   }
