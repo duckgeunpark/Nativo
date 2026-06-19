@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import type { DailyTaskId, Language, TablesInsert } from "@nativo/core";
 import { createClient } from "@/lib/supabase/client";
 import { STREAK_GOAL_DAYS, type RoutineTask } from "@/lib/routine";
@@ -123,33 +124,49 @@ export function RoutineChecklist({ language, tasks }: Props) {
         {tasks.map((task) => {
           const checked = completed.has(task.id);
           return (
-            <li key={task.id}>
+            <li
+              key={task.id}
+              className={`flex items-center gap-2 rounded-xl border p-2 pr-3 transition ${
+                checked ? "border-green-300 bg-green-50" : "border-neutral-200 bg-white"
+              }`}
+            >
+              {/* 체크 토글 */}
               <button
                 type="button"
                 onClick={() => toggle(task.id)}
                 disabled={saving}
-                className={`flex w-full items-center justify-between rounded-xl border p-4 text-left transition disabled:opacity-60 ${
+                aria-pressed={checked}
+                aria-label={checked ? "완료 취소" : "완료 표시"}
+                className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full border text-sm transition disabled:opacity-60 ${
                   checked
-                    ? "border-green-300 bg-green-50"
-                    : "border-neutral-200 bg-white hover:bg-neutral-50"
+                    ? "border-green-500 bg-green-500 text-white"
+                    : "border-neutral-300 hover:border-green-400"
                 }`}
               >
-                <span className="flex items-center gap-3">
-                  <span
-                    className={`flex h-6 w-6 items-center justify-center rounded-full border text-sm ${
-                      checked
-                        ? "border-green-500 bg-green-500 text-white"
-                        : "border-neutral-300"
-                    }`}
-                  >
-                    {checked ? "✓" : ""}
-                  </span>
+                {checked ? "✓" : ""}
+              </button>
+
+              {/* 학습하러 가기 (링크 없으면 라벨만) */}
+              {task.href ? (
+                <Link
+                  href={task.href}
+                  className="flex flex-1 items-center justify-between gap-2 rounded-lg px-2 py-2 hover:bg-neutral-50"
+                >
                   <span className={checked ? "line-through opacity-60" : ""}>
                     {task.label}
                   </span>
-                </span>
-                <span className="text-sm text-neutral-500">{task.minutes}분</span>
-              </button>
+                  <span className="flex items-center gap-2 text-sm text-neutral-500">
+                    {task.minutes}분<span aria-hidden>→</span>
+                  </span>
+                </Link>
+              ) : (
+                <div className="flex flex-1 items-center justify-between px-2 py-2">
+                  <span className={checked ? "line-through opacity-60" : ""}>
+                    {task.label}
+                  </span>
+                  <span className="text-sm text-neutral-500">{task.minutes}분</span>
+                </div>
+              )}
             </li>
           );
         })}

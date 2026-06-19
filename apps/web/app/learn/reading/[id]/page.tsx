@@ -60,6 +60,19 @@ export default async function BookReaderPage({
     );
   }
 
+  // 위치 기억: ?p 없이 열면 마지막으로 읽던 쪽으로 이어가기
+  if (searchParams.p === undefined) {
+    const { data: hist } = await supabase
+      .from("content_history")
+      .select("last_chapter")
+      .eq("user_id", user.id)
+      .eq("content_id", params.id)
+      .eq("language", language)
+      .maybeSingle();
+    const resume = Number(hist?.last_chapter ?? "1") || 1;
+    if (resume > 1) redirect(`/learn/reading/${params.id}?p=${resume}`);
+  }
+
   const page = Math.min(Math.max(1, Number(searchParams.p ?? "1") || 1), total);
   const text = pages[page - 1] ?? "";
 

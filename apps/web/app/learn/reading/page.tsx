@@ -38,6 +38,17 @@ export default async function ReadingPage({
   const q = searchParams.q ?? "";
   const books = await searchBooks(language, q);
 
+  // 이어 읽기: 진행 중인 책 (최근 순)
+  const { data: inProgress } = await supabase
+    .from("content_history")
+    .select("content_id, title, author, last_chapter, total_chapters, progress_pct")
+    .eq("user_id", user.id)
+    .eq("language", language)
+    .eq("content_type", "book")
+    .eq("completed", false)
+    .order("started_at", { ascending: false })
+    .limit(4);
+
   return (
     <>
       <AppHeader />
@@ -48,6 +59,31 @@ export default async function ReadingPage({
             저작권이 만료된 원서를 읽고, 모르는 단어를 눌러 뜻을 보고 카드에 담으세요. (Project Gutenberg)
           </p>
         </header>
+
+        {inProgress && inProgress.length > 0 && (
+          <section className="mb-8">
+            <h2 className="mb-3 text-sm font-semibold text-muted-foreground">이어 읽기</h2>
+            <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+              {inProgress.map((h) => (
+                <li key={h.content_id}>
+                  <Link href={`/learn/reading/${h.content_id}?p=${Number(h.last_chapter ?? "1") || 1}`}>
+                    <Card className="h-full transition-colors hover:bg-secondary/40">
+                      <CardContent className="p-4">
+                        <p className="line-clamp-2 font-medium">{h.title}</p>
+                        <p className="mt-1 text-sm text-muted-foreground">
+                          {h.last_chapter ?? 1}
+                          {h.total_chapters ? ` / ${h.total_chapters}` : ""} 쪽
+                          {" · "}
+                          {h.progress_pct}%
+                        </p>
+                      </CardContent>
+                    </Card>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </section>
+        )}
 
         <form className="mb-6 flex gap-2" action="/learn/reading" method="get">
           <Input name="q" defaultValue={q} placeholder="제목·작가 검색 (예: Tom Sawyer)" />
