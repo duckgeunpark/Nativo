@@ -41,3 +41,4 @@ next-env.d.ts
 
 # 패키지 빌드 산출물 (packages/*/dist 포함)
 dist/
+/asset
