@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { HeartToggle } from "@/app/learn/flashcards/dictionary/HeartToggle";
-import { addToMyChunks, removeFromMyChunks } from "./actions";
+import { addToMyChunks, removeFromMyChunks, deleteChunk } from "./actions";
 
 export type ChunkRow = Pick<
   Chunk,
@@ -40,6 +40,22 @@ export function ChunkDictionary({
 }) {
   const [rows, setRows] = useState<ChunkRow[]>(initial);
   const [query, setQuery] = useState("");
+  const [busy, setBusy] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  async function remove(id: string) {
+    if (busy) return;
+    if (!confirm("이 청크를 사전에서 완전히 삭제할까요? 학습 기록도 함께 사라집니다.")) return;
+    setBusy(id);
+    setError(null);
+    const res = await deleteChunk({ id });
+    setBusy(null);
+    if (!res.ok) {
+      setError(res.error ?? "삭제 실패");
+      return;
+    }
+    setRows((prev) => prev.filter((r) => r.id !== id));
+  }
 
   const q = query.trim().toLowerCase();
   const filtered = q
@@ -59,6 +75,12 @@ export function ChunkDictionary({
         className="mb-4"
       />
       <p className="mb-3 text-sm text-muted-foreground">{filtered.length}개 청크</p>
+
+      {error && (
+        <p className="mb-3 rounded-lg bg-destructive/10 px-3 py-2 text-sm text-destructive">
+          {error}
+        </p>
+      )}
 
       {filtered.length === 0 ? (
         <Card>
@@ -124,6 +146,16 @@ export function ChunkDictionary({
                       }
                     }}
                   />
+                  <button
+                    type="button"
+                    onClick={() => remove(r.id)}
+                    disabled={busy === r.id}
+                    aria-label="청크 삭제"
+                    title="사전에서 완전히 삭제"
+                    className="shrink-0 rounded-md p-1.5 text-muted-foreground transition hover:bg-destructive/10 hover:text-destructive disabled:opacity-40"
+                  >
+                    🗑
+                  </button>
                 </CardContent>
               </Card>
             </li>

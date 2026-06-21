@@ -117,11 +117,19 @@ export default async function DashboardPage() {
     <>
       <AppHeader />
       <main className="container max-w-2xl py-10">
-        <header className="mb-6">
-          <h1 className="text-2xl font-bold">안녕하세요, {name}님</h1>
-          <p className="mt-1 text-sm text-muted-foreground">
-            {LANGUAGE_LABEL[language]} · 🔥 스트릭 {streak}일
-          </p>
+        <header className="mb-6 flex items-start justify-between gap-3">
+          <div>
+            <h1 className="text-2xl font-bold">안녕하세요, {name}님</h1>
+            <p className="mt-1 text-sm text-muted-foreground">
+              {LANGUAGE_LABEL[language]} · 🔥 스트릭 {streak}일
+            </p>
+          </div>
+          <Link
+            href="/learn/stats"
+            className="shrink-0 rounded-md border px-3 py-1.5 text-sm transition hover:bg-secondary"
+          >
+            📊 통계
+          </Link>
         </header>
 
         <section>

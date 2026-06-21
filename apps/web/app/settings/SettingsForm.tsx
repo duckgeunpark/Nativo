@@ -12,6 +12,7 @@ import {
 } from "@/lib/session-size";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { ErrorBanner } from "@/components/ui/states";
 import { cn } from "@/lib/utils";
 
 const LANGUAGES: { value: Language; label: string; flag: string }[] = [
@@ -50,10 +51,12 @@ export function SettingsForm({
   const [chunkSize, setChunkSize] = useState(String(initial.chunkSize));
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   async function save() {
     setSaving(true);
     setSaved(false);
+    setError(null);
     const supabase = createClient();
     const {
       data: { user },
@@ -68,7 +71,7 @@ export function SettingsForm({
       .eq("id", user.id);
     if (error) {
       setSaving(false);
-      alert(`저장 실패: ${error.message}`);
+      setError(`저장 실패: ${error.message}`);
       return;
     }
     // 회당 학습량은 쿠키로(기기별)
@@ -156,11 +159,14 @@ export function SettingsForm({
         </div>
       </section>
 
-      <div className="flex items-center gap-3">
-        <Button onClick={save} disabled={saving}>
-          {saving ? "저장 중…" : "저장"}
-        </Button>
-        {saved && <span className="text-sm text-success">✓ 저장됨</span>}
+      <div>
+        <div className="flex items-center gap-3">
+          <Button onClick={save} disabled={saving}>
+            {saving ? "저장 중…" : "저장"}
+          </Button>
+          {saved && <span className="text-sm text-success">✓ 저장됨</span>}
+        </div>
+        <ErrorBanner message={error} className="mt-3" />
       </div>
     </div>
   );

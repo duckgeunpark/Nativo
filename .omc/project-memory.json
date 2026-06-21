@@ -1,0 +1,233 @@
+{
+  "version": "1.0.0",
+  "lastScanned": 1782029787200,
+  "projectRoot": "C:\\Users\\duke\\Desktop\\Project\\Nativo",
+  "techStack": {
+    "languages": [
+      {
+        "name": "JavaScript/TypeScript",
+        "version": ">=20",
+        "confidence": "high",
+        "markers": [
+          "package.json"
+        ]
+      }
+    ],
+    "frameworks": [],
+    "packageManager": "npm",
+    "runtime": "Node.js 20"
+  },
+  "build": {
+    "buildCommand": "cd /c/Users/duke/Desktop/Project/Nativo && echo \"=== TSC ===\" && (cd apps/web && npx tsc --noEmit 2>&1 | head -20); echo \"TSC_EXIT=$?\"; echo \"=== TESTS ===\" && npm run test:direct 2>&1 | grep -E \"Test Files|Tests|FAIL|passed|failed\"; echo \"=== alert check ===\" && grep -rn \"alert(\" apps/web/app apps/web/components 2>/dev/null || echo \"no alert() remaining\"",
+    "testCommand": "cd /c/Users/duke/Desktop/Project/Nativo && ls node_modules/.bin/ | grep -i vitest; echo \"---utils bin---\"; ls packages/utils/node_modules/.bin/ 2>/dev/null | grep -i vitest || echo \"no local utils bin\"",
+    "lintCommand": "npm run lint",
+    "devCommand": "npm run dev",
+    "scripts": {
+      "dev": "turbo run dev",
+      "build": "turbo run build",
+      "lint": "turbo run lint",
+      "test": "turbo run test",
+      "typecheck": "turbo run typecheck"
+    }
+  },
+  "conventions": {
+    "namingStyle": null,
+    "importStyle": null,
+    "testPattern": null,
+    "fileOrganization": null
+  },
+  "structure": {
+    "isMonorepo": true,
+    "workspaces": [
+      "apps/*",
+      "packages/*"
+    ],
+    "mainDirectories": [
+      "scripts"
+    ],
+    "gitBranches": {
+      "defaultBranch": "main",
+      "branchingStrategy": null
+    }
+  },
+  "customNotes": [],
+  "directoryMap": {
+    "apps": {
+      "path": "apps",
+      "purpose": null,
+      "fileCount": 0,
+      "lastAccessed": 1782029787171,
+      "keyFiles": []
+    },
+    "documents": {
+      "path": "documents",
+      "purpose": null,
+      "fileCount": 5,
+      "lastAccessed": 1782029787172,
+      "keyFiles": [
+        "Nativo 기능 정의 v2.md",
+        "spec+db Schema v1.md",
+        "업데이트 예정 v4.md",
+        "전체 서비스 상세 설계서 v1.md",
+        "학습기능 목표 v3.md"
+      ]
+    },
+    "packages": {
+      "path": "packages",
+      "purpose": null,
+      "fileCount": 0,
+      "lastAccessed": 1782029787180,
+      "keyFiles": []
+    },
+    "scripts": {
+      "path": "scripts",
+      "purpose": "Build/utility scripts",
+      "fileCount": 5,
+      "lastAccessed": 1782029787180,
+      "keyFiles": [
+        "audit-levels.mjs",
+        "build-chunk-db.mjs",
+        "build-word-db-openai.mjs",
+        "build-word-db.mjs",
+        "build-wordbank.mjs"
+      ]
+    },
+    "supabase": {
+      "path": "supabase",
+      "purpose": null,
+      "fileCount": 0,
+      "lastAccessed": 1782029787181,
+      "keyFiles": []
+    },
+    "packages\\utils": {
+      "path": "packages\\utils",
+      "purpose": "Utility functions",
+      "fileCount": 2,
+      "lastAccessed": 1782029787182,
+      "keyFiles": [
+        "package.json",
+        "tsconfig.json"
+      ]
+    },
+    "supabase\\migrations": {
+      "path": "supabase\\migrations",
+      "purpose": "Database migrations",
+      "fileCount": 1,
+      "lastAccessed": 1782029787182,
+      "keyFiles": [
+        "0001_init.sql"
+      ]
+    }
+  },
+  "hotPaths": [
+    {
+      "path": "apps\\web\\package.json",
+      "accessCount": 3,
+      "lastAccessed": 1782030400988,
+      "type": "file"
+    },
+    {
+      "path": "apps\\web\\lib\\chunk-review.test.ts",
+      "accessCount": 3,
+      "lastAccessed": 1782030474827,
+      "type": "file"
+    },
+    {
+      "path": "package.json",
+      "accessCount": 2,
+      "lastAccessed": 1782030402177,
+      "type": "file"
+    },
+    {
+      "path": "supabase\\migrations\\0001_init.sql",
+      "accessCount": 1,
+      "lastAccessed": 1782029876854,
+      "type": "file"
+    },
+    {
+      "path": ".env.example",
+      "accessCount": 1,
+      "lastAccessed": 1782029877331,
+      "type": "file"
+    },
+    {
+      "path": "apps\\web\\app\\page.tsx",
+      "accessCount": 1,
+      "lastAccessed": 1782029877521,
+      "type": "file"
+    },
+    {
+      "path": "packages\\core\\src\\types\\database.ts",
+      "accessCount": 1,
+      "lastAccessed": 1782029889932,
+      "type": "file"
+    },
+    {
+      "path": "documents\\업데이트 예정 v4.md",
+      "accessCount": 1,
+      "lastAccessed": 1782029894829,
+      "type": "file"
+    },
+    {
+      "path": "documents\\학습기능 목표 v3.md",
+      "accessCount": 1,
+      "lastAccessed": 1782029895289,
+      "type": "file"
+    },
+    {
+      "path": "documents\\Nativo 기능 정의 v2.md",
+      "accessCount": 1,
+      "lastAccessed": 1782029895805,
+      "type": "file"
+    },
+    {
+      "path": "packages\\utils\\src\\srs.test.ts",
+      "accessCount": 1,
+      "lastAccessed": 1782030334916,
+      "type": "file"
+    },
+    {
+      "path": "apps\\web\\lib\\session-size.test.ts",
+      "accessCount": 1,
+      "lastAccessed": 1782030359298,
+      "type": "file"
+    },
+    {
+      "path": "apps\\web\\lib\\word-db.test.ts",
+      "accessCount": 1,
+      "lastAccessed": 1782030379304,
+      "type": "file"
+    },
+    {
+      "path": "apps\\web\\lib\\flashcards.test.ts",
+      "accessCount": 1,
+      "lastAccessed": 1782030385157,
+      "type": "file"
+    },
+    {
+      "path": "apps\\web\\vitest.config.ts",
+      "accessCount": 1,
+      "lastAccessed": 1782030390630,
+      "type": "file"
+    },
+    {
+      "path": "apps\\web\\lib\\chunks.ts",
+      "accessCount": 1,
+      "lastAccessed": 1782030434198,
+      "type": "file"
+    },
+    {
+      "path": "apps\\web\\lib\\chunk-review.ts",
+      "accessCount": 1,
+      "lastAccessed": 1782030464972,
+      "type": "file"
+    },
+    {
+      "path": "apps\\web\\app\\learn\\chunks\\ChunkReviewSession.tsx",
+      "accessCount": 1,
+      "lastAccessed": 1782030532315,
+      "type": "file"
+    }
+  ],
+  "userDirectives": []
+}

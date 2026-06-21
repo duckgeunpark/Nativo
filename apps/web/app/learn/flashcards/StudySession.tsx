@@ -9,6 +9,7 @@ import { speak } from "@/lib/tts";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { ErrorBanner } from "@/components/ui/states";
 import { cn } from "@/lib/utils";
 import { HeartToggle } from "./dictionary/HeartToggle";
 import { addToMyWords, removeFromMyWords } from "./dictionary/actions";
@@ -77,6 +78,7 @@ export function StudySession({ cards }: { cards: StudyCard[] }) {
   const [index, setIndex] = useState(0);
   const [saving, setSaving] = useState(false);
   const [reviewed, setReviewed] = useState(0);
+  const [error, setError] = useState<string | null>(null);
 
   const uniqueMeanings = useMemo(
     () => [...new Set(cards.map((c) => c.meaning))],
@@ -102,14 +104,15 @@ export function StudySession({ cards }: { cards: StudyCard[] }) {
   async function grade(choice: ReviewChoice) {
     if (!card || saving) return;
     setSaving(true);
+    setError(null);
     const supabase = createClient();
-    const { error } = await supabase
+    const { error: dbError } = await supabase
       .from("flashcards")
       .update(reviewUpdate(card, choice))
       .eq("id", card.id);
     setSaving(false);
-    if (error) {
-      alert(`저장 실패: ${error.message}`);
+    if (dbError) {
+      setError(`저장 실패: ${dbError.message}`);
       return;
     }
     setReviewed((n) => n + 1);
@@ -164,14 +167,17 @@ export function StudySession({ cards }: { cards: StudyCard[] }) {
           </CardContent>
         </Card>
       ) : (
-        <CardRunner
-          key={`${mode}-${index}`}
-          card={card!}
-          mode={mode}
-          meanings={uniqueMeanings}
-          saving={saving}
-          onGrade={grade}
-        />
+        <>
+          <CardRunner
+            key={`${mode}-${index}`}
+            card={card!}
+            mode={mode}
+            meanings={uniqueMeanings}
+            saving={saving}
+            onGrade={grade}
+          />
+          <ErrorBanner message={error} className="mt-4" />
+        </>
       )}
     </div>
   );

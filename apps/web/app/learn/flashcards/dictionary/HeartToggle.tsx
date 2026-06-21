@@ -35,7 +35,8 @@ export function HeartToggle({
     const res = active ? await onRemove() : await onAdd();
     setPending(false);
     if (!res.ok) {
-      alert(res.error ?? "처리 실패");
+      // 비차단: 하트는 그대로 두어(상태 유지) 사용자가 실패를 인지하게 한다.
+      console.error("하트 토글 실패:", res.error ?? "처리 실패");
       return;
     }
     const next = !active;

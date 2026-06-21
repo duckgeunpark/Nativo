@@ -67,6 +67,29 @@ export async function addToMyWords(
 }
 
 /**
+ * 카드를 완전히 삭제한다(학습 기록 포함). 사전에서 영구 제거.
+ * RLS 로 본인 카드만 삭제 가능하나, user_id 조건을 명시해 방어한다.
+ */
+export async function deleteWord(input: {
+  id: string;
+}): Promise<{ ok: boolean; error?: string }> {
+  const supabase = createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { ok: false, error: "로그인이 필요합니다." };
+
+  const { error } = await supabase
+    .from("flashcards")
+    .delete()
+    .eq("id", input.id)
+    .eq("user_id", user.id);
+  if (error) return { ok: false, error: error.message };
+  revalidatePath(DICT_PATH);
+  return { ok: true };
+}
+
+/**
  * '내 단어'에서 제거 = source 를 'curated' 로 되돌려 '내 단어'(source != curated) 목록에서 빠지게 한다.
  * 카드 자체는 삭제하지 않음(학습 단어로는 남음).
  */

@@ -68,6 +68,26 @@ export async function addToMyChunks(
   return { ok: true };
 }
 
+/** 청크를 완전히 삭제(학습 기록 포함). RLS + user_id 조건으로 본인 것만. */
+export async function deleteChunk(input: {
+  id: string;
+}): Promise<{ ok: boolean; error?: string }> {
+  const supabase = createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { ok: false, error: "로그인이 필요합니다." };
+
+  const { error } = await supabase
+    .from("chunks")
+    .delete()
+    .eq("id", input.id)
+    .eq("user_id", user.id);
+  if (error) return { ok: false, error: error.message };
+  revalidatePath(DICT_PATH);
+  return { ok: true };
+}
+
 /** '내 청크'에서 제거 = source 를 'curated' 로 (학습 청크로는 남음). */
 export async function removeFromMyChunks(input: {
   language: Language;

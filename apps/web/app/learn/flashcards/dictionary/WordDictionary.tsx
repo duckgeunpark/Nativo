@@ -8,8 +8,9 @@ import { speak } from "@/lib/tts";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { cn } from "@/lib/utils";
 import { HeartToggle } from "./HeartToggle";
-import { addToMyWords, removeFromMyWords } from "./actions";
+import { addToMyWords, removeFromMyWords, deleteWord } from "./actions";
 
 export type WordRow = Pick<
   Flashcard,
@@ -20,8 +21,14 @@ export type WordRow = Pick<
   | "difficulty"
   | "language"
   | "repetitions"
+  | "last_grade"
   | "source"
 >;
+
+/** 자주 틀리는 단어 판정: 마지막 채점이 정답선(3) 미만. */
+function isStruggling(r: WordRow): boolean {
+  return r.last_grade !== null && r.last_grade < 3;
+}
 
 export function WordDictionary({
   initial,
@@ -37,30 +44,50 @@ export function WordDictionary({
 }) {
   const [rows, setRows] = useState<WordRow[]>(initial);
   const [query, setQuery] = useState("");
+  const [strugglingOnly, setStrugglingOnly] = useState(false);
   const [editing, setEditing] = useState<string | null>(null);
   const [draft, setDraft] = useState("");
+  const [busy, setBusy] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  const strugglingCount = rows.filter(isStruggling).length;
 
   const q = query.trim().toLowerCase();
-  const filtered = q
-    ? rows.filter(
-        (r) => r.word.toLowerCase().includes(q) || r.meaning.toLowerCase().includes(q),
-      )
-    : rows;
+  const filtered = rows
+    .filter((r) => (strugglingOnly ? isStruggling(r) : true))
+    .filter((r) =>
+      q ? r.word.toLowerCase().includes(q) || r.meaning.toLowerCase().includes(q) : true,
+    );
 
   async function saveMeaning(id: string) {
     const value = draft.trim();
     if (!value) return;
     const supabase = createClient();
-    const { error } = await supabase
+    const { error: dbError } = await supabase
       .from("flashcards")
       .update({ meaning: value })
       .eq("id", id);
-    if (error) {
-      alert(`수정 실패: ${error.message}`);
+    if (dbError) {
+      setError(`수정 실패: ${dbError.message}`);
       return;
     }
     setRows((prev) => prev.map((r) => (r.id === id ? { ...r, meaning: value } : r)));
     setEditing(null);
+    setError(null);
+  }
+
+  async function remove(id: string) {
+    if (busy) return;
+    if (!confirm("이 단어를 사전에서 완전히 삭제할까요? 학습 기록도 함께 사라집니다.")) return;
+    setBusy(id);
+    setError(null);
+    const res = await deleteWord({ id });
+    setBusy(null);
+    if (!res.ok) {
+      setError(res.error ?? "삭제 실패");
+      return;
+    }
+    setRows((prev) => prev.filter((r) => r.id !== id));
   }
 
   return (
@@ -69,9 +96,32 @@ export function WordDictionary({
         value={query}
         onChange={(e) => setQuery(e.target.value)}
         placeholder="단어·뜻 검색…"
-        className="mb-4"
+        className="mb-3"
       />
-      <p className="mb-3 text-sm text-muted-foreground">{filtered.length}개 단어</p>
+      <div className="mb-3 flex items-center justify-between gap-2">
+        <p className="text-sm text-muted-foreground">{filtered.length}개 단어</p>
+        {strugglingCount > 0 && (
+          <button
+            type="button"
+            onClick={() => setStrugglingOnly((v) => !v)}
+            aria-pressed={strugglingOnly}
+            className={cn(
+              "rounded-full border px-3 py-1 text-xs font-medium transition",
+              strugglingOnly
+                ? "border-destructive bg-destructive/10 text-destructive"
+                : "text-muted-foreground hover:bg-secondary",
+            )}
+          >
+            자주 틀리는 단어 {strugglingCount}
+          </button>
+        )}
+      </div>
+
+      {error && (
+        <p className="mb-3 rounded-lg bg-destructive/10 px-3 py-2 text-sm text-destructive">
+          {error}
+        </p>
+      )}
 
       {filtered.length === 0 ? (
         <Card>
@@ -108,6 +158,11 @@ export function WordDictionary({
                       ) : (
                         <span className="text-xs text-muted-foreground">
                           복습 {r.repetitions}회
+                        </span>
+                      )}
+                      {isStruggling(r) && (
+                        <span className="rounded bg-destructive/10 px-1.5 py-0.5 text-xs font-medium text-destructive">
+                          자주 틀림
                         </span>
                       )}
                     </div>
@@ -157,6 +212,16 @@ export function WordDictionary({
                       }
                     }}
                   />
+                  <button
+                    type="button"
+                    onClick={() => remove(r.id)}
+                    disabled={busy === r.id}
+                    aria-label="단어 삭제"
+                    title="사전에서 완전히 삭제"
+                    className="shrink-0 rounded-md p-1.5 text-muted-foreground transition hover:bg-destructive/10 hover:text-destructive disabled:opacity-40"
+                  >
+                    🗑
+                  </button>
                 </CardContent>
               </Card>
             </li>

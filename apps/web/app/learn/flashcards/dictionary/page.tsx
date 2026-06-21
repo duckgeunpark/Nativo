@@ -129,7 +129,9 @@ async function FlashcardsTab({
   const supabase = createClient();
   let query = supabase
     .from("flashcards")
-    .select("id, word, meaning, pronunciation, difficulty, language, repetitions, source")
+    .select(
+      "id, word, meaning, pronunciation, difficulty, language, repetitions, last_grade, source",
+    )
     .eq("user_id", userId)
     .eq("language", language);
   if (variant === "mine") {
