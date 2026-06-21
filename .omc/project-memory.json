@@ -18,7 +18,7 @@
     "runtime": "Node.js 20"
   },
   "build": {
-    "buildCommand": "cd /c/Users/duke/Desktop/Project/Nativo && echo \"=== TSC ===\" && (cd apps/web && npx tsc --noEmit 2>&1 | head -20); echo \"TSC_EXIT=$?\"; echo \"=== TESTS ===\" && npm run test:direct 2>&1 | grep -E \"Test Files|Tests|FAIL|passed|failed\"; echo \"=== alert check ===\" && grep -rn \"alert(\" apps/web/app apps/web/components 2>/dev/null || echo \"no alert() remaining\"",
+    "buildCommand": "cd /c/Users/duke/Desktop/Project/Nativo && echo \"=== TSC ===\" && (cd apps/web && npx tsc --noEmit 2>&1 | head -20); echo \"TSC_EXIT=$?\"; echo \"=== TESTS ===\" && npm run test:direct 2>&1 | grep -E \"Test Files|Tests|FAIL\"",
     "testCommand": "cd /c/Users/duke/Desktop/Project/Nativo && ls node_modules/.bin/ | grep -i vitest; echo \"---utils bin---\"; ls packages/utils/node_modules/.bin/ 2>/dev/null | grep -i vitest || echo \"no local utils bin\"",
     "lintCommand": "npm run lint",
     "devCommand": "npm run dev",

@@ -10,6 +10,9 @@ const NAV = [
   { href: "/learn/shadowing", label: "쉐도잉" },
   { href: "/learn/roleplay", label: "AI 대화" },
   { href: "/learn/reading", label: "읽기" },
+  { href: "/learn/translate", label: "번역가" },
+  { href: "/learn/journal", label: "영작 일기" },
+  { href: "/learn/nuance", label: "뉘앙스" },
 ];
 
 export function AppHeader() {

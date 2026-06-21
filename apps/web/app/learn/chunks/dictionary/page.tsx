@@ -10,6 +10,7 @@ import { getChunkDbPage, chunkDbSize } from "@/lib/chunk-db";
 import { cn } from "@/lib/utils";
 import { ChunkDictionary, type ChunkRow } from "./ChunkDictionary";
 import { AllChunksList } from "./AllChunksList";
+import { ChunkGenerator } from "./ChunkGenerator";
 
 const BASE = "/learn/chunks/dictionary";
 const CHUNK_COLS =
@@ -38,10 +39,11 @@ export default async function ChunkDictionaryPage({
 
   const { data: profile } = await supabase
     .from("users")
-    .select("selected_language")
+    .select("selected_language, current_level")
     .eq("id", user.id)
     .single();
   const language = profile?.selected_language ?? "english";
+  const level = (profile?.current_level ?? "B1") as CefrLevel;
 
   const tab =
     searchParams.tab === "all" ? "all" : searchParams.tab === "studied" ? "studied" : "mine";
@@ -83,6 +85,7 @@ export default async function ChunkDictionaryPage({
             key={tab}
             userId={user.id}
             language={language}
+            level={level}
             variant={tab === "mine" ? "mine" : "studied"}
           />
         )}
@@ -119,10 +122,12 @@ function TabLink({
 async function MineOrStudiedTab({
   userId,
   language,
+  level,
   variant,
 }: {
   userId: string;
   language: Language;
+  level: CefrLevel;
   variant: "mine" | "studied";
 }) {
   const supabase = createClient();
@@ -140,16 +145,19 @@ async function MineOrStudiedTab({
     .returns<ChunkRow[]>();
 
   return (
-    <ChunkDictionary
-      initial={chunks ?? []}
-      language={language}
-      removeOnUnheart={variant === "mine"}
-      emptyText={
-        variant === "mine"
-          ? "아직 내 청크가 없어요. 전체 목록·학습 청크에서 하트를 눌러 담으세요."
-          : "아직 학습한 청크가 없어요. 청크 복습을 하면 여기에 쌓여요."
-      }
-    />
+    <>
+      {variant === "mine" && <ChunkGenerator language={language} level={level} />}
+      <ChunkDictionary
+        initial={chunks ?? []}
+        language={language}
+        removeOnUnheart={variant === "mine"}
+        emptyText={
+          variant === "mine"
+            ? "아직 내 청크가 없어요. 전체 목록·학습 청크에서 하트를 눌러 담거나, 위에서 AI로 생성해 보세요."
+            : "아직 학습한 청크가 없어요. 청크 복습을 하면 여기에 쌓여요."
+        }
+      />
+    </>
   );
 }
 
