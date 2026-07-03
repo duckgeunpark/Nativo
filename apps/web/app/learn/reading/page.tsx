@@ -8,6 +8,8 @@ import { searchBooks } from "@/lib/gutenberg";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { UploadDocForm } from "./UploadDocForm";
+import { DocListItem } from "./DocListItem";
 
 export default async function ReadingPage({
   searchParams,
@@ -49,16 +51,40 @@ export default async function ReadingPage({
     .order("started_at", { ascending: false })
     .limit(4);
 
+  // 내가 올린 문서 (PDF 등)
+  const { data: docs } = await supabase
+    .from("documents")
+    .select("id, title, total_pages")
+    .eq("user_id", user.id)
+    .eq("language", language)
+    .order("created_at", { ascending: false });
+
   return (
     <>
       <AppHeader />
       <main className="container max-w-2xl py-10">
-        <header className="mb-6">
-          <h1 className="text-2xl font-bold">문서 읽기</h1>
-          <p className="mt-1 text-sm text-muted-foreground">
-            저작권이 만료된 원서를 읽고, 모르는 단어를 눌러 뜻을 보고 카드에 담으세요. (Project Gutenberg)
-          </p>
+        <header className="mb-6 flex items-start justify-between gap-3">
+          <div>
+            <h1 className="text-2xl font-bold">문서 읽기</h1>
+            <p className="mt-1 text-sm text-muted-foreground">
+              원서(Project Gutenberg)나 <b>내 PDF</b>를 읽고, 모르는 단어를 눌러 뜻을 보고 카드에 담으세요.
+            </p>
+          </div>
+          <UploadDocForm language={language} />
         </header>
+
+        {docs && docs.length > 0 && (
+          <section className="mb-8">
+            <h2 className="mb-3 text-sm font-semibold text-muted-foreground">내 문서</h2>
+            <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+              {docs.map((d) => (
+                <li key={d.id}>
+                  <DocListItem id={d.id} title={d.title} totalPages={d.total_pages} />
+                </li>
+              ))}
+            </ul>
+          </section>
+        )}
 
         {inProgress && inProgress.length > 0 && (
           <section className="mb-8">

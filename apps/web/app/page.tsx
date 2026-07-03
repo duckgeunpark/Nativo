@@ -1,34 +1,17 @@
 import { redirect } from "next/navigation";
-import Link from "next/link";
-import { isSupabaseConfigured } from "@/lib/supabase/env";
 import { createClient } from "@/lib/supabase/server";
+import { LOCAL_USER_ID } from "@/lib/db";
 
+/**
+ * 루트 진입점 (단일 사용자 로컬 모드 — 로그인 없음).
+ * 온보딩 완료(카드 보유) 여부로 대시보드/온보딩을 분기한다.
+ */
 export default async function HomePage() {
-  // 키가 있으면 로그인 상태에 따라 분기, 없으면 랜딩만 노출
-  if (isSupabaseConfigured()) {
-    const supabase = createClient();
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-    if (user) redirect("/dashboard");
-  }
+  const supabase = createClient();
+  const { count } = await supabase
+    .from("flashcards")
+    .select("id", { count: "exact", head: true })
+    .eq("user_id", LOCAL_USER_ID);
 
-  return (
-    <main className="flex min-h-screen flex-col items-center justify-center gap-8 px-6 text-center">
-      <div>
-        <h1 className="text-4xl font-bold tracking-tight">Nativo</h1>
-        <p className="mt-3 text-lg text-neutral-600">Speak your way to native.</p>
-        <p className="mt-1 text-sm text-neutral-500">
-          5단계 Phase로 영어 · 스페인어 · 일본어를 원어민처럼.
-        </p>
-      </div>
-
-      <Link
-        href="/login"
-        className="rounded-lg bg-brand px-6 py-3 font-medium text-brand-fg transition hover:opacity-90"
-      >
-        시작하기
-      </Link>
-    </main>
-  );
+  redirect((count ?? 0) > 0 ? "/dashboard" : "/onboarding");
 }

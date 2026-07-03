@@ -2,6 +2,7 @@
 
 import type { CefrLevel, Language, TablesInsert } from "@nativo/core";
 import { createClient } from "@/lib/supabase/server";
+import { LOCAL_USER_ID } from "@/lib/db";
 import { nextNewWords } from "@/lib/word-db";
 
 /** 온보딩 직후 채울 초기 덱 크기. */
@@ -16,6 +17,28 @@ const INITIAL_DECK = 20;
  *
  * @returns 새로 추가된 카드 수
  */
+/**
+ * 온보딩 완료: 선택 언어를 저장하고 초기 덱을 시드한다.
+ * (단일 사용자 로컬 모드 — 브라우저 대신 서버에서 DB 접근)
+ */
+export async function completeOnboarding(
+  language: Language,
+): Promise<{ ok: boolean; error?: string }> {
+  const supabase = createClient();
+  const { error } = await supabase
+    .from("users")
+    .update({ selected_language: language })
+    .eq("id", LOCAL_USER_ID);
+  if (error) return { ok: false, error: error.message };
+
+  try {
+    await seedInitialDeck(language);
+  } catch {
+    // 시드 실패는 진행을 막지 않음
+  }
+  return { ok: true };
+}
+
 export async function seedInitialDeck(language: Language): Promise<number> {
   const supabase = createClient();
   const {

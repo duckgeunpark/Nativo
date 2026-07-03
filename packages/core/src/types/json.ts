@@ -43,6 +43,13 @@ export interface SavedChunk {
   timestamp: number;
 }
 
+/** 시간별 자막 큐. shadowing_videos.transcript[]. (lib/youtube TranscriptCue 와 동일 구조) */
+export interface TranscriptCue {
+  start: number; // 초
+  dur: number; // 초
+  text: string;
+}
+
 /** 롤플레이 시나리오 미션 카드. roleplay_scenarios.mission_cards[]. */
 export interface MissionCard {
   mission: string;

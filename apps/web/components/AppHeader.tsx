@@ -58,14 +58,6 @@ export function AppHeader() {
           >
             설정
           </Link>
-          <form action="/auth/signout" method="post">
-            <button
-              type="submit"
-              className="whitespace-nowrap text-sm text-muted-foreground transition-colors hover:text-foreground"
-            >
-              로그아웃
-            </button>
-          </form>
         </div>
       </div>
     </header>

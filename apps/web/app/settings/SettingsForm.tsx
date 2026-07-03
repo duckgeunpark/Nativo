@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import type { CefrLevel, Language } from "@nativo/core";
-import { createClient } from "@/lib/supabase/client";
+import { saveSettings } from "./actions";
 import {
   SESSION_SIZE,
   SESSION_MIN,
@@ -57,21 +57,10 @@ export function SettingsForm({
     setSaving(true);
     setSaved(false);
     setError(null);
-    const supabase = createClient();
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-    if (!user) {
-      router.push("/login");
-      return;
-    }
-    const { error } = await supabase
-      .from("users")
-      .update({ selected_language: language, current_level: level })
-      .eq("id", user.id);
-    if (error) {
+    const res = await saveSettings({ language, level });
+    if (!res.ok) {
       setSaving(false);
-      setError(`저장 실패: ${error.message}`);
+      setError(`저장 실패: ${res.error ?? "알 수 없는 오류"}`);
       return;
     }
     // 회당 학습량은 쿠키로(기기별)

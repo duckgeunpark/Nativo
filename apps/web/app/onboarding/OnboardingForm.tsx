@@ -3,8 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import type { Language } from "@nativo/core";
-import { createClient } from "@/lib/supabase/client";
-import { seedInitialDeck } from "./actions";
+import { completeOnboarding } from "./actions";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
@@ -24,30 +23,11 @@ export function OnboardingForm({ initial }: { initial: { selectedLanguage: Langu
     setSaving(true);
     setError(null);
 
-    const supabase = createClient();
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-    if (!user) {
-      router.push("/login");
-      return;
-    }
-
-    const { error: updateError } = await supabase
-      .from("users")
-      .update({ selected_language: language })
-      .eq("id", user.id);
-    if (updateError) {
+    const res = await completeOnboarding(language);
+    if (!res.ok) {
       setSaving(false);
-      setError(`저장 실패: ${updateError.message}`);
+      setError(`저장 실패: ${res.error ?? "알 수 없는 오류"}`);
       return;
-    }
-
-    // 선택 언어의 word-db 에서 초기 덱 자동 채우기 (실패해도 진행)
-    try {
-      await seedInitialDeck(language);
-    } catch {
-      // 무시
     }
 
     router.push("/dashboard");

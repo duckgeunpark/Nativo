@@ -42,6 +42,10 @@ export async function POST(request: Request) {
     .select("id")
     .single();
 
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+  if (error || !data)
+    return NextResponse.json(
+      { error: error?.message ?? "저장 실패" },
+      { status: 500 },
+    );
   return NextResponse.json({ id: data.id });
 }

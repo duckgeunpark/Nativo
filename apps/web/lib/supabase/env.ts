@@ -1,9 +1,11 @@
-/** Supabase 환경 변수 접근 + 설정 여부 판별. */
+/**
+ * (구) Supabase 환경 변수 게이트 → 내장 DB 전환 후 항상 구성됨으로 처리.
+ *
+ * 내장 DB 는 외부 키 없이 동작하므로 별도 설정이 필요 없다.
+ * 호출부 호환을 위해 함수 시그니처만 유지한다.
+ */
 
-export const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
-export const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-
-/** 키가 아직 없을 때(개발 초기) 앱이 죽지 않도록 안내 화면으로 분기하기 위한 플래그. */
+/** 내장 DB 는 항상 사용 가능하므로 true. */
 export function isSupabaseConfigured(): boolean {
-  return Boolean(SUPABASE_URL && SUPABASE_ANON_KEY);
+  return true;
 }

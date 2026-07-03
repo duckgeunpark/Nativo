@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import type { CefrLevel, Language, TablesInsert } from "@nativo/core";
 import { createClient } from "@/lib/supabase/server";
+import { LOCAL_USER_ID } from "@/lib/db";
 
 /** 내 단어 사전 라우트 — 토글 후 캐시 무효화로 모든 탭이 즉시 최신 반영. */
 const DICT_PATH = "/learn/flashcards/dictionary";
@@ -64,6 +65,40 @@ export async function addToMyWords(
   if (error) return { ok: false, error: error.message };
   revalidatePath(DICT_PATH);
   return { ok: true };
+}
+
+/** 카드 뜻(meaning) 수정. */
+export async function updateWordMeaning(
+  id: string,
+  meaning: string,
+): Promise<{ ok: boolean; error?: string }> {
+  const value = meaning.trim();
+  if (!value) return { ok: false, error: "빈 뜻은 저장할 수 없습니다." };
+  const supabase = createClient();
+  const { error } = await supabase
+    .from("flashcards")
+    .update({ meaning: value })
+    .eq("id", id);
+  if (error) return { ok: false, error: error.message };
+  revalidatePath(DICT_PATH);
+  return { ok: true };
+}
+
+/** 이 단어가 이미 '내 단어'(source='manual')로 담겨 있는지. */
+export async function isWordSaved(
+  word: string,
+  language: Language,
+): Promise<boolean> {
+  const supabase = createClient();
+  const { data } = await supabase
+    .from("flashcards")
+    .select("id")
+    .eq("user_id", LOCAL_USER_ID)
+    .eq("language", language)
+    .eq("word", word)
+    .eq("source", "manual")
+    .maybeSingle();
+  return !!data;
 }
 
 /**

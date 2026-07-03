@@ -34,6 +34,7 @@ import type {
   RoleplayFeedback,
   SavedChunk,
   SavedWord,
+  TranscriptCue,
   TranslationFeedback,
   UnknownWord,
   WritingCorrection,
@@ -270,6 +271,7 @@ interface TableDefinitions {
           completed: boolean;
           saved_words: SavedWord[];
           saved_chunks: SavedChunk[];
+          transcript: TranscriptCue[];
           created_at: Timestamp;
           updated_at: Timestamp;
         };
@@ -287,6 +289,7 @@ interface TableDefinitions {
           completed?: boolean;
           saved_words?: SavedWord[];
           saved_chunks?: SavedChunk[];
+          transcript?: TranscriptCue[];
         };
         Update: {
           title?: string | null;
@@ -297,6 +300,7 @@ interface TableDefinitions {
           completed?: boolean;
           saved_words?: SavedWord[];
           saved_chunks?: SavedChunk[];
+          transcript?: TranscriptCue[];
         };
       };
 
@@ -555,6 +559,34 @@ interface TableDefinitions {
           progress_pct?: number;
           completed?: boolean;
           completed_at?: Timestamp | null;
+        };
+      };
+
+      documents: {
+        Row: {
+          id: string;
+          user_id: string;
+          title: string;
+          author: string | null;
+          language: Language;
+          pages: string[];
+          total_pages: number;
+          created_at: Timestamp;
+        };
+        Insert: {
+          id?: string;
+          user_id: string;
+          title: string;
+          author?: string | null;
+          language: Language;
+          pages?: string[];
+          total_pages?: number;
+        };
+        Update: {
+          title?: string;
+          author?: string | null;
+          pages?: string[];
+          total_pages?: number;
         };
       };
 }

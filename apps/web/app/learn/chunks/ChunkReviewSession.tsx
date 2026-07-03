@@ -2,12 +2,8 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import { createClient } from "@/lib/supabase/client";
-import {
-  chunkReviewUpdate,
-  chunkReviewUpdateGraded,
-  type StudyChunk,
-} from "@/lib/chunk-review";
+import { type StudyChunk } from "@/lib/chunk-review";
+import { gradeChunk } from "./actions";
 import { addToMyChunks, removeFromMyChunks } from "./dictionary/actions";
 import { speak } from "@/lib/tts";
 import { CATEGORY_LABEL } from "@/lib/chunks";
@@ -81,15 +77,10 @@ export function ChunkReviewSession({ chunks }: { chunks: StudyChunk[] }) {
     if (!chunk || saving) return;
     setSaving(true);
     setError(null);
-    const supabase = createClient();
-    const update =
-      correct === null
-        ? chunkReviewUpdate(chunk.review_count)
-        : chunkReviewUpdateGraded(chunk.review_count, correct);
-    const { error: dbError } = await supabase.from("chunks").update(update).eq("id", chunk.id);
+    const res = await gradeChunk(chunk.id, chunk.review_count, correct);
     setSaving(false);
-    if (dbError) {
-      setError(`저장 실패: ${dbError.message}`);
+    if (!res.ok) {
+      setError(`저장 실패: ${res.error ?? "알 수 없는 오류"}`);
       return;
     }
     setReviewed((n) => n + 1);

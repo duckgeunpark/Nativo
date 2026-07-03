@@ -3,8 +3,8 @@
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import type { ReviewChoice } from "@nativo/utils";
-import { createClient } from "@/lib/supabase/client";
-import { reviewUpdate, type StudyCard } from "@/lib/flashcards";
+import { type StudyCard } from "@/lib/flashcards";
+import { gradeFlashcard } from "./actions";
 import { speak } from "@/lib/tts";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -105,14 +105,10 @@ export function StudySession({ cards }: { cards: StudyCard[] }) {
     if (!card || saving) return;
     setSaving(true);
     setError(null);
-    const supabase = createClient();
-    const { error: dbError } = await supabase
-      .from("flashcards")
-      .update(reviewUpdate(card, choice))
-      .eq("id", card.id);
+    const res = await gradeFlashcard(card, choice);
     setSaving(false);
-    if (dbError) {
-      setError(`저장 실패: ${dbError.message}`);
+    if (!res.ok) {
+      setError(`저장 실패: ${res.error ?? "알 수 없는 오류"}`);
       return;
     }
     setReviewed((n) => n + 1);

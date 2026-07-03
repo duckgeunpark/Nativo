@@ -2,8 +2,8 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import type { DailyTaskId, Language, TablesInsert } from "@nativo/core";
-import { createClient } from "@/lib/supabase/client";
+import type { DailyTaskId, Language } from "@nativo/core";
+import { getRoutineState, saveDailyRoutine } from "./actions";
 import { STREAK_GOAL_DAYS, type RoutineTask } from "@/lib/routine";
 
 /** 로컬 타임존 기준 YYYY-MM-DD (offsetDays 만큼 가감). */
@@ -31,24 +31,14 @@ export function RoutineChecklist({ language, tasks }: Props) {
   useEffect(() => {
     let active = true;
     void (async () => {
-      const supabase = createClient();
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-      if (!user || !active) return;
-
-      const { data: rows } = await supabase
-        .from("daily_logs")
-        .select("log_date, tasks_completed, streak_day")
-        .eq("user_id", user.id)
-        .eq("language", language)
-        .in("log_date", [localDate(0), localDate(-1)]);
-
+      const { completed: done, yesterdayStreak: streak } = await getRoutineState(
+        language,
+        localDate(0),
+        localDate(-1),
+      );
       if (!active) return;
-      const todayRow = rows?.find((r) => r.log_date === localDate(0));
-      const yesterdayRow = rows?.find((r) => r.log_date === localDate(-1));
-      setCompleted(new Set(todayRow?.tasks_completed ?? []));
-      setYesterdayStreak(yesterdayRow?.streak_day ?? 0);
+      setCompleted(new Set(done));
+      setYesterdayStreak(streak);
       setLoading(false);
     })();
     return () => {
@@ -75,37 +65,22 @@ export function RoutineChecklist({ language, tasks }: Props) {
     setSaving(true);
     setError(null);
 
-    const supabase = createClient();
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-    if (!user) {
-      setSaving(false);
-      return;
-    }
-
     const completedIds = tasks.map((t) => t.id).filter((id) => set.has(id));
     const complete = completedIds.length === tasks.length && tasks.length > 0;
     const minutes = tasks
       .filter((t) => set.has(t.id))
       .reduce((sum, t) => sum + t.minutes, 0);
 
-    const payload: TablesInsert<"daily_logs"> = {
-      user_id: user.id,
-      log_date: localDate(0),
-      phase: 1, // daily_logs.phase 는 NOT NULL (Phase 개념 제거 후 상수 유지)
+    const res = await saveDailyRoutine({
       language,
-      tasks_completed: completedIds,
-      study_minutes: minutes,
-      streak_day: complete ? yesterdayStreak + 1 : 0,
-    };
-
-    const { error: upsertError } = await supabase
-      .from("daily_logs")
-      .upsert(payload, { onConflict: "user_id,log_date,language" });
+      logDate: localDate(0),
+      tasksCompleted: completedIds,
+      studyMinutes: minutes,
+      streakDay: complete ? yesterdayStreak + 1 : 0,
+    });
 
     setSaving(false);
-    if (upsertError) setError(`저장 실패: ${upsertError.message}`);
+    if (!res.ok) setError(`저장 실패: ${res.error ?? "알 수 없는 오류"}`);
   }
 
   if (loading) {

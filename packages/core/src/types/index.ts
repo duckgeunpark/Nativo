@@ -22,6 +22,7 @@ export type TranslationSession = Tables<"translation_sessions">;
 export type PhaseCompletion = Tables<"phase_completions">;
 export type StudyStats = Tables<"study_stats">;
 export type ContentHistoryEntry = Tables<"content_history">;
+export type ReadingDocument = Tables<"documents">;
 
 /**
  * 클라이언트에 안전하게 노출 가능한 시나리오(민감 컬럼 system_prompt 제거).

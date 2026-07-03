@@ -1,11 +1,11 @@
 import { redirect } from "next/navigation";
-import Link from "next/link";
 import { isSupabaseConfigured } from "@/lib/supabase/env";
 import { SupabaseNotice } from "@/components/SupabaseNotice";
 import { AppHeader } from "@/components/AppHeader";
 import { createClient } from "@/lib/supabase/server";
 import { Card, CardContent } from "@/components/ui/card";
 import { AddVideoForm } from "./AddVideoForm";
+import { ShadowingListItem } from "./ShadowingListItem";
 
 export default async function ShadowingPage() {
   if (!isSupabaseConfigured()) {
@@ -49,29 +49,14 @@ export default async function ShadowingPage() {
           <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2">
             {list.map((v) => (
               <li key={v.id}>
-                <Link href={`/learn/shadowing/${v.id}`}>
-                  <Card className="overflow-hidden transition-colors hover:bg-secondary/40">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
-                      src={
-                        v.thumbnail_url ??
-                        `https://i.ytimg.com/vi/${v.youtube_video_id}/hqdefault.jpg`
-                      }
-                      alt=""
-                      className="aspect-video w-full object-cover"
-                    />
-                    <CardContent className="p-3">
-                      <p className="line-clamp-2 text-sm font-medium">
-                        {v.title ?? "제목 없는 영상"}
-                      </p>
-                      {(v.last_position_sec ?? 0) > 0 && (
-                        <p className="mt-1 text-xs text-muted-foreground">
-                          {v.completed ? "완료" : `${Math.floor((v.last_position_sec ?? 0) / 60)}분 지점부터 이어보기`}
-                        </p>
-                      )}
-                    </CardContent>
-                  </Card>
-                </Link>
+                <ShadowingListItem
+                  id={v.id}
+                  title={v.title}
+                  thumbnailUrl={v.thumbnail_url}
+                  youtubeVideoId={v.youtube_video_id}
+                  lastPositionSec={v.last_position_sec ?? 0}
+                  completed={v.completed}
+                />
               </li>
             ))}
           </ul>

@@ -28,13 +28,20 @@ export default async function ShadowingVideoPage({
 
   const { data: video } = await supabase
     .from("shadowing_videos")
-    .select("id, youtube_video_id, title, language, last_position_sec, total_watch_sec")
+    .select(
+      "id, youtube_video_id, title, language, last_position_sec, total_watch_sec, transcript",
+    )
     .eq("id", params.id)
     .single();
 
   if (!video) notFound();
 
-  const transcript = await fetchTranscript(video.youtube_video_id, video.language);
+  // 저장해 둔 자막이 있으면 그대로 사용, 없으면 자동 수집을 한 번 시도(대개 실패 → 빈 배열).
+  const stored = video.transcript ?? [];
+  const transcript =
+    stored.length > 0
+      ? stored
+      : await fetchTranscript(video.youtube_video_id, video.language).catch(() => []);
 
   return (
     <>
@@ -52,6 +59,7 @@ export default async function ShadowingVideoPage({
         <ShadowingPlayer
           id={video.id}
           videoId={video.youtube_video_id}
+          language={video.language}
           startSec={video.last_position_sec ?? 0}
           initialWatchSec={video.total_watch_sec ?? 0}
           transcript={transcript}

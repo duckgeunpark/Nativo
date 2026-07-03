@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import type { Flashcard, Language } from "@nativo/core";
-import { createClient } from "@/lib/supabase/client";
 import { COMPLETE_THRESHOLD } from "@/lib/flashcards";
 import { speak } from "@/lib/tts";
 import { Input } from "@/components/ui/input";
@@ -10,7 +9,12 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { HeartToggle } from "./HeartToggle";
-import { addToMyWords, removeFromMyWords, deleteWord } from "./actions";
+import {
+  addToMyWords,
+  removeFromMyWords,
+  deleteWord,
+  updateWordMeaning,
+} from "./actions";
 
 export type WordRow = Pick<
   Flashcard,
@@ -62,13 +66,9 @@ export function WordDictionary({
   async function saveMeaning(id: string) {
     const value = draft.trim();
     if (!value) return;
-    const supabase = createClient();
-    const { error: dbError } = await supabase
-      .from("flashcards")
-      .update({ meaning: value })
-      .eq("id", id);
-    if (dbError) {
-      setError(`수정 실패: ${dbError.message}`);
+    const res = await updateWordMeaning(id, value);
+    if (!res.ok) {
+      setError(`수정 실패: ${res.error ?? "알 수 없는 오류"}`);
       return;
     }
     setRows((prev) => prev.map((r) => (r.id === id ? { ...r, meaning: value } : r)));

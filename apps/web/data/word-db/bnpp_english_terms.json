@@ -1,0 +1,2274 @@
+[
+  {
+    "word": "ITP",
+    "meaning": "검사 및 시험 계획서 (Inspection and Test Plan)",
+    "pronunciation": "/ˌaɪ tiː ˈpiː/",
+    "example_1": "The contractor must submit the ITP for engineer approval before starting the piping work.",
+    "part_of_speech": "noun (acronym)",
+    "difficulty": "B2"
+  },
+  {
+    "word": "FCR",
+    "meaning": "현장 설계 변경 요청서 (Field Change Request)",
+    "pronunciation": "/ˌef siː ˈɑːr/",
+    "example_1": "If site conditions differ from the drawing, an FCR must be issued to the engineering department.",
+    "part_of_speech": "noun (acronym)",
+    "difficulty": "B2"
+  },
+  {
+    "word": "NCR",
+    "meaning": "부적합 보고서 (Nonconformance Report)",
+    "pronunciation": "/ˌen siː ˈɑːr/",
+    "example_1": "An NCR was raised due to welding defects found during the liquid penetration test.",
+    "part_of_speech": "noun (acronym)",
+    "difficulty": "B2"
+  },
+  {
+    "word": "QVD",
+    "meaning": "품질 검증 서류 (Quality Verification Document)",
+    "pronunciation": "/ˌkjuː viː ˈdiː/",
+    "example_1": "All inspection reports and material certificates are compiled into the final QVD package.",
+    "part_of_speech": "noun (acronym)",
+    "difficulty": "C1"
+  },
+  {
+    "word": "QVDR",
+    "meaning": "품질 검증 서류 기록 (Quality Verification Document Record)",
+    "pronunciation": "/ˌkjuː viː diː ˈɑːr/",
+    "example_1": "The QVDR is submitted to KEPCO and ENEC for project turnover approval.",
+    "part_of_speech": "noun (acronym)",
+    "difficulty": "C1"
+  },
+  {
+    "word": "WPP",
+    "meaning": "작업 수행 절차서 (Work Practice Procedure)",
+    "pronunciation": "/ˌdʌbəl.juː piː ˈpiː/",
+    "example_1": "Workers must strictly follow the approved WPP during duct installation.",
+    "part_of_speech": "noun (acronym)",
+    "difficulty": "B2"
+  },
+  {
+    "word": "QCI",
+    "meaning": "품질 관리 지침서 (Quality Control Instruction)",
+    "pronunciation": "/ˌkjuː siː ˈaɪ/",
+    "example_1": "The QCI outlines the acceptance criteria for visual weld inspections.",
+    "part_of_speech": "noun (acronym)",
+    "difficulty": "B2"
+  },
+  {
+    "word": "WPS",
+    "meaning": "용접 절차 사양서 (Welding Procedure Specification)",
+    "pronunciation": "/ˌdʌbəl.juː piː ˈes/",
+    "example_1": "The welder verified the WPS parameters before striking the arc.",
+    "part_of_speech": "noun (acronym)",
+    "difficulty": "C1"
+  },
+  {
+    "word": "PQR",
+    "meaning": "용접 절차 인정 기록서 (Procedure Qualification Record)",
+    "pronunciation": "/ˌpiː kjuː ˈɑːr/",
+    "example_1": "The PQR confirms that the welding procedure meets ASME Section III code requirements.",
+    "part_of_speech": "noun (acronym)",
+    "difficulty": "C1"
+  },
+  {
+    "word": "JHA",
+    "meaning": "작업 위험성 평가서 (Job Hazard Analysis)",
+    "pronunciation": "/ˌdʒeɪ eɪtʃ ˈeɪ/",
+    "example_1": "A JHA was conducted to identify safety risks prior to working in the confined space.",
+    "part_of_speech": "noun (acronym)",
+    "difficulty": "B2"
+  },
+  {
+    "word": "WMS",
+    "meaning": "작업 방법 설명서 (Work Method Statement)",
+    "pronunciation": "/ˌdʌbəl.juː em ˈes/",
+    "example_1": "The WMS clearly defines the sequence of pipe support installation.",
+    "part_of_speech": "noun (acronym)",
+    "difficulty": "B2"
+  },
+  {
+    "word": "FME",
+    "meaning": "이물질 유입 방지 (Foreign Material Exclusion)",
+    "pronunciation": "/ˌef em ˈiː/",
+    "example_1": "FME covers must be installed on all open pipe ends to prevent contamination.",
+    "part_of_speech": "noun (acronym)",
+    "difficulty": "C1"
+  },
+  {
+    "word": "IR",
+    "meaning": "검사 보고서 / 검사 요청서 (Inspection Report / Inspection Request)",
+    "pronunciation": "/ˌaɪ ˈɑːr/",
+    "example_1": "The inspector signed the IR after confirming the pipe fit-up gap was correct.",
+    "part_of_speech": "noun (acronym)",
+    "difficulty": "B1"
+  },
+  {
+    "word": "WIR",
+    "meaning": "작업 검사 보고서 (Work Inspection Report)",
+    "pronunciation": "/ˌdʌbəl.juː aɪ ˈɑːr/",
+    "example_1": "The WIR for the temporary piping assembly was reviewed by the quality manager.",
+    "part_of_speech": "noun (acronym)",
+    "difficulty": "B2"
+  },
+  {
+    "word": "NOTI",
+    "meaning": "검사 요청 통지서 (Inspection Notice / Notification)",
+    "pronunciation": "/ˈnoʊti/",
+    "example_1": "An inspection NOTI was issued 24 hours prior to the official hydrostatic test.",
+    "part_of_speech": "noun (abbreviation)",
+    "difficulty": "B1"
+  },
+  {
+    "word": "TAB",
+    "meaning": "시험, 조정, 균형 (Testing, Adjusting, and Balancing)",
+    "pronunciation": "/ˌtiː eɪ ˈbiː/",
+    "example_1": "TAB work is performed to ensure proper air flow distribution in the HVAC ductwork.",
+    "part_of_speech": "noun (acronym)",
+    "difficulty": "B2"
+  },
+  {
+    "word": "MSIV",
+    "meaning": "주증기 격리 밸브 (Main Steam Isolation Valve)",
+    "pronunciation": "/ˌem es aɪ ˈviː/",
+    "example_1": "Maintenance work on the MSIV requires strict adherence to nuclear safety standards.",
+    "part_of_speech": "noun (acronym)",
+    "difficulty": "C1"
+  },
+  {
+    "word": "SGBD",
+    "meaning": "증기 발생기 블로우다운 (Steam Generator Blowdown)",
+    "pronunciation": "/ˌes dʒiː biː ˈdiː/",
+    "example_1": "The SGBD system helps maintain water chemistry in the secondary loop.",
+    "part_of_speech": "noun (acronym)",
+    "difficulty": "C1"
+  },
+  {
+    "word": "SIS",
+    "meaning": "안전 주입 계통 (Safety Injection System)",
+    "pronunciation": "/ˌes aɪ ˈes/",
+    "example_1": "The SIS piping modification mitigates potential air voids in the emergency core cooling system.",
+    "part_of_speech": "noun (acronym)",
+    "difficulty": "C1"
+  },
+  {
+    "word": "SCS",
+    "meaning": "정지 냉각 계통 (Shutdown Cooling System)",
+    "pronunciation": "/ˌes siː ˈes/",
+    "example_1": "The SCS operates to remove residual heat from the reactor during maintenance outages.",
+    "part_of_speech": "noun (acronym)",
+    "difficulty": "C1"
+  },
+  {
+    "word": "CLP",
+    "meaning": "캐스크 적재 피트 (Cask Loading Pit)",
+    "pronunciation": "/ˌsiː el ˈpiː/",
+    "example_1": "The CLP water inventory is utilized during the SIS void elimination process.",
+    "part_of_speech": "noun (acronym)",
+    "difficulty": "C1"
+  },
+  {
+    "word": "NDE",
+    "meaning": "비파괴 검사 (Non-Destructive Examination)",
+    "pronunciation": "/ˌen diː ˈiː/",
+    "example_1": "NDE methods such as PT and UT are used to evaluate weld integrity without damaging the pipe.",
+    "part_of_speech": "noun (acronym)",
+    "difficulty": "B2"
+  },
+  {
+    "word": "PT",
+    "meaning": "침투 탐상 검사 (Liquid Penetration Test)",
+    "pronunciation": "/ˌpiː ˈtiː/",
+    "example_1": "100% PT was performed on all field joint welds in accordance with the Q Class ITP.",
+    "part_of_speech": "noun (acronym)",
+    "difficulty": "B2"
+  },
+  {
+    "word": "VT",
+    "meaning": "육안 검사 (Visual Testing)",
+    "pronunciation": "/ˌviː ˈtiː/",
+    "example_1": "VT-2 inspection confirmed there was no leakage during the hydrostatic test.",
+    "part_of_speech": "noun (acronym)",
+    "difficulty": "B2"
+  },
+  {
+    "word": "ANII",
+    "meaning": "공인 원자력 검사관 (Authorized Nuclear Inservice Inspector)",
+    "pronunciation": "/ˌeɪ en aɪ ˈaɪ/",
+    "example_1": "The ANII witnessed the hydrostatic test and verified the NIS-2 owners report.",
+    "part_of_speech": "noun (acronym)",
+    "difficulty": "C2"
+  },
+  {
+    "word": "ENEC",
+    "meaning": "아랍에미리트 원자력 공사 (Emirates Nuclear Energy Corporation)",
+    "pronunciation": "/ˈiːnek/",
+    "example_1": "ENEC Operations supplied demineralized water for the flushing procedure.",
+    "part_of_speech": "noun (acronym)",
+    "difficulty": "C1"
+  },
+  {
+    "word": "KEPCO",
+    "meaning": "한국전력공사 (Korea Electric Power Corporation)",
+    "pronunciation": "/ˈkepkoʊ/",
+    "example_1": "KEPCO quality engineers reviewed the constructor's weld inspection records.",
+    "part_of_speech": "noun (acronym)",
+    "difficulty": "B1"
+  },
+  {
+    "word": "JSP",
+    "meaning": "제이에스플랜트 / 시공사 (JS Plant)",
+    "pronunciation": "/ˌdʒeɪ es ˈpiː/",
+    "example_1": "JSP quality control personnel performed the initial fit-up check.",
+    "part_of_speech": "noun (acronym)",
+    "difficulty": "B2"
+  },
+  {
+    "word": "DTR",
+    "meaning": "성과물 기술 검토서 (Deliverable Technical Review)",
+    "pronunciation": "/ˌdiː tiː ˈɑːr/",
+    "example_1": "The design change package was officially submitted via the DTR form.",
+    "part_of_speech": "noun (acronym)",
+    "difficulty": "C1"
+  },
+  {
+    "word": "DRR",
+    "meaning": "문서 검토 요청/보고서 (Document Review Request / Report)",
+    "pronunciation": "/ˌdiː ɑːr ˈɑːr/",
+    "example_1": "The DRR with comments attached requires resubmittal by the due date.",
+    "part_of_speech": "noun (acronym)",
+    "difficulty": "C1"
+  },
+  {
+    "word": "TCP",
+    "meaning": "임시 변경 패키지 (Temporary Change Package)",
+    "pronunciation": "/ˌtiː siː ˈpiː/",
+    "example_1": "A TCP was implemented for temporary power supply during the unit outage.",
+    "part_of_speech": "noun (acronym)",
+    "difficulty": "C1"
+  },
+  {
+    "word": "SOV",
+    "meaning": "솔레노이드 작동 밸브 (Solenoid Operated Valve)",
+    "pronunciation": "/ˌes oʊ ˈviː/",
+    "example_1": "The new SOV was installed to automate venting during system startup.",
+    "part_of_speech": "noun (acronym)",
+    "difficulty": "C1"
+  },
+  {
+    "word": "QCP",
+    "meaning": "품질 관리 절차서 (Quality Control Procedure)",
+    "pronunciation": "/ˌkjuː siː ˈpiː/",
+    "example_1": "The calibration of test equipment must adhere to QCP guidelines.",
+    "part_of_speech": "noun (acronym)",
+    "difficulty": "B2"
+  },
+  {
+    "word": "RFI",
+    "meaning": "정보 요청서 (Request for Information)",
+    "pronunciation": "/ˌɑːr ef ˈaɪ/",
+    "example_1": "The site engineer submitted an RFI to clarify an ambiguous dimension on the isometric drawing.",
+    "part_of_speech": "noun (acronym)",
+    "difficulty": "B2"
+  },
+  {
+    "word": "NIS-2",
+    "meaning": "원전 수리 및 개조 보고서 (Nuclear Inservice Report 2)",
+    "pronunciation": "/ˌen aɪ es ˈtuː/",
+    "example_1": "The NIS-2 Owners Report is a mandatory ASME Section XI requirement for Q Class modifications.",
+    "part_of_speech": "noun (proper noun)",
+    "difficulty": "C2"
+  },
+  {
+    "word": "Inspection",
+    "meaning": "검사 / 점검",
+    "pronunciation": "/ɪnˈspekʃn/",
+    "example_1": "The official inspection of the pipe joint requires proper lighting and surface cleanliness.",
+    "part_of_speech": "noun",
+    "difficulty": "B1"
+  },
+  {
+    "word": "Test",
+    "meaning": "시험 / 테스트",
+    "pronunciation": "/test/",
+    "example_1": "The leak test confirmed that the valve body can easily withstand operating pressures.",
+    "part_of_speech": "noun, verb",
+    "difficulty": "A1"
+  },
+  {
+    "word": "Plan",
+    "meaning": "계획 / 계획서",
+    "pronunciation": "/plæn/",
+    "example_1": "Review the master plan before dispatching work crews to the field.",
+    "part_of_speech": "noun, verb",
+    "difficulty": "A1"
+  },
+  {
+    "word": "Field",
+    "meaning": "현장 / 필드",
+    "pronunciation": "/fiːld/",
+    "example_1": "Field conditions often require minor adjustments to pre-fabricated pipe spools.",
+    "part_of_speech": "noun, adjective",
+    "difficulty": "A2"
+  },
+  {
+    "word": "Change",
+    "meaning": "변경 / 수정",
+    "pronunciation": "/tʃeɪndʒ/",
+    "example_1": "Any structural change to the duct support requires prior engineering approval.",
+    "part_of_speech": "noun, verb",
+    "difficulty": "A1"
+  },
+  {
+    "word": "Request",
+    "meaning": "요청 / 요청서",
+    "pronunciation": "/rɪˈkwest/",
+    "example_1": "The contractor submitted a formal request for temporary electrical power.",
+    "part_of_speech": "noun, verb",
+    "difficulty": "B1"
+  },
+  {
+    "word": "Nonconformance",
+    "meaning": "부적합 / 불일치",
+    "pronunciation": "/ˌnɑːnkənˈfɔːrməns/",
+    "example_1": "A nonconformance occurs when a component fails to meet the specified drawing tolerances.",
+    "part_of_speech": "noun",
+    "difficulty": "C1"
+  },
+  {
+    "word": "Report",
+    "meaning": "보고서 / 보고하다",
+    "pronunciation": "/rɪˈpɔːrt/",
+    "example_1": "The NDE technician generated a formal report upon completing the liquid penetration test.",
+    "part_of_speech": "noun, verb",
+    "difficulty": "A2"
+  },
+  {
+    "word": "Quality",
+    "meaning": "품질 / 우수성",
+    "pronunciation": "/ˈkwɑːləti/",
+    "example_1": "High quality standards are absolutely non-negotiable in nuclear power plant construction.",
+    "part_of_speech": "noun, adjective",
+    "difficulty": "A2"
+  },
+  {
+    "word": "Verification",
+    "meaning": "검증 / 확인",
+    "pronunciation": "/ˌverɪfɪˈkeɪʃn/",
+    "example_1": "Verification of the weld root gap was conducted using a calibrated taper gauge.",
+    "part_of_speech": "noun",
+    "difficulty": "B2"
+  },
+  {
+    "word": "Document",
+    "meaning": "문서 / 서류",
+    "pronunciation": "/ˈdɑːkjumənt/",
+    "example_1": "Keep every approved quality document safely stored in the designated unit binder.",
+    "part_of_speech": "noun, verb",
+    "difficulty": "B1"
+  },
+  {
+    "word": "Record",
+    "meaning": "기록 / 기록물",
+    "pronunciation": "/ˈrekərd/",
+    "example_1": "Quality verification records must be signed in indelible blue ink.",
+    "part_of_speech": "noun, verb",
+    "difficulty": "B1"
+  },
+  {
+    "word": "Work",
+    "meaning": "작업 / 공사 / 일",
+    "pronunciation": "/wɜːrk/",
+    "example_1": "Piping installation work resumed immediately after the safety hold was lifted.",
+    "part_of_speech": "noun, verb",
+    "difficulty": "A1"
+  },
+  {
+    "word": "Practice",
+    "meaning": "실무 / 관행 / 작업 방법",
+    "pronunciation": "/ˈpræktɪ스/",
+    "example_1": "Standard industry practice requires deburring all cut pipe edges before fit-up.",
+    "part_of_speech": "noun, verb",
+    "difficulty": "B1"
+  },
+  {
+    "word": "Procedure",
+    "meaning": "절차 / 절차서",
+    "pronunciation": "/prəˈsiːdʒər/",
+    "example_1": "Follow the detailed operating procedure when aligning valves for the pressure test.",
+    "part_of_speech": "noun",
+    "difficulty": "B1"
+  },
+  {
+    "word": "Control",
+    "meaning": "관리 / 제어 / 통제",
+    "pronunciation": "/kənˈtroʊl/",
+    "example_1": "Strict foreign material control prevents debris from entering the reactor building.",
+    "part_of_speech": "noun, verb",
+    "difficulty": "B1"
+  },
+  {
+    "word": "Instruction",
+    "meaning": "지침 / 지시서 / 지시사항",
+    "pronunciation": "/ɪnˈstrʌkʃn/",
+    "example_1": "The quality control instruction specifies exact bolt tightening sequences.",
+    "part_of_speech": "noun",
+    "difficulty": "B1"
+  },
+  {
+    "word": "Welding",
+    "meaning": "용접 / 용접 작업",
+    "pronunciation": "/ˈweldɪŋ/",
+    "example_1": "Gas tungsten arc welding is preferred for small diameter nuclear stainless steel pipes.",
+    "part_of_speech": "noun",
+    "difficulty": "B2"
+  },
+  {
+    "word": "Specification",
+    "meaning": "사양서 / 시방서 / 명세서",
+    "pronunciation": "/ˌspesɪfɪˈkeɪʃn/",
+    "example_1": "Piping materials must comply with the design specification and ASME codes.",
+    "part_of_speech": "noun",
+    "difficulty": "B2"
+  },
+  {
+    "word": "Qualification",
+    "meaning": "자격 검증 / 자격증",
+    "pronunciation": "/ˌkwɑːlɪfɪˈkeɪʃn/",
+    "example_1": "Check the welder's qualification records before allowing him to weld on Q Class pipes.",
+    "part_of_speech": "noun",
+    "difficulty": "B2"
+  },
+  {
+    "word": "Job",
+    "meaning": "직무 / 일 / 작업",
+    "pronunciation": "/dʒɑːb/",
+    "example_1": "Conduct a safety briefing at the start of every challenging job.",
+    "part_of_speech": "noun",
+    "difficulty": "A1"
+  },
+  {
+    "word": "Hazard",
+    "meaning": "위험 / 유해 요인",
+    "pronunciation": "/ˈhæzərd/",
+    "example_1": "High voltage power lines present a severe electrical hazard during crane operations.",
+    "part_of_speech": "noun",
+    "difficulty": "B2"
+  },
+  {
+    "word": "Analysis",
+    "meaning": "분석",
+    "pronunciation": "/əˈnæləsɪ스/",
+    "example_1": "Stress analysis confirms that the pipe support can withstand peak seismic loads.",
+    "part_of_speech": "noun",
+    "difficulty": "B2"
+  },
+  {
+    "word": "Method",
+    "meaning": "방법 / 시공 공법",
+    "pronunciation": "/ˈmeθəd/",
+    "example_1": "The welding method changed from SMAW to GTAW to achieve superior root pass quality.",
+    "part_of_speech": "noun",
+    "difficulty": "B1"
+  },
+  {
+    "word": "Statement",
+    "meaning": "계획서 / 명세서 / 설명서",
+    "pronunciation": "/ˈsteɪtmənt/",
+    "example_1": "The contractor submitted a formal method statement detailing the heavy equipment rigging sequence.",
+    "part_of_speech": "noun",
+    "difficulty": "B1"
+  },
+  {
+    "word": "Foreign",
+    "meaning": "이물질의 / 외국의 / 외부의",
+    "pronunciation": "/ˈfɔːrən/",
+    "example_1": "Inspect the pipe interior to confirm it is entirely free of foreign matter.",
+    "part_of_speech": "adjective",
+    "difficulty": "A2"
+  },
+  {
+    "word": "Material",
+    "meaning": "자재 / 재료 / 물질",
+    "pronunciation": "/məˈtɪriəl/",
+    "example_1": "Always verify the material mill test report before cutting the alloy pipe.",
+    "part_of_speech": "noun, adjective",
+    "difficulty": "B1"
+  },
+  {
+    "word": "Exclusion",
+    "meaning": "배제 / 차단 / 방지",
+    "pronunciation": "/ɪkˈskluːʒn/",
+    "example_1": "Foreign material exclusion is enforced strictly inside the clean room facility.",
+    "part_of_speech": "noun",
+    "difficulty": "C1"
+  },
+  {
+    "word": "Main",
+    "meaning": "주요한 / 주된",
+    "pronunciation": "/meɪn/",
+    "example_1": "The main steam header operates at exceptionally high temperatures and pressures.",
+    "part_of_speech": "adjective, noun",
+    "difficulty": "A2"
+  },
+  {
+    "word": "Steam",
+    "meaning": "증기 / 스팀",
+    "pronunciation": "/stiːm/",
+    "example_1": "Dry steam turns the massive low-pressure turbine rotors at constant speed.",
+    "part_of_speech": "noun, verb",
+    "difficulty": "B1"
+  },
+  {
+    "word": "Isolation",
+    "meaning": "격리 / 차단",
+    "pronunciation": "/ˌaɪsəˈleɪʃn/",
+    "example_1": "Verify complete valve isolation before attempting to break open the bolted pipe flange.",
+    "part_of_speech": "noun",
+    "difficulty": "B2"
+  },
+  {
+    "word": "Valve",
+    "meaning": "밸브",
+    "pronunciation": "/vælv/",
+    "example_1": "Close the manual isolation valve before cutting into the existing pipe.",
+    "part_of_speech": "noun",
+    "difficulty": "A2"
+  },
+  {
+    "word": "Generator",
+    "meaning": "발생기 / 발전기",
+    "pronunciation": "/ˈdʒenəreɪtər/",
+    "example_1": "The steam generator converts primary reactor thermal energy into secondary steam.",
+    "part_of_speech": "noun",
+    "difficulty": "B1"
+  },
+  {
+    "word": "Blowdown",
+    "meaning": "블로우다운 / 배수 및 이물질 배출",
+    "pronunciation": "/ˈbloʊdaʊn/",
+    "example_1": "Continuous blowdown removes accumulated sludge and dissolved impurities from the steam generator bottom.",
+    "part_of_speech": "noun",
+    "difficulty": "C1"
+  },
+  {
+    "word": "Safety",
+    "meaning": "안전 / 안전성",
+    "pronunciation": "/ˈseɪfti/",
+    "example_1": "Safety is the paramount priority in all nuclear engineering activities.",
+    "part_of_speech": "noun, adjective",
+    "difficulty": "A2"
+  },
+  {
+    "word": "Injection",
+    "meaning": "주입 / 투입",
+    "pronunciation": "/ɪnˈdʒekʃn/",
+    "example_1": "High-pressure safety injection pumps deliver emergency cooling water directly into the reactor core.",
+    "part_of_speech": "noun",
+    "difficulty": "B2"
+  },
+  {
+    "word": "System",
+    "meaning": "계통 / 시스템 / 체계",
+    "pronunciation": "/ˈsɪstəm/",
+    "example_1": "The shutdown cooling system removes decay heat during refueling outages.",
+    "part_of_speech": "noun",
+    "difficulty": "A1"
+  },
+  {
+    "word": "Shutdown",
+    "meaning": "정지 / 가동 중단 / 셧다운",
+    "pronunciation": "/ˈʃʌtdaʊn/",
+    "example_1": "An emergency shutdown occurs automatically if reactor coolant pressure drops rapidly.",
+    "part_of_speech": "noun",
+    "difficulty": "B2"
+  },
+  {
+    "word": "Cooling",
+    "meaning": "냉각 / 냉각의",
+    "pronunciation": "/ˈkuːlɪŋ/",
+    "example_1": "Secondary cooling towers release excess plant waste heat into the surrounding atmosphere.",
+    "part_of_speech": "noun, adjective",
+    "difficulty": "A2"
+  },
+  {
+    "word": "Cask",
+    "meaning": "캐스크 / 사용후핵연료 수송 및 저장 용기",
+    "pronunciation": "/kæsk/",
+    "example_1": "The spent fuel cask is lowered gently into the concrete storage pit.",
+    "part_of_speech": "noun",
+    "difficulty": "C2"
+  },
+  {
+    "word": "Loading",
+    "meaning": "장전 / 적재 / 로딩",
+    "pronunciation": "/ˈloʊdɪŋ/",
+    "example_1": "Special heavy rigging equipment is required during the fuel cask loading operations.",
+    "part_of_speech": "noun",
+    "difficulty": "B1"
+  },
+  {
+    "word": "Pit",
+    "meaning": "피트 / 지하 구조물 / 구덩이",
+    "pronunciation": "/pɪt/",
+    "example_1": "Workers drained the Cask Loading Pit to perform maintenance on the lower isolation valves.",
+    "part_of_speech": "noun",
+    "difficulty": "B2"
+  },
+  {
+    "word": "Non-Destructive",
+    "meaning": "비파괴적인 / 손상을 주지 않는",
+    "pronunciation": "/ˌnɑːn dɪˈstrʌktɪv/",
+    "example_1": "Non-destructive testing allows engineers to verify weld quality without cutting open the pipe.",
+    "part_of_speech": "adjective",
+    "difficulty": "B2"
+  },
+  {
+    "word": "Examination",
+    "meaning": "검사 / 조사 / 시험",
+    "pronunciation": "/ɪɡˌzæmɪˈneɪʃn/",
+    "example_1": "Ultrasonic examination detects microscopic internal flaws deep within heavy steel forgings.",
+    "part_of_speech": "noun",
+    "difficulty": "B2"
+  },
+  {
+    "word": "Liquid",
+    "meaning": "액체",
+    "pronunciation": "/ˈlɪkwɪd/",
+    "example_1": "Liquid penetrant inspection detects surface flaws by using red dye and white developer.",
+    "part_of_speech": "noun, adjective",
+    "difficulty": "A2"
+  },
+  {
+    "word": "Penetration",
+    "meaning": "침투 / 관통 / 관통부",
+    "pronunciation": "/ˌpenəˈtreɪʃn/",
+    "example_1": "The wall penetration for the HVAC duct must be sealed with fire-retardant material.",
+    "part_of_speech": "noun",
+    "difficulty": "C1"
+  },
+  {
+    "word": "Visual",
+    "meaning": "육안의 / 시각의",
+    "pronunciation": "/ˈvɪʒuəl/",
+    "example_1": "Visual inspection is the absolute first step before conducting any advanced NDE.",
+    "part_of_speech": "adjective",
+    "difficulty": "B1"
+  },
+  {
+    "word": "Testing",
+    "meaning": "시험 작업 / 테스팅",
+    "pronunciation": "/ˈtestɪŋ/",
+    "example_1": "Comprehensive hydrostatic testing validates the structural integrity of the entire piping network.",
+    "part_of_speech": "noun",
+    "difficulty": "B1"
+  },
+  {
+    "word": "Authorized",
+    "meaning": "공인된 / 권한을 부여받은",
+    "pronunciation": "/ˈɔːθəraɪzd/",
+    "example_1": "Only authorized personnel are permitted to adjust main turbine governor control valves.",
+    "part_of_speech": "adjective",
+    "difficulty": "B2"
+  },
+  {
+    "word": "Nuclear",
+    "meaning": "원자력의 / 핵의",
+    "pronunciation": "/ˈnuːkliər/",
+    "example_1": "Nuclear safety culture emphasizes rigorous procedural adherence at all times.",
+    "part_of_speech": "adjective",
+    "difficulty": "B1"
+  },
+  {
+    "word": "Inservice",
+    "meaning": "가동 중의 / 운전 중의",
+    "pronunciation": "/ˌɪnˈsɜːrvɪ스/",
+    "example_1": "Inservice inspections are scheduled during plant operation to monitor pipe wall thinning.",
+    "part_of_speech": "adjective",
+    "difficulty": "C2"
+  },
+  {
+    "word": "Inspector",
+    "meaning": "검사관 / 조사관 / 감리원",
+    "pronunciation": "/ɪnˈspektər/",
+    "example_1": "The lead quality inspector verified the fit-up root gap prior to welding.",
+    "part_of_speech": "noun",
+    "difficulty": "B1"
+  },
+  {
+    "word": "Deliverable",
+    "meaning": "성과물 / 최종 제출물",
+    "pronunciation": "/dɪˈlɪvərəbl/",
+    "example_1": "Completed QVD packages are major deliverables required for milestone progress payments.",
+    "part_of_speech": "noun",
+    "difficulty": "C1"
+  },
+  {
+    "word": "Technical",
+    "meaning": "기술적인 / 전문적인",
+    "pronunciation": "/ˈteknɪkl/",
+    "example_1": "The technical review meeting resolved several discrepancies in the piping layout.",
+    "part_of_speech": "adjective",
+    "difficulty": "B1"
+  },
+  {
+    "word": "Review",
+    "meaning": "서류 검토 / 검토하다",
+    "pronunciation": "/rɪˈvjuː/",
+    "example_1": "The engineer performed a technical review of the vendor drawings.",
+    "part_of_speech": "noun, verb",
+    "difficulty": "B1"
+  },
+  {
+    "word": "Temporary",
+    "meaning": "임시의 / 가설의",
+    "pronunciation": "/ˈtempəreri/",
+    "example_1": "Temporary pipes were welded in place solely to conduct the shop hydrostatic test.",
+    "part_of_speech": "adjective",
+    "difficulty": "B1"
+  },
+  {
+    "word": "Solenoid",
+    "meaning": "솔레노이드 / 전자석",
+    "pronunciation": "/ˈsoʊlənɔɪd/",
+    "example_1": "The solenoid valve opens electronically when energized by the control system.",
+    "part_of_speech": "noun",
+    "difficulty": "C1"
+  },
+  {
+    "word": "Operated",
+    "meaning": "작동되는 / 조작되는",
+    "pronunciation": "/ˈɑːpəreɪtɪd/",
+    "example_1": "Pneumatically operated valves respond much faster than manual handwheel valves.",
+    "part_of_speech": "adjective",
+    "difficulty": "B1"
+  },
+  {
+    "word": "Information",
+    "meaning": "정보",
+    "pronunciation": "/ˌɪnfərˈmeɪʃn/",
+    "example_1": "The site engineer requested further information regarding the exact anchor bolt embedment depth.",
+    "part_of_speech": "noun",
+    "difficulty": "A1"
+  },
+  {
+    "word": "Design",
+    "meaning": "설계 / 디자인",
+    "pronunciation": "/dɪˈzaɪn/",
+    "example_1": "Piping design must account for extreme thermal expansion during maximum steam temperature operation.",
+    "part_of_speech": "noun, verb",
+    "difficulty": "A2"
+  },
+  {
+    "word": "Construction",
+    "meaning": "시공 / 건설",
+    "pronunciation": "/kənˈstrʌkʃn/",
+    "example_1": "Quality control during construction prevents costly repairs during commissioning.",
+    "part_of_speech": "noun",
+    "difficulty": "B1"
+  },
+  {
+    "word": "Procurement",
+    "meaning": "구매 / 조달",
+    "pronunciation": "/proʊˈkjʊrmənt/",
+    "example_1": "The procurement department issued a purchase order for the high-pressure check valves.",
+    "part_of_speech": "noun",
+    "difficulty": "C1"
+  },
+  {
+    "word": "Standard",
+    "meaning": "표준 / 규격",
+    "pronunciation": "/ˈstændərd/",
+    "example_1": "All site construction procedures must comply with international nuclear engineering standards.",
+    "part_of_speech": "noun, adjective",
+    "difficulty": "A2"
+  },
+  {
+    "word": "Typical",
+    "meaning": "전형적인 / 표준 상세의",
+    "pronunciation": "/ˈtɪpɪkl/",
+    "example_1": "Refer to the typical support drawings for standard bolt tightening torque values.",
+    "part_of_speech": "adjective",
+    "difficulty": "B1"
+  },
+  {
+    "word": "Vendor",
+    "meaning": "공급업체 / 제조사 / 벤더",
+    "pronunciation": "/ˈvendər/",
+    "example_1": "Review the vendor equipment manual for specific electrical wiring instructions.",
+    "part_of_speech": "noun",
+    "difficulty": "B2"
+  },
+  {
+    "word": "As-Built",
+    "meaning": "준공 도면 / 현장 일치 도면",
+    "pronunciation": "/ˈæz bɪlt/",
+    "example_1": "Red-line markups are converted into formal As-Built drawings after construction completes.",
+    "part_of_speech": "noun, adjective",
+    "difficulty": "B2"
+  },
+  {
+    "word": "Drawing",
+    "meaning": "도면 / 설계도",
+    "pronunciation": "/ˈdrɔːɪŋ/",
+    "example_1": "Verify all pipe support elevations directly against the approved structural drawing.",
+    "part_of_speech": "noun",
+    "difficulty": "A2"
+  },
+  {
+    "word": "Schedule",
+    "meaning": "공정표 / 일정",
+    "pronunciation": "/ˈskedʒuːl/",
+    "example_1": "The project master schedule tracks all critical path engineering activities.",
+    "part_of_speech": "noun, verb",
+    "difficulty": "A2"
+  },
+  {
+    "word": "Notice",
+    "meaning": "통지 / 검사 요청 통지서",
+    "pronunciation": "/ˈnoʊtɪ스/",
+    "example_1": "Written notice must be provided to the client at least 24 hours before covering underground pipes.",
+    "part_of_speech": "noun, verb",
+    "difficulty": "B1"
+  },
+  {
+    "word": "Package",
+    "meaning": "패키지 / 종합 서류 묶음",
+    "pronunciation": "/ˈpækɪdʒ/",
+    "example_1": "The test package includes the P&ID, valve alignment sheets, and calibration certs.",
+    "part_of_speech": "noun, verb",
+    "difficulty": "A2"
+  },
+  {
+    "word": "Audit",
+    "meaning": "품질 감사 / 심사",
+    "pronunciation": "/ˈɔːdɪt/",
+    "example_1": "An external audit team reviewed the site quality records to verify compliance with nuclear safety regulations.",
+    "part_of_speech": "noun, verb",
+    "difficulty": "C1"
+  },
+  {
+    "word": "Hold",
+    "meaning": "필수 입회점 / 홀드 포인트 / 잡다",
+    "pronunciation": "/hoʊld/",
+    "example_1": "A Hold Point requires official inspector sign-off before any subsequent work can proceed.",
+    "part_of_speech": "noun, verb",
+    "difficulty": "A2"
+  },
+  {
+    "word": "Witness",
+    "meaning": "입회점 / 목격하다",
+    "pronunciation": "/ˈwɪtnəs/",
+    "example_1": "The client decided to witness the hydrostatic pressure test on-site.",
+    "part_of_speech": "noun, verb",
+    "difficulty": "B2"
+  },
+  {
+    "word": "Surveillance",
+    "meaning": "품질 감시 / 점검",
+    "pronunciation": "/sɜːrˈveɪləns/",
+    "example_1": "Quality surveillance audits are conducted periodically to ensure field compliance.",
+    "part_of_speech": "noun",
+    "difficulty": "C1"
+  },
+  {
+    "word": "Assurance",
+    "meaning": "보증 (Quality Assurance)",
+    "pronunciation": "/əˈʃʊrəns/",
+    "example_1": "The quality assurance department establishes the overall site inspection policies.",
+    "part_of_speech": "noun",
+    "difficulty": "B2"
+  },
+  {
+    "word": "Nonconforming",
+    "meaning": "부적합한 / 규격 미달의",
+    "pronunciation": "/ˌnɑːnkənˈfɔːrmɪŋ/",
+    "example_1": "Nonconforming materials are segregated in a locked holding area to prevent accidental use.",
+    "part_of_speech": "adjective",
+    "difficulty": "C1"
+  },
+  {
+    "word": "Flange",
+    "meaning": "플랜지",
+    "pronunciation": "/flændʒ/",
+    "example_1": "Insert a fresh gasket between the two pipe flanges before tightening the bolts.",
+    "part_of_speech": "noun",
+    "difficulty": "B2"
+  },
+  {
+    "word": "Gasket",
+    "meaning": "가스켓 / 패킹",
+    "pronunciation": "/ˈɡæskɪt/",
+    "example_1": "Inspect the spiral wound gasket for any visual damage before clamping the flanged joint.",
+    "part_of_speech": "noun",
+    "difficulty": "B2"
+  },
+  {
+    "word": "Thread",
+    "meaning": "나사선 / 나사산",
+    "pronunciation": "/θred/",
+    "example_1": "Teflon tape was applied to the pipe thread to ensure a leak-proof seal.",
+    "part_of_speech": "noun, verb",
+    "difficulty": "B2"
+  },
+  {
+    "word": "Joint",
+    "meaning": "조인트 / 용접 이음부",
+    "pronunciation": "/dʒɔɪnt/",
+    "example_1": "Every welded joint is assigned a unique number for inspection tracking.",
+    "part_of_speech": "noun",
+    "difficulty": "B1"
+  },
+  {
+    "word": "Anchor",
+    "meaning": "앵커 / 고정 볼트",
+    "pronunciation": "/ˈæŋkər/",
+    "example_1": "Drill four holes in the concrete to install the heavy-duty wedge anchors.",
+    "part_of_speech": "noun, verb",
+    "difficulty": "B2"
+  },
+  {
+    "word": "Plate",
+    "meaning": "플레이트 / 철판",
+    "pronunciation": "/pleɪt/",
+    "example_1": "The support bracket is welded directly to the embedded steel plate.",
+    "part_of_speech": "noun",
+    "difficulty": "A2"
+  },
+  {
+    "word": "Base",
+    "meaning": "기초 / 베이스",
+    "pronunciation": "/beɪ스/",
+    "example_1": "The steel base plate is anchored securely to the concrete floor.",
+    "part_of_speech": "noun, adjective",
+    "difficulty": "A2"
+  },
+  {
+    "word": "Hydrostatic",
+    "meaning": "수압의 / 정수압의",
+    "pronunciation": "/ˌhaɪdrəˈstætɪk/",
+    "example_1": "A hydrostatic test subjects the piping system to high pressure water to verify leak tightness.",
+    "part_of_speech": "adjective",
+    "difficulty": "B2"
+  },
+  {
+    "word": "Demineralized",
+    "meaning": "탈염된 / 순수의",
+    "pronunciation": "/diːˈmɪnərəlaɪzd/",
+    "example_1": "Only demineralized water is permitted for flushing stainless steel nuclear piping.",
+    "part_of_speech": "adjective",
+    "difficulty": "C1"
+  },
+  {
+    "word": "Pressurize",
+    "meaning": "가압하다",
+    "pronunciation": "/ˈpreʃəraɪz/",
+    "example_1": "The test pump will pressurize the SI line up to 2560 psi.",
+    "part_of_speech": "verb",
+    "difficulty": "B2"
+  },
+  {
+    "word": "Depressurize",
+    "meaning": "감압하다 / 압력을 낮추다",
+    "pronunciation": "/diːˈpreʃəraɪz/",
+    "example_1": "After the test completes, the line must be depressurized safely through the drain valve.",
+    "part_of_speech": "verb",
+    "difficulty": "B2"
+  },
+  {
+    "word": "Leak",
+    "meaning": "누설 / 누수",
+    "pronunciation": "/liːk/",
+    "example_1": "The inspector checked every welded joint for any sign of a water leak.",
+    "part_of_speech": "noun, verb",
+    "difficulty": "A2"
+  },
+  {
+    "word": "Line-up",
+    "meaning": "계통 정렬 / 밸브 라인업",
+    "pronunciation": "/ˈlaɪn ʌp/",
+    "example_1": "ENEC Operators executed the correct valve line-up before starting the test pump.",
+    "part_of_speech": "noun",
+    "difficulty": "B1"
+  },
+  {
+    "word": "Erection",
+    "meaning": "현장 설치 / 조립",
+    "pronunciation": "/ɪˈrekʃn/",
+    "example_1": "Field erection of the heavy pipe supports requires two mobile cranes.",
+    "part_of_speech": "noun",
+    "difficulty": "B2"
+  },
+  {
+    "word": "Fabrication",
+    "meaning": "제작 / 가공",
+    "pronunciation": "/ˌfæbrɪˈkeɪʃn/",
+    "example_1": "Duct fabrication takes place in the off-site shop to maintain quality and cleanliness.",
+    "part_of_speech": "noun",
+    "difficulty": "B2"
+  },
+  {
+    "word": "Installation",
+    "meaning": "설치",
+    "pronunciation": "/ˌɪnstəˈleɪʃn/",
+    "example_1": "Proper installation of seismic duct supports is critical for structural safety.",
+    "part_of_speech": "noun",
+    "difficulty": "B1"
+  },
+  {
+    "word": "Disassembly",
+    "meaning": "분해 / 해체",
+    "pronunciation": "/ˌdɪsəˈsembli/",
+    "example_1": "Valve disassembly was performed carefully to avoid damaging the internal stellite seats.",
+    "part_of_speech": "noun",
+    "difficulty": "C1"
+  },
+  {
+    "word": "Reassembly",
+    "meaning": "재조립",
+    "pronunciation": "/ˌriːəˈsembli/",
+    "example_1": "During valve reassembly, all rubber O-rings and gaskets must be replaced with brand new spares.",
+    "part_of_speech": "noun",
+    "difficulty": "C1"
+  },
+  {
+    "word": "Cleanliness",
+    "meaning": "청정도 / 청결 관리",
+    "pronunciation": "/ˈklenlinəs/",
+    "example_1": "Maintaining high system cleanliness prevents debris from clogging sensitive nuclear instrument tubing.",
+    "part_of_speech": "noun",
+    "difficulty": "B2"
+  },
+  {
+    "word": "Piping",
+    "meaning": "배관 / 배관 설비",
+    "pronunciation": "/ˈpaɪpɪŋ/",
+    "example_1": "Process piping carries high-temperature steam between the steam generator and the main turbine.",
+    "part_of_speech": "noun",
+    "difficulty": "B2"
+  },
+  {
+    "word": "Duct",
+    "meaning": "덕트 / 풍도",
+    "pronunciation": "/dʌkt/",
+    "example_1": "Galvanized steel ducts distribute conditioned air throughout the turbine generator building.",
+    "part_of_speech": "noun",
+    "difficulty": "B2"
+  },
+  {
+    "word": "Spool",
+    "meaning": "스풀 / 공장 조립 배관 단관",
+    "pronunciation": "/spuːl/",
+    "example_1": "Pre-fabricated pipe spools are transported to the field for rapid erection and welding.",
+    "part_of_speech": "noun",
+    "difficulty": "C2"
+  },
+  {
+    "word": "Flushing",
+    "meaning": "플러싱 / 관내 세척",
+    "pronunciation": "/ˈflʌʃɪŋ/",
+    "example_1": "High-velocity water flushing cleans out loose scale and debris from newly installed pipes.",
+    "part_of_speech": "noun",
+    "difficulty": "C1"
+  },
+  {
+    "word": "Isometric",
+    "meaning": "아이소 도면 / 입체 배관도",
+    "pronunciation": "/ˌaɪsəˈmetrɪk/",
+    "example_1": "The piping supervisor reviewed the isometric drawing to verify exact weld joint locations.",
+    "part_of_speech": "noun, adjective",
+    "difficulty": "C1"
+  },
+  {
+    "word": "Venting",
+    "meaning": "벤팅 / 공기 빼기 작업",
+    "pronunciation": "/ˈventɪŋ/",
+    "example_1": "Thorough venting is mandatory to eliminate all trapped air pockets before conducting a hydro test.",
+    "part_of_speech": "noun",
+    "difficulty": "B2"
+  },
+  {
+    "word": "Damper",
+    "meaning": "댐퍼 / 풍량 조절판",
+    "pronunciation": "/ˈdæmpər/",
+    "example_1": "Motorized fire dampers close automatically if abnormal smoke or heat is detected in the duct.",
+    "part_of_speech": "noun",
+    "difficulty": "B2"
+  },
+  {
+    "word": "Seismic",
+    "meaning": "내진의 / 지진의",
+    "pronunciation": "/ˈsaɪzmɪk/",
+    "example_1": "Seismic restraints are installed on major pipes to withstand extreme earthquake ground motion.",
+    "part_of_speech": "adjective",
+    "difficulty": "C1"
+  },
+  {
+    "word": "Header",
+    "meaning": "헤더 / 주배관 / 모관",
+    "pronunciation": "/ˈhedər/",
+    "example_1": "Multiple smaller branch pipes feed directly into the main cooling water header.",
+    "part_of_speech": "noun",
+    "difficulty": "B2"
+  },
+  {
+    "word": "Branch",
+    "meaning": "분기관 / 가지 배관",
+    "pronunciation": "/bræntʃ/",
+    "example_1": "A branch line diverts cooling water to the secondary heat exchanger.",
+    "part_of_speech": "noun, verb",
+    "difficulty": "B1"
+  },
+  {
+    "word": "Clamp",
+    "meaning": "클램프 / 고정장치",
+    "pronunciation": "/klæmp/",
+    "example_1": "Secure the pipe tightly using a heavy steel clamp to prevent vibration during pump operation.",
+    "part_of_speech": "noun, verb",
+    "difficulty": "B2"
+  },
+  {
+    "word": "Calibration",
+    "meaning": "계측기 교정 / 눈금 보정",
+    "pronunciation": "/ˌkælɪˈbreɪʃn/",
+    "example_1": "Annual calibration of test pressure gauges is required to ensure measurement accuracy.",
+    "part_of_speech": "noun",
+    "difficulty": "C1"
+  },
+  {
+    "word": "Defect",
+    "meaning": "결함 / 불량",
+    "pronunciation": "/ˈdiːfekt/",
+    "example_1": "Any weld defect discovered during NDE must be logged and repaired immediately.",
+    "part_of_speech": "noun",
+    "difficulty": "B2"
+  },
+  {
+    "word": "Acceptance",
+    "meaning": "합격 / 인수 / 승인",
+    "pronunciation": "/əkˈseptəns/",
+    "example_1": "The acceptance criteria for visual weld inspections are specified clearly in the ASME code.",
+    "part_of_speech": "noun",
+    "difficulty": "B2"
+  },
+  {
+    "word": "Criteria",
+    "meaning": "기준 / 판정 기준",
+    "pronunciation": "/kraɪˈtɪriə/",
+    "example_1": "Quality inspectors evaluate the completed work against rigorous engineering criteria.",
+    "part_of_speech": "noun (plural)",
+    "difficulty": "B2"
+  },
+  {
+    "word": "Corrective",
+    "meaning": "시정의 / 수정의",
+    "pronunciation": "/kəˈrektɪv/",
+    "example_1": "Corrective actions were implemented to prevent recurring fit-up misalignment.",
+    "part_of_speech": "adjective",
+    "difficulty": "C1"
+  },
+  {
+    "word": "Preventive",
+    "meaning": "예방의 / 방지의",
+    "pronunciation": "/prɪˈventɪv/",
+    "example_1": "Preventive maintenance schedules extend the operational lifespan of heavy plant machinery.",
+    "part_of_speech": "adjective",
+    "difficulty": "C1"
+  },
+  {
+    "word": "Confined",
+    "meaning": "밀폐된 / 좁은",
+    "pronunciation": "/kənˈfaɪnd/",
+    "example_1": "Working inside a confined space such as a water chamber requires continuous ventilation.",
+    "part_of_speech": "adjective",
+    "difficulty": "C1"
+  },
+  {
+    "word": "Ventilation",
+    "meaning": "환기 / 통풍",
+    "pronunciation": "/ˌventɪˈleɪʃn/",
+    "example_1": "Temporary ventilation fans maintain clean breathing air inside the containment building.",
+    "part_of_speech": "noun",
+    "difficulty": "B2"
+  },
+  {
+    "word": "Contamination",
+    "meaning": "오염 / 이물질 유입",
+    "pronunciation": "/kənˌtæmɪˈneɪʃn/",
+    "example_1": "Foreign material covers protect open pipes from dust and chemical contamination.",
+    "part_of_speech": "noun",
+    "difficulty": "C1"
+  },
+  {
+    "word": "Rigging",
+    "meaning": "중량물 인양 작업 / 리깅",
+    "pronunciation": "/ˈrɪɡɪŋ/",
+    "example_1": "Heavy rigging operations must be supervised by a certified lifting specialist.",
+    "part_of_speech": "noun",
+    "difficulty": "C2"
+  },
+  {
+    "word": "Crane",
+    "meaning": "크레인 / 기중기",
+    "pronunciation": "/kreɪn/",
+    "example_1": "The tower crane lifted the pre-assembled duct package to the upper building level.",
+    "part_of_speech": "noun, verb",
+    "difficulty": "B1"
+  },
+  {
+    "word": "Scaffold",
+    "meaning": "비계 / 가설 발판",
+    "pronunciation": "/ˈskæfoʊld/",
+    "example_1": "Inspect the temporary scaffold structure daily before allowing workers to access elevated pipe racks.",
+    "part_of_speech": "noun",
+    "difficulty": "C1"
+  },
+  {
+    "word": "Elevated",
+    "meaning": "높은 / 고소의",
+    "pronunciation": "/ˈeləveɪtɪd/",
+    "example_1": "Fall protection safety harnesses are mandatory for all elevated construction work.",
+    "part_of_speech": "adjective",
+    "difficulty": "B2"
+  },
+  {
+    "word": "Harness",
+    "meaning": "안전대 / 하네스",
+    "pronunciation": "/ˈhɑːrnɪ스/",
+    "example_1": "Attach your safety harness securely to the overhead lifeline before stepping onto the pipe bridge.",
+    "part_of_speech": "noun, verb",
+    "difficulty": "B2"
+  },
+  {
+    "word": "Lifeline",
+    "meaning": "구명줄 / 생명줄",
+    "pronunciation": "/ˈlaɪflaɪn/",
+    "example_1": "Horizontal lifelines provide continuous fall protection for steel erectors walking along overhead beams.",
+    "part_of_speech": "noun",
+    "difficulty": "C1"
+  },
+  {
+    "word": "Beam",
+    "meaning": "보 / 빔 / H빔",
+    "pronunciation": "/biːm/",
+    "example_1": "The primary structural beam supports both the concrete floor and multiple heavy pipe racks.",
+    "part_of_speech": "noun",
+    "difficulty": "B1"
+  },
+  {
+    "word": "Column",
+    "meaning": "기둥 / 컬럼",
+    "pronunciation": "/ˈkɑːləm/",
+    "example_1": "Pipe support brackets are bolted directly to the vertical concrete building columns.",
+    "part_of_speech": "noun",
+    "difficulty": "B1"
+  },
+  {
+    "word": "Embed",
+    "meaning": "매립하다 / 심다",
+    "pronunciation": "/ɪmˈbed/",
+    "example_1": "Steel embed plates are placed inside the concrete formwork prior to pouring.",
+    "part_of_speech": "verb",
+    "difficulty": "C1"
+  },
+  {
+    "word": "Formwork",
+    "meaning": "거푸집 / 가설 틀",
+    "pronunciation": "/ˈfɔːrmwɜːrk/",
+    "example_1": "Inspect the wooden formwork to ensure it can support the weight of wet concrete.",
+    "part_of_speech": "noun",
+    "difficulty": "C2"
+  },
+  {
+    "word": "Concrete",
+    "meaning": "콘크리트",
+    "pronunciation": "/ˈkɑːnkriːt/",
+    "example_1": "Reinforced concrete provides massive structural strength and effective radiation shielding.",
+    "part_of_speech": "noun, adjective",
+    "difficulty": "B1"
+  },
+  {
+    "word": "Reinforced",
+    "meaning": "보강된 / 철근이 들어간",
+    "pronunciation": "/ˌriːɪnˈfɔːrst/",
+    "example_1": "Heavily reinforced concrete walls protect critical nuclear systems from external impacts.",
+    "part_of_speech": "adjective",
+    "difficulty": "B2"
+  },
+  {
+    "word": "Shielding",
+    "meaning": "방페 / 차폐 / 실딩",
+    "pronunciation": "/ˈʃiːldɪŋ/",
+    "example_1": "Lead blankets provide effective temporary radiation shielding during pipe maintenance.",
+    "part_of_speech": "noun",
+    "difficulty": "C1"
+  },
+  {
+    "word": "Lead",
+    "meaning": "납 (금속)",
+    "pronunciation": "/led/",
+    "example_1": "Dense lead aprons and shields protect workers from harmful gamma radiation.",
+    "part_of_speech": "noun",
+    "difficulty": "B2"
+  },
+  {
+    "word": "Blanket",
+    "meaning": "블랭킷 / 차폐 담요 / 덮개",
+    "pronunciation": "/ˈblæŋkɪt/",
+    "example_1": "Heavy lead blankets are draped over radioactive pipes to reduce local dose rates.",
+    "part_of_speech": "noun",
+    "difficulty": "B1"
+  },
+  {
+    "word": "Dose",
+    "meaning": "방사선량 / 피폭량",
+    "pronunciation": "/doʊ스/",
+    "example_1": "Personal dosimeters measure the exact accumulated radiation dose of each worker.",
+    "part_of_speech": "noun",
+    "difficulty": "C1"
+  },
+  {
+    "word": "Monitor",
+    "meaning": "감시하다 / 모니터링하다",
+    "pronunciation": "/ˈmɑːnɪtər/",
+    "example_1": "Digital sensors monitor the fluid temperature and flow rate continuously.",
+    "part_of_speech": "noun, verb",
+    "difficulty": "B1"
+  },
+  {
+    "word": "Transmitter",
+    "meaning": "전송기 / 트랜스미터",
+    "pronunciation": "/trænsˈmɪtər/",
+    "example_1": "The pressure transmitter converts physical pressure into an electrical control signal.",
+    "part_of_speech": "noun",
+    "difficulty": "B2"
+  },
+  {
+    "word": "Sensor",
+    "meaning": "센서 / 감지기",
+    "pronunciation": "/ˈsensər/",
+    "example_1": "A delicate optical sensor detects early smoke particles inside the ventilation duct.",
+    "part_of_speech": "noun",
+    "difficulty": "B1"
+  },
+  {
+    "word": "Signal",
+    "meaning": "신호 / 신호를 보내다",
+    "pronunciation": "/ˈsɪɡnəl/",
+    "example_1": "The safety alarm triggers an immediate shutdown signal to the main isolation valves.",
+    "part_of_speech": "noun, verb",
+    "difficulty": "B1"
+  },
+  {
+    "word": "Alarm",
+    "meaning": "경보 / 알람",
+    "pronunciation": "/əˈlɑːrm/",
+    "example_1": "A high-level alarm alerts operators to abnormal water accumulation inside the sump.",
+    "part_of_speech": "noun, verb",
+    "difficulty": "B1"
+  },
+  {
+    "word": "Accumulation",
+    "meaning": "누적 / 축적 / 고임",
+    "pronunciation": "/əˌkjuːmjəˈleɪʃn/",
+    "example_1": "Continuous venting prevents the dangerous accumulation of combustible hydrogen gas.",
+    "part_of_speech": "noun",
+    "difficulty": "C1"
+  },
+  {
+    "word": "Combustible",
+    "meaning": "가연성의 / 불붙기 쉬운",
+    "pronunciation": "/kəmˈbʌstəbl/",
+    "example_1": "Store all combustible liquids in an approved fireproof storage cabinet.",
+    "part_of_speech": "adjective, noun",
+    "difficulty": "C2"
+  },
+  {
+    "word": "Cabinet",
+    "meaning": "캐비닛 / 제어반 / 분전반",
+    "pronunciation": "/ˈkæbɪnət/",
+    "example_1": "The electrical control cabinet houses delicate relays, breakers, and wiring terminals.",
+    "part_of_speech": "noun",
+    "difficulty": "B1"
+  },
+  {
+    "word": "Relay",
+    "meaning": "계전기 / 릴레이",
+    "pronunciation": "/ˈriːleɪ/",
+    "example_1": "An electronic relay closes the circuit to energize the solenoid operating valve.",
+    "part_of_speech": "noun, verb",
+    "difficulty": "B2"
+  },
+  {
+    "word": "Breaker",
+    "meaning": "차단기",
+    "pronunciation": "/ˈbreɪkər/",
+    "example_1": "Trip the main circuit breaker before opening the electrical panel for maintenance.",
+    "part_of_speech": "noun",
+    "difficulty": "B2"
+  },
+  {
+    "word": "Terminal",
+    "meaning": "단자 / 터미널 / 단자대",
+    "pronunciation": "/ˈtɜːrmɪnl/",
+    "example_1": "Verify that all wire connections at the terminal block are tightened to the specified torque.",
+    "part_of_speech": "noun, adjective",
+    "difficulty": "B2"
+  },
+  {
+    "word": "Torque",
+    "meaning": "토크 / 조임 회전력",
+    "pronunciation": "/tɔːrk/",
+    "example_1": "A calibrated torque wrench is required to tighten flanged joint bolts evenly.",
+    "part_of_speech": "noun, verb",
+    "difficulty": "C1"
+  },
+  {
+    "word": "Wrench",
+    "meaning": "렌치 / 스패너",
+    "pronunciation": "/rentʃ/",
+    "example_1": "The mechanic used an adjustable wrench to loosen the corroded drain plug.",
+    "part_of_speech": "noun, verb",
+    "difficulty": "B2"
+  },
+  {
+    "word": "Plug",
+    "meaning": "플러그 / 마개 / 막다",
+    "pronunciation": "/plʌɡ/",
+    "example_1": "Insert a solid steel plug into the unused pipe branch to prevent fluid leakage.",
+    "part_of_speech": "noun, verb",
+    "difficulty": "B1"
+  },
+  {
+    "word": "Bypass",
+    "meaning": "바이패스 / 우회 배관",
+    "pronunciation": "/ˈbaɪpæs/",
+    "example_1": "A bypass valve allows fluid to flow around the main filter during cartridge maintenance.",
+    "part_of_speech": "noun, verb",
+    "difficulty": "B2"
+  },
+  {
+    "word": "Cartridge",
+    "meaning": "카트리지 / 필터 여과재",
+    "pronunciation": "/ˈkɑːrtrɪdʒ/",
+    "example_1": "Replace the clogged water filter cartridge with a clean spare unit.",
+    "part_of_speech": "noun",
+    "difficulty": "B2"
+  },
+  {
+    "word": "Filter",
+    "meaning": "필터 / 여과기",
+    "pronunciation": "/ˈfɪltər/",
+    "example_1": "High-efficiency particulate air filters purify exhaust ventilation from radioactive rooms.",
+    "part_of_speech": "noun, verb",
+    "difficulty": "B1"
+  },
+  {
+    "word": "Exhaust",
+    "meaning": "배기 / 배출 / 배기가스",
+    "pronunciation": "/ɪɡˈzɔːst/",
+    "example_1": "The main exhaust duct expels stale, filtered air out of the building roof.",
+    "part_of_speech": "noun, verb",
+    "difficulty": "B2"
+  },
+  {
+    "word": "Expel",
+    "meaning": "배출하다 / 밖으로 밀어내다",
+    "pronunciation": "/ɪkˈspel/",
+    "example_1": "System flushing is designed to expel any trapped foreign material from the piping lines.",
+    "part_of_speech": "verb",
+    "difficulty": "C1"
+  },
+  {
+    "word": "Stale",
+    "meaning": "탁한 / 신선하지 않은",
+    "pronunciation": "/steɪl/",
+    "example_1": "Continuous fresh air intake prevents stale air from accumulating in underground pump rooms.",
+    "part_of_speech": "adjective",
+    "difficulty": "B2"
+  },
+  {
+    "word": "Intake",
+    "meaning": "유입구 / 흡기 / 인테이크",
+    "pronunciation": "/ˈɪnteɪk/",
+    "example_1": "Regularly inspect the outdoor air intake louvers to ensure they are free of debris.",
+    "part_of_speech": "noun",
+    "difficulty": "B2"
+  },
+  {
+    "word": "Louver",
+    "meaning": "루버 / 통풍 갤러리",
+    "pronunciation": "/ˈluːvər/",
+    "example_1": "Aluminum weather louvers protect ventilation duct openings from entering rain and debris.",
+    "part_of_speech": "noun",
+    "difficulty": "C2"
+  },
+  {
+    "word": "Weather",
+    "meaning": "기상 / 날씨 / 비바람 견디다",
+    "pronunciation": "/ˈweðər/",
+    "example_1": "Outdoor equipment must be fully weatherproof to withstand desert temperatures and dust.",
+    "part_of_speech": "noun, verb",
+    "difficulty": "A1"
+  },
+  {
+    "word": "Proof",
+    "meaning": "방수의 / 방호의 / 증명",
+    "pronunciation": "/pruːf/",
+    "example_1": "Explosion-proof light fixtures are installed inside rooms housing combustible chemicals.",
+    "part_of_speech": "noun, adjective",
+    "difficulty": "B1"
+  },
+  {
+    "word": "Explosion",
+    "meaning": "폭발",
+    "pronunciation": "/ɪkˈsploʊʒn/",
+    "example_1": "Relief valves open automatically to prevent catastrophic pressure explosions in steam headers.",
+    "part_of_speech": "noun",
+    "difficulty": "B2"
+  },
+  {
+    "word": "Relief",
+    "meaning": "도피 / 안도 / 릴리프",
+    "pronunciation": "/rɪˈliːf/",
+    "example_1": "The pressure relief valve discharges excess fluid safely into the overflow collection tank.",
+    "part_of_speech": "noun",
+    "difficulty": "B2"
+  },
+  {
+    "word": "Discharge",
+    "meaning": "방출 / 배출 / 유출",
+    "pronunciation": "/ˈdɪstʃɑːrdʒ/",
+    "example_1": "Cooling water discharges into the ocean after absorbing waste heat from the plant steam condensers.",
+    "part_of_speech": "noun, verb",
+    "difficulty": "C1"
+  },
+  {
+    "word": "Condenser",
+    "meaning": "복수기 / 응축기 / 콘덴서",
+    "pronunciation": "/kənˈdensər/",
+    "example_1": "The steam condenser converts exhaust turbine steam back into liquid water for boiler recycling.",
+    "part_of_speech": "noun",
+    "difficulty": "C1"
+  },
+  {
+    "word": "Boiler",
+    "meaning": "보일러 / 증기 발생 장치",
+    "pronunciation": "/ˈbɔɪlər/",
+    "example_1": "The nuclear steam generator functions exactly like a massive industrial boiler.",
+    "part_of_speech": "noun",
+    "difficulty": "B1"
+  },
+  {
+    "word": "Recycle",
+    "meaning": "재순환하다 / 재활용하다",
+    "pronunciation": "/ˌriːˈsaɪkl/",
+    "example_1": "Condensate pumps recycle purified water back to the secondary side of the steam generator.",
+    "part_of_speech": "verb",
+    "difficulty": "B1"
+  },
+  {
+    "word": "Purified",
+    "meaning": "정제된 / 정화된",
+    "pronunciation": "/ˈpjʊrɪfaɪd/",
+    "example_1": "Highly purified water prevents mineral build-up inside delicate heat exchanger tubes.",
+    "part_of_speech": "adjective",
+    "difficulty": "B2"
+  },
+  {
+    "word": "Mineral",
+    "meaning": "미네랄 / 광물질",
+    "pronunciation": "/ˈmɪnərəl/",
+    "example_1": "Demineralizers extract dissolved mineral ions from the raw cooling water supply.",
+    "part_of_speech": "noun, adjective",
+    "difficulty": "B1"
+  },
+  {
+    "word": "Ion",
+    "meaning": "이온",
+    "pronunciation": "/ˈaɪən/",
+    "example_1": "Ion exchange resins purify the primary coolant loop by capturing dissolved radioactive particles.",
+    "part_of_speech": "noun",
+    "difficulty": "C1"
+  },
+  {
+    "word": "Resin",
+    "meaning": "수지 / 레진",
+    "pronunciation": "/ˈrezən/",
+    "example_1": "Exhausted filter resin is removed periodically and handled as low-level radioactive waste.",
+    "part_of_speech": "noun",
+    "difficulty": "C2"
+  },
+  {
+    "word": "Coolant",
+    "meaning": "냉각재 / 쿨런트",
+    "pronunciation": "/ˈkuːlənt/",
+    "example_1": "Reactor coolant water flows continuously through the primary loops to absorb nuclear heat.",
+    "part_of_speech": "noun",
+    "difficulty": "C1"
+  },
+  {
+    "word": "Loop",
+    "meaning": "루프 / 순환 계통",
+    "pronunciation": "/luːp/",
+    "example_1": "The primary coolant loop is physically isolated from the secondary steam production loop.",
+    "part_of_speech": "noun, verb",
+    "difficulty": "B2"
+  },
+  {
+    "word": "Isolate",
+    "meaning": "차단하다 / 격리하다",
+    "pronunciation": "/ˈaɪsəleɪt/",
+    "example_1": "Close the manual gate valves to isolate the damaged pipe section prior to starting cutting operations.",
+    "part_of_speech": "verb",
+    "difficulty": "B2"
+  },
+  {
+    "word": "Class",
+    "meaning": "등급 / 클래스",
+    "pronunciation": "/klæ스/",
+    "example_1": "Quality Class Q items are subject to rigorous nuclear safety regulations.",
+    "part_of_speech": "noun",
+    "difficulty": "A1"
+  },
+  {
+    "word": "Unit",
+    "meaning": "호기 / 유닛",
+    "pronunciation": "/ˈjuːnɪt/",
+    "example_1": "Unit 1 is currently operating at 100% full reactor power.",
+    "part_of_speech": "noun",
+    "difficulty": "A1"
+  },
+  {
+    "word": "Train",
+    "meaning": "계열 / 트레인",
+    "pronunciation": "/treɪn/",
+    "example_1": "Maintenance on Train A cooling pumps was performed while Train B remained in operation.",
+    "part_of_speech": "noun",
+    "difficulty": "A1"
+  },
+  {
+    "word": "Modify",
+    "meaning": "개조하다 / 수정하다",
+    "pronunciation": "/ˈmɑːdɪfaɪ/",
+    "example_1": "Engineers decided to modify the drain line to prevent standing water accumulation.",
+    "part_of_speech": "verb",
+    "difficulty": "B2"
+  },
+  {
+    "word": "Mitigate",
+    "meaning": "완화하다 / 경감시키다",
+    "pronunciation": "/ˈmɪtɪɡeɪt/",
+    "example_1": "Additional support brackets were installed to mitigate extreme pipe vibration.",
+    "part_of_speech": "verb",
+    "difficulty": "C1"
+  },
+  {
+    "word": "Sump",
+    "meaning": "집수정 / 썸프",
+    "pronunciation": "/sʌmp/",
+    "example_1": "The radioactive sump pump transfers collected wastewater to the liquid processing system.",
+    "part_of_speech": "noun",
+    "difficulty": "C2"
+  },
+  {
+    "word": "Radioactive",
+    "meaning": "방사성의 / 방사능의",
+    "pronunciation": "/ˌreɪdioʊˈæktɪv/",
+    "example_1": "Radioactive waste handling procedures require heavy lead shielding and protective equipment.",
+    "part_of_speech": "adjective",
+    "difficulty": "B2"
+  },
+  {
+    "word": "Leakage",
+    "meaning": "누설 / 누출량",
+    "pronunciation": "/ˈliːkɪdʒ/",
+    "example_1": "Allowable valve seat leakage is defined strictly within the vendor technical specifications.",
+    "part_of_speech": "noun",
+    "difficulty": "C1"
+  },
+  {
+    "word": "Damaged",
+    "meaning": "손상된 / 파손된",
+    "pronunciation": "/ˈdæmɪdʒd/",
+    "example_1": "The damaged section of the drain line was cut out and replaced with a new spool piece.",
+    "part_of_speech": "adjective",
+    "difficulty": "B1"
+  },
+  {
+    "word": "Inlet",
+    "meaning": "유입구 / 입구",
+    "pronunciation": "/ˈɪnlet/",
+    "example_1": "A pressure gauge is installed directly at the pump inlet flange.",
+    "part_of_speech": "noun",
+    "difficulty": "C1"
+  },
+  {
+    "word": "Outlet",
+    "meaning": "유출구 / 출구",
+    "pronunciation": "/ˈaʊtlet/",
+    "example_1": "Water discharges from the cooler outlet into the primary return header.",
+    "part_of_speech": "noun",
+    "difficulty": "C1"
+  },
+  {
+    "word": "Touch-up",
+    "meaning": "터치업 / 국소 보수 도장",
+    "pronunciation": "/ˈtʌtʃ ʌp/",
+    "example_1": "Paint touch-up was performed on the support brackets where minor scratches occurred during handling.",
+    "part_of_speech": "noun",
+    "difficulty": "B2"
+  },
+  {
+    "word": "Master",
+    "meaning": "마스터 / 종합",
+    "pronunciation": "/ˈmæstər/",
+    "example_1": "The master inspection plan synchronizes all independent contractor schedules.",
+    "part_of_speech": "noun, adjective",
+    "difficulty": "B1"
+  },
+  {
+    "word": "Discipline",
+    "meaning": "공종 / 기술 분야",
+    "pronunciation": "/ˈdɪsəplɪn/",
+    "example_1": "Each engineering discipline maintains its own set of dedicated design standards.",
+    "part_of_speech": "noun",
+    "difficulty": "B2"
+  },
+  {
+    "word": "Geometry",
+    "meaning": "기하학적 구조 / 외형",
+    "pronunciation": "/dʒiˈɑːmətri/",
+    "example_1": "Piping geometry is analyzed using 3D modeling software to prevent clashes with cable trays.",
+    "part_of_speech": "noun",
+    "difficulty": "B2"
+  },
+  {
+    "word": "Layout",
+    "meaning": "배치 / 레이아웃",
+    "pronunciation": "/ˈleɪaʊt/",
+    "example_1": "Review the equipment layout drawing to verify adequate clearance for maintenance access.",
+    "part_of_speech": "noun",
+    "difficulty": "B2"
+  },
+  {
+    "word": "Archive",
+    "meaning": "기록 보관소 / 구버전 보관함",
+    "pronunciation": "/ˈɑːrkaɪv/",
+    "example_1": "Superseded drawings must be moved immediately to the Archive folder to prevent field errors.",
+    "part_of_speech": "noun, verb",
+    "difficulty": "B2"
+  },
+  {
+    "word": "Minutes",
+    "meaning": "회의록",
+    "pronunciation": "/ˈmɪnɪts/",
+    "example_1": "Official meeting minutes were distributed to all participants within 24 hours.",
+    "part_of_speech": "noun",
+    "difficulty": "B1"
+  },
+  {
+    "word": "Response",
+    "meaning": "회신 / 응답",
+    "pronunciation": "/rɪˈspɑːns/",
+    "example_1": "We are currently awaiting an official response from the lead structural engineer regarding RFI #102.",
+    "part_of_speech": "noun",
+    "difficulty": "B2"
+  },
+  {
+    "word": "Attachment",
+    "meaning": "첨부파일 / 첨부물",
+    "pronunciation": "/əˈtætʃmənt/",
+    "example_1": "Please review Attachment 1 for the detailed list of weld joint inspection items.",
+    "part_of_speech": "noun",
+    "difficulty": "B1"
+  },
+  {
+    "word": "Action",
+    "meaning": "조치 / 액션",
+    "pronunciation": "/ˈækʃn/",
+    "example_1": "The quality manager updated the action log with deadlines for resolving open NCRs.",
+    "part_of_speech": "noun",
+    "difficulty": "A2"
+  },
+  {
+    "word": "Log",
+    "meaning": "일지 / 기록부 / 대장",
+    "pronunciation": "/lɔːɡ/",
+    "example_1": "The site welding log records the environmental humidity and temperature daily.",
+    "part_of_speech": "noun, verb",
+    "difficulty": "B2"
+  },
+  {
+    "word": "Obsolete",
+    "meaning": "구형의 / 쓸모없게 된",
+    "pronunciation": "/ˌɑːbsəˈliːt/",
+    "example_1": "Obsolete revision documents must be clearly stamped 'VOID' and removed from active folders.",
+    "part_of_speech": "adjective",
+    "difficulty": "C1"
+  },
+  {
+    "word": "Superseded",
+    "meaning": "대체된 / 구버전이 된",
+    "pronunciation": "/ˌsuːpərˈsiːdɪd/",
+    "example_1": "This specification has been superseded by Revision 2; do not use Revision 1.",
+    "part_of_speech": "adjective, verb",
+    "difficulty": "C1"
+  },
+  {
+    "word": "Duplicate",
+    "meaning": "중복의 / 사본",
+    "pronunciation": "/ˈduːplɪkeɪt/",
+    "example_1": "Avoid creating duplicate file copies across different unit folders to ensure document integrity.",
+    "part_of_speech": "noun, adjective, verb",
+    "difficulty": "B2"
+  },
+  {
+    "word": "Convenience",
+    "meaning": "편의",
+    "pronunciation": "/kənˈviːniəns/",
+    "example_1": "Convenience copies are uncontrolled documents kept solely for quick personal reference.",
+    "part_of_speech": "noun",
+    "difficulty": "B1"
+  },
+  {
+    "word": "Copy",
+    "meaning": "사본 / 복사본",
+    "pronunciation": "/ˈkɑːpi/",
+    "example_1": "Make sure a clean hard copy of the approved ITP is available at the work site.",
+    "part_of_speech": "noun, verb",
+    "difficulty": "A1"
+  },
+  {
+    "word": "Status",
+    "meaning": "상태 / 승인 현황",
+    "pronunciation": "/ˈsteɪtəs/",
+    "example_1": "Check the document status in the tracking log to see if it is approved or rejected.",
+    "part_of_speech": "noun",
+    "difficulty": "B2"
+  },
+  {
+    "word": "Approved",
+    "meaning": "승인된 / 합격한",
+    "pronunciation": "/əˈpruːvd/",
+    "example_1": "Work can only commence once the engineering drawings are formally approved.",
+    "part_of_speech": "adjective, verb",
+    "difficulty": "B1"
+  },
+  {
+    "word": "Conditionally",
+    "meaning": "조건부로",
+    "pronunciation": "/kənˈdɪʃənəli/",
+    "example_1": "The submittal was conditionally accepted, meaning work can proceed if minor markups are addressed.",
+    "part_of_speech": "adverb",
+    "difficulty": "C1"
+  },
+  {
+    "word": "Resubmit",
+    "meaning": "재제출하다",
+    "pronunciation": "/ˌriːsəbˈmɪt/",
+    "example_1": "The contractor must revise the structural calculation and resubmit within seven working days.",
+    "part_of_speech": "verb",
+    "difficulty": "B2"
+  },
+  {
+    "word": "Management",
+    "meaning": "관리 / 경영",
+    "pronunciation": "/ˈmænɪdʒmənt/",
+    "example_1": "Proper document management ensures that every engineer accesses the latest revision.",
+    "part_of_speech": "noun",
+    "difficulty": "B1"
+  },
+  {
+    "word": "Maintenance",
+    "meaning": "유지보수 / 정비",
+    "pronunciation": "/ˈmeɪntənəns/",
+    "example_1": "Regular preventive maintenance reduces unexpected downtime of critical emergency generators.",
+    "part_of_speech": "noun",
+    "difficulty": "B2"
+  },
+  {
+    "word": "Outage",
+    "meaning": "가동 중단 / 계획예방정비기간",
+    "pronunciation": "/ˈaʊtɪdʒ/",
+    "example_1": "Major piping modifications are strictly scheduled during the annual refueling outage.",
+    "part_of_speech": "noun",
+    "difficulty": "C1"
+  },
+  {
+    "word": "Refuel",
+    "meaning": "연료 재장전",
+    "pronunciation": "/ˌriːˈfjuːəl/",
+    "example_1": "The nuclear reactor must shut down every 18 months to refuel.",
+    "part_of_speech": "verb",
+    "difficulty": "C1"
+  },
+  {
+    "word": "Turbine",
+    "meaning": "터빈",
+    "pronunciation": "/ˈtɜːrbaɪn/",
+    "example_1": "High pressure steam from the generators spins the massive main turbine blades.",
+    "part_of_speech": "noun",
+    "difficulty": "B2"
+  },
+  {
+    "word": "Safeguards",
+    "meaning": "안전장치 / 방호 설비",
+    "pronunciation": "/ˈseɪfɡɑːrdz/",
+    "example_1": "Special technical safeguards prevent radioactive contamination from exiting the containment building.",
+    "part_of_speech": "noun, verb",
+    "difficulty": "C1"
+  },
+  {
+    "word": "Commissioning",
+    "meaning": "시운전 / 종합 성능 시험",
+    "pronunciation": "/kəˈmɪʃənɪŋ/",
+    "example_1": "Commissioning engineers verify that all electrical and mechanical systems interact perfectly.",
+    "part_of_speech": "noun",
+    "difficulty": "C1"
+  },
+  {
+    "word": "Operations",
+    "meaning": "운전 / 운영 / 발주처 운전부서",
+    "pronunciation": "/ˌɑːpəˈreɪʃnz/",
+    "example_1": "Plant Operations must authorize any temporary shutdown of the cooling water pumps.",
+    "part_of_speech": "noun",
+    "difficulty": "B2"
+  },
+  {
+    "word": "Chemistry",
+    "meaning": "화학 / 수질 관리",
+    "pronunciation": "/ˈkemɪstri/",
+    "example_1": "Maintaining strict water chemistry prevents corrosion of the steam generator internal tubes.",
+    "part_of_speech": "noun",
+    "difficulty": "B1"
+  },
+  {
+    "word": "Chamber",
+    "meaning": "챔버 / 실 / 공간",
+    "pronunciation": "/ˈtʃeɪmbər/",
+    "example_1": "Inspection of the water chamber revealed slight blistering in the protective epoxy coating.",
+    "part_of_speech": "noun",
+    "difficulty": "B2"
+  },
+  {
+    "word": "Cooler",
+    "meaning": "냉각기 / 쿨러",
+    "pronunciation": "/ˈkuːlər/",
+    "example_1": "The hydrogen cooler maintains the operating temperature of the main generator.",
+    "part_of_speech": "noun",
+    "difficulty": "B1"
+  },
+  {
+    "word": "Paint",
+    "meaning": "도장 / 페인트",
+    "pronunciation": "/peɪnt/",
+    "example_1": "Special industrial paint is applied to structural steel to resist high humidity and corrosion.",
+    "part_of_speech": "noun, verb",
+    "difficulty": "A1"
+  },
+  {
+    "word": "Repair",
+    "meaning": "수리 / 보수 / 리페어",
+    "pronunciation": "/rɪˈper/",
+    "example_1": "Weld defects identified by NDE must undergo formal grinding and weld repair.",
+    "part_of_speech": "noun, verb",
+    "difficulty": "B1"
+  },
+  {
+    "word": "Tooling",
+    "meaning": "공구류 / 작업 도구",
+    "pronunciation": "/ˈtuːlɪŋ/",
+    "example_1": "Clean room tooling must be dedicated exclusively to stainless steel fabrication to prevent rust contamination.",
+    "part_of_speech": "noun",
+    "difficulty": "C1"
+  },
+  {
+    "word": "Consumable",
+    "meaning": "소모품",
+    "pronunciation": "/kənˈsuːməbl/",
+    "example_1": "Welding electrodes and grinding discs are tracked carefully as consumable job site items.",
+    "part_of_speech": "noun, adjective",
+    "difficulty": "C1"
+  },
+  {
+    "word": "Insulation",
+    "meaning": "보온재 / 단열재",
+    "pronunciation": "/ˌɪnsəˈleɪʃn/",
+    "example_1": "Workers removed the pipe insulation to expose the bare steel joint for non-destructive examination.",
+    "part_of_speech": "noun",
+    "difficulty": "B2"
+  },
+  {
+    "word": "Pressure",
+    "meaning": "압력",
+    "pronunciation": "/ˈpreʃər/",
+    "example_1": "The system operating pressure is monitored continuously by digital pressure transmitters.",
+    "part_of_speech": "noun",
+    "difficulty": "B1"
+  },
+  {
+    "word": "Welder",
+    "meaning": "용접사 / 용접기",
+    "pronunciation": "/ˈweldər/",
+    "example_1": "A certified nuclear welder performed the complex root pass on the safety injection pipe.",
+    "part_of_speech": "noun",
+    "difficulty": "B2"
+  },
+  {
+    "word": "Weldment",
+    "meaning": "용접부 / 용접 구조물",
+    "pronunciation": "/ˈweldmənt/",
+    "example_1": "Temporary weldments must be ground down flush with the pipe surface after the test completes.",
+    "part_of_speech": "noun",
+    "difficulty": "C2"
+  },
+  {
+    "word": "Surface",
+    "meaning": "표면 / 외관",
+    "pronunciation": "/ˈsɜːrfɪ스/",
+    "example_1": "Thorough surface cleaning is required to remove oil and dirt prior to liquid penetration testing.",
+    "part_of_speech": "noun",
+    "difficulty": "B1"
+  },
+  {
+    "word": "Originator",
+    "meaning": "기안자 / 최초 작성자",
+    "pronunciation": "/əˈrɪdʒəneɪtər/",
+    "example_1": "The originator of the FCR must clarify the background reasoning for the design change.",
+    "part_of_speech": "noun",
+    "difficulty": "C1"
+  },
+  {
+    "word": "Recipient",
+    "meaning": "수신자 / 수령인",
+    "pronunciation": "/rɪˈsɪpiənt/",
+    "example_1": "The designated recipient in ENEC engineering received the DTR transmittal via email.",
+    "part_of_speech": "noun",
+    "difficulty": "C1"
+  },
+  {
+    "word": "Retention",
+    "meaning": "보존 / 유지",
+    "pronunciation": "/rɪˈtenʃn/",
+    "example_1": "Quality verification documents for safety-related items have a permanent retention period.",
+    "part_of_speech": "noun",
+    "difficulty": "C1"
+  },
+  {
+    "word": "Transmittal",
+    "meaning": "송부 / 문서 송부서",
+    "pronunciation": "/trænsˈmɪtl/",
+    "example_1": "A formal transmittal sheet accompanied the updated isometric drawing package.",
+    "part_of_speech": "noun",
+    "difficulty": "C1"
+  },
+  {
+    "word": "Demonstration",
+    "meaning": "시연 / 증명",
+    "pronunciation": "/ˌdemənˈstreɪʃn/",
+    "example_1": "The NDE demonstration was witnessed by the Authorized Nuclear Inservice Inspector.",
+    "part_of_speech": "noun",
+    "difficulty": "B2"
+  },
+  {
+    "word": "Verify",
+    "meaning": "검증하다 / 확인하다",
+    "pronunciation": "/ˈverɪfaɪ/",
+    "example_1": "Always verify field dimensions before cutting expensive alloy piping.",
+    "part_of_speech": "verb",
+    "difficulty": "B2"
+  },
+  {
+    "word": "Check Valve",
+    "meaning": "체크 밸브 / 역류 방지 밸브",
+    "pronunciation": "/ˈtʃek vælv/",
+    "example_1": "A check valve permits fluid flow in only one direction, preventing backflow.",
+    "part_of_speech": "noun",
+    "difficulty": "B1"
+  },
+  {
+    "word": "Solenoid Valve",
+    "meaning": "솔레노이드 밸브 / 전자 밸브",
+    "pronunciation": "/ˈsoʊlənɔɪd vælv/",
+    "example_1": "The solenoid valve opens electronically when energized by the control system.",
+    "part_of_speech": "noun",
+    "difficulty": "C1"
+  },
+  {
+    "word": "Base Plate",
+    "meaning": "베이스 플레이트 / 기초판",
+    "pronunciation": "/ˈbeɪ스 pleɪt/",
+    "example_1": "The steel base plate is anchored securely to the concrete floor.",
+    "part_of_speech": "noun",
+    "difficulty": "A2"
+  },
+  {
+    "word": "Anchor Bolt",
+    "meaning": "앵커 볼트 / 고정 볼트",
+    "pronunciation": "/ˈæŋkər boʊlt/",
+    "example_1": "Drill four holes in the concrete to install the heavy-duty wedge anchor bolts.",
+    "part_of_speech": "noun",
+    "difficulty": "B2"
+  },
+  {
+    "word": "Flange Joint",
+    "meaning": "플랜지 조인트 / 플랜지 이음부",
+    "pronunciation": "/ˈflændʒ dʒɔɪnt/",
+    "example_1": "Insert a fresh gasket inside the flange joint before tightening the connecting bolts.",
+    "part_of_speech": "noun",
+    "difficulty": "B2"
+  },
+  {
+    "word": "Thread Joint",
+    "meaning": "나사 조인트 / 나사 이음부",
+    "pronunciation": "/ˈθred dʒɔɪnt/",
+    "example_1": "Teflon tape was applied to the thread joint to ensure a completely leak-proof seal.",
+    "part_of_speech": "noun",
+    "difficulty": "B2"
+  },
+  {
+    "word": "Wedge Anchor",
+    "meaning": "웨지 앵커 / 확장형 앵커",
+    "pronunciation": "/ˈwedʒ æŋkər/",
+    "example_1": "Heavy duty wedge anchors secure the main pipe support bracket to the concrete wall.",
+    "part_of_speech": "noun",
+    "difficulty": "C1"
+  },
+  {
+    "word": "Hold Point",
+    "meaning": "홀드 포인트 / 필수 입회점",
+    "pronunciation": "/ˈhoʊld pɔɪnt/",
+    "example_1": "A Hold Point requires official inspector sign-off before any subsequent work can proceed.",
+    "part_of_speech": "noun",
+    "difficulty": "A2"
+  },
+  {
+    "word": "Witness Point",
+    "meaning": "위트니스 포인트 / 입회점",
+    "pronunciation": "/ˈwɪtnəs pɔɪnt/",
+    "example_1": "The client decided to attend the witness point for the hydrostatic pressure test on-site.",
+    "part_of_speech": "noun",
+    "difficulty": "B2"
+  },
+  {
+    "word": "Document Review",
+    "meaning": "문서 검토 / 서류 점검",
+    "pronunciation": "/ˈdɑːkjumənt rɪˈvjuː/",
+    "example_1": "The engineer performed a technical document review of the vendor drawing package.",
+    "part_of_speech": "noun",
+    "difficulty": "B1"
+  },
+  {
+    "word": "Acceptance Criteria",
+    "meaning": "합격 기준 / 인수 기준",
+    "pronunciation": "/əkˈseptəns kraɪˈtɪriə/",
+    "example_1": "The acceptance criteria for visual weld inspections are specified clearly in the ASME code.",
+    "part_of_speech": "noun",
+    "difficulty": "B2"
+  },
+  {
+    "word": "Action Log",
+    "meaning": "조치 일지 / 액션 로그",
+    "pronunciation": "/ˈækʃn lɔːɡ/",
+    "example_1": "The quality manager updated the action log with deadlines for resolving open NCRs.",
+    "part_of_speech": "noun",
+    "difficulty": "A2"
+  },
+  {
+    "word": "Master Schedule",
+    "meaning": "마스터 스케줄 / 주 공정표",
+    "pronunciation": "/ˈmæstər skedʒuːl/",
+    "example_1": "The project master schedule tracks all critical path engineering activities.",
+    "part_of_speech": "noun",
+    "difficulty": "B1"
+  },
+  {
+    "word": "Method Statement",
+    "meaning": "시공 계획서 / 작업 설명서",
+    "pronunciation": "/ˈmeθəd steɪtmənt/",
+    "example_1": "The contractor submitted a formal method statement detailing the heavy equipment rigging sequence.",
+    "part_of_speech": "noun",
+    "difficulty": "B1"
+  },
+  {
+    "word": "Work Practice",
+    "meaning": "작업 관행 / 작업 수행 방법",
+    "pronunciation": "/ˈwɜːrk præktɪ스/",
+    "example_1": "Safe work practice requires wearing fall protection harnesses at all times on elevated platforms.",
+    "part_of_speech": "noun",
+    "difficulty": "B1"
+  },
+  {
+    "word": "Quality Assurance",
+    "meaning": "품질 보증",
+    "pronunciation": "/ˈkwɑːləti əˈʃʊrəns/",
+    "example_1": "The quality assurance department establishes the overall site inspection policies.",
+    "part_of_speech": "noun",
+    "difficulty": "B2"
+  },
+  {
+    "word": "Quality Control",
+    "meaning": "품질 관리 / 품질 점검",
+    "pronunciation": "/ˈkwɑːləti kənˈtroʊl/",
+    "example_1": "Quality control inspectors conduct daily visual checks on all ongoing pipe welds.",
+    "part_of_speech": "noun",
+    "difficulty": "B1"
+  },
+  {
+    "word": "Quality Surveillance",
+    "meaning": "품질 감시 / 품질 실사",
+    "pronunciation": "/ˈkwɑːləti sɜːrˈveɪləns/",
+    "example_1": "Quality surveillance audits are conducted periodically to ensure field compliance.",
+    "part_of_speech": "noun",
+    "difficulty": "C1"
+  },
+  {
+    "word": "Convenience Copy",
+    "meaning": "편의 사본 / 비관리 사본",
+    "pronunciation": "/kənˈviːniəns kɑːpi/",
+    "example_1": "Convenience copies are uncontrolled documents kept solely for quick personal reference.",
+    "part_of_speech": "noun",
+    "difficulty": "B2"
+  },
+  {
+    "word": "Meeting Minutes",
+    "meaning": "회의록 / 회의 기록",
+    "pronunciation": "/ˈmiːtɪŋ mɪnɪts/",
+    "example_1": "Official meeting minutes were distributed to all participants within 24 hours.",
+    "part_of_speech": "noun",
+    "difficulty": "B1"
+  },
+  {
+    "word": "Retention Period",
+    "meaning": "보존 기간 / 문서 보관 기간",
+    "pronunciation": "/rɪˈtenʃn pɪriəd/",
+    "example_1": "Quality verification documents for safety-related items have a permanent retention period.",
+    "part_of_speech": "noun",
+    "difficulty": "C1"
+  },
+  {
+    "word": "Confined Space",
+    "meaning": "밀폐 공간 / 질식 위험 공간",
+    "pronunciation": "/kənˈfaɪnd speɪ스/",
+    "example_1": "Working inside a confined space such as a water chamber requires continuous ventilation.",
+    "part_of_speech": "noun",
+    "difficulty": "C1"
+  },
+  {
+    "word": "Preventive Maintenance",
+    "meaning": "예방 정비 / 유지 보수",
+    "pronunciation": "/prɪˈventɪv meɪntənəns/",
+    "example_1": "Preventive maintenance schedules extend the operational lifespan of heavy plant machinery.",
+    "part_of_speech": "noun",
+    "difficulty": "C1"
+  },
+  {
+    "word": "Corrective Action",
+    "meaning": "시정 조치 / 재발 방지 대책",
+    "pronunciation": "/kəˈrektɪv ækʃn/",
+    "example_1": "Corrective actions were implemented to prevent recurring fit-up misalignment.",
+    "part_of_speech": "noun",
+    "difficulty": "C1"
+  }
+]
