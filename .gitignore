@@ -42,3 +42,14 @@ next-env.d.ts
 # 패키지 빌드 산출물 (packages/*/dist 포함)
 dist/
 /asset
+
+# 내장 DB(libSQL/SQLite) 로컬 데이터
+.data/
+*.db
+*.db-shm
+*.db-wal
+
+/.omc
+/.omx
+.omc/
+.omx/
