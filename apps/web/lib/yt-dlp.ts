@@ -44,22 +44,32 @@ export async function fetchTranscriptViaYtDlp(
   const dir = await mkdtemp(join(tmpdir(), "nativo-sub-"));
   try {
     const lang = LANG_CODE[language];
-    await exec(
-      "yt-dlp",
-      [
-        "--skip-download",
-        "--write-subs",
-        "--write-auto-subs",
-        "--sub-langs",
-        `${lang}.*,${lang},en.*,en`, // 선택 언어 우선, 영어 폴백
-        "--sub-format",
-        "vtt/srt/best",
-        "-o",
-        join(dir, "%(id)s.%(ext)s"),
-        `https://www.youtube.com/watch?v=${videoId}`,
-      ],
-      { timeout: 90000, windowsHide: true },
-    );
+    try {
+      await exec(
+        "yt-dlp",
+        [
+          "--skip-download",
+          "--write-subs",
+          "--write-auto-subs",
+          "--sub-langs",
+          // 선택 언어 + 원어 자동자막 + 영어 폴백만. 와일드카드(en.*)를 쓰면
+          // 자동 번역 변형(en-de 등)까지 전부 받으려다 429 에 걸리기 쉽다.
+          `${lang},${lang}-orig,en,en-orig`,
+          "--sub-format",
+          "vtt/srt/best",
+          "-o",
+          join(dir, "%(id)s.%(ext)s"),
+          `https://www.youtube.com/watch?v=${videoId}`,
+        ],
+        { timeout: 90000, windowsHide: true },
+      );
+    } catch (err) {
+      // 실행 파일 없음 → 상위에서 설치 안내로 분기
+      const e = err as NodeJS.ErrnoException;
+      if (e?.code === "ENOENT") throw new Error("no_ytdlp");
+      // 그 외 실패(일부 변형 429 등)는 exit code 가 1이어도 필요한 자막은
+      // 이미 받아졌을 수 있으므로, 받은 파일이 있는지 계속 확인한다.
+    }
 
     const files = await readdir(dir);
     // 선택 언어 자막 우선, 없으면 첫 자막 파일
@@ -70,11 +80,6 @@ export async function fetchTranscriptViaYtDlp(
 
     const text = await readFile(join(dir, subFile), "utf8");
     return parseSubtitles(text);
-  } catch (err) {
-    // 실행 파일 없음 → 상위에서 설치 안내로 분기
-    const e = err as NodeJS.ErrnoException;
-    if (e?.code === "ENOENT") throw new Error("no_ytdlp");
-    throw err;
   } finally {
     await rm(dir, { recursive: true, force: true }).catch(() => {});
   }
