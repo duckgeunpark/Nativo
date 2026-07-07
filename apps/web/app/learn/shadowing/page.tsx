@@ -1,9 +1,9 @@
 import { redirect } from "next/navigation";
 import { isSupabaseConfigured } from "@/lib/supabase/env";
 import { SupabaseNotice } from "@/components/SupabaseNotice";
-import { AppHeader } from "@/components/AppHeader";
+import { AppShell } from "@/components/AppShell";
 import { createClient } from "@/lib/supabase/server";
-import { Card, CardContent } from "@/components/ui/card";
+import { EmptyState } from "@/components/ui/states";
 import { AddVideoForm } from "./AddVideoForm";
 import { ShadowingListItem } from "./ShadowingListItem";
 
@@ -31,11 +31,10 @@ export default async function ShadowingPage() {
   const list = videos ?? [];
 
   return (
-    <>
-      <AppHeader />
-      <main className="container max-w-2xl py-10">
+    <AppShell>
+      <main className="container max-w-4xl py-10">
         <header className="mb-6">
-          <h1 className="text-2xl font-bold">쉐도잉</h1>
+          <h1 className="font-display text-2xl font-bold tracking-tight">쉐도잉</h1>
           <p className="mt-1 text-sm text-muted-foreground">
             좋아하는 YouTube 영상을 따라 말하며 발음·리듬을 훈련하세요.
           </p>
@@ -46,7 +45,7 @@ export default async function ShadowingPage() {
         </div>
 
         {list.length > 0 ? (
-          <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+          <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {list.map((v) => (
               <li key={v.id}>
                 <ShadowingListItem
@@ -61,13 +60,13 @@ export default async function ShadowingPage() {
             ))}
           </ul>
         ) : (
-          <Card>
-            <CardContent className="py-12 text-center text-sm text-muted-foreground">
-              위에 YouTube 링크를 붙여넣어 첫 영상을 추가하세요.
-            </CardContent>
-          </Card>
+          <EmptyState
+            icon="🎬"
+            title="아직 추가한 영상이 없어요"
+            description="위에 YouTube 링크를 붙여넣어 첫 영상을 추가하세요."
+          />
         )}
       </main>
-    </>
+    </AppShell>
   );
 }

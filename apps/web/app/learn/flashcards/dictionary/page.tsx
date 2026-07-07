@@ -1,14 +1,17 @@
 import { redirect } from "next/navigation";
 import Link from "next/link";
+import { Search, ChevronLeft, ChevronRight } from "lucide-react";
 import type { Language } from "@nativo/core";
 import { isSupabaseConfigured } from "@/lib/supabase/env";
 import { SupabaseNotice } from "@/components/SupabaseNotice";
-import { AppHeader } from "@/components/AppHeader";
+import { AppShell } from "@/components/AppShell";
 import { createClient } from "@/lib/supabase/server";
 import { getWordDbPage, wordDbSize } from "@/lib/word-db";
+import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { WordDictionary, type WordRow } from "./WordDictionary";
 import { AllWordsList } from "./AllWordsList";
+import { SearchInput } from "./SearchInput";
 
 const BASE = "/learn/flashcards/dictionary";
 
@@ -46,17 +49,19 @@ export default async function WordDictionaryPage({
         : "mine";
 
   return (
-    <>
-      <AppHeader />
-      <main className="container max-w-2xl py-10">
+    <AppShell>
+      <main className="container max-w-2xl py-8 md:py-10">
         <header className="mb-5">
-          <h1 className="text-2xl font-bold">내 단어 사전</h1>
+          <h1 className="font-display text-2xl font-bold text-foreground">내 단어 사전</h1>
           <p className="mt-1 text-sm text-muted-foreground">
             직접 추가한 내 단어, 학습한 단어, 전체 단어 목록을 볼 수 있어요.
           </p>
         </header>
 
-        <nav className="mb-5 flex gap-1 border-b">
+        <nav
+          aria-label="사전 탭"
+          className="mb-5 grid auto-cols-fr grid-flow-col gap-1 rounded-full bg-secondary p-1"
+        >
           <TabLink href={BASE} active={tab === "mine"}>
             내 단어
           </TabLink>
@@ -83,7 +88,7 @@ export default async function WordDictionaryPage({
           />
         )}
       </main>
-    </>
+    </AppShell>
   );
 }
 
@@ -99,11 +104,12 @@ function TabLink({
   return (
     <Link
       href={href}
+      aria-current={active ? "page" : undefined}
       className={cn(
-        "-mb-px border-b-2 px-4 py-2 text-sm font-medium transition",
+        "truncate rounded-full px-3 py-1.5 text-center text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
         active
-          ? "border-primary text-foreground"
-          : "border-transparent text-muted-foreground hover:text-foreground",
+          ? "bg-primary font-medium text-primary-foreground shadow-sm"
+          : "text-muted-foreground hover:text-foreground",
       )}
     >
       {children}
@@ -191,19 +197,11 @@ async function AllTab({
     <div>
       <form className="mb-4 flex gap-2" action={BASE} method="get">
         <input type="hidden" name="tab" value="all" />
-        <input
-          type="text"
-          name="q"
-          defaultValue={q}
-          placeholder="단어·뜻 검색…"
-          className="flex-1 rounded-md border px-3 py-2 text-sm"
-        />
-        <button
-          type="submit"
-          className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition hover:opacity-90"
-        >
-          검색
-        </button>
+        <SearchInput name="q" defaultValue={q} placeholder="단어·뜻 검색…" />
+        <Button type="submit" variant="secondary" className="shrink-0">
+          <Search className="h-4 w-4" aria-hidden />
+          <span className="hidden sm:inline">검색</span>
+        </Button>
       </form>
 
       <p className="mb-3 text-sm text-muted-foreground">
@@ -211,26 +209,26 @@ async function AllTab({
         {q ? "" : ` (전체 ${wordDbSize(language).toLocaleString()})`}
       </p>
 
-      <AllWordsList words={result.words} language={language} owned={owned} />
+      <AllWordsList words={result.words} language={language} owned={owned} hasQuery={!!q} />
 
-      <nav className="mt-6 flex items-center justify-between">
+      <nav className="mt-6 flex items-center justify-between" aria-label="페이지 이동">
         {page > 1 ? (
-          <Link
-            href={linkFor(page - 1)}
-            className="rounded-md border px-4 py-2 text-sm transition hover:bg-secondary"
-          >
-            ← 이전
-          </Link>
+          <Button asChild variant="outline" size="sm">
+            <Link href={linkFor(page - 1)}>
+              <ChevronLeft className="h-4 w-4" aria-hidden />
+              이전
+            </Link>
+          </Button>
         ) : (
           <span />
         )}
         {page < totalPages ? (
-          <Link
-            href={linkFor(page + 1)}
-            className="rounded-md border px-4 py-2 text-sm transition hover:bg-secondary"
-          >
-            다음 →
-          </Link>
+          <Button asChild variant="outline" size="sm">
+            <Link href={linkFor(page + 1)}>
+              다음
+              <ChevronRight className="h-4 w-4" aria-hidden />
+            </Link>
+          </Button>
         ) : (
           <span />
         )}

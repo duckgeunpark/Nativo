@@ -33,10 +33,15 @@ export default async function OnboardingPage() {
     .single();
 
   return (
-    <main className="flex min-h-screen items-center justify-center px-6">
-      <Card className="w-full max-w-md">
+    <main className="flex min-h-screen flex-col items-center justify-center gap-8 bg-background px-6 py-12">
+      <div className="text-center">
+        <p className="font-display text-4xl font-bold text-primary">Nativo</p>
+        <p className="mt-1 text-sm text-muted-foreground">Speak your way to native.</p>
+      </div>
+
+      <Card className="w-full max-w-[720px] rounded-2xl">
         <CardHeader>
-          <CardTitle className="text-xl">어떤 언어를 배울까요?</CardTitle>
+          <CardTitle className="font-display text-xl">어떤 언어를 배울까요?</CardTitle>
           <CardDescription>지금 고른 언어로 바로 시작해요. 언제든 바꿀 수 있어요.</CardDescription>
         </CardHeader>
         <CardContent>

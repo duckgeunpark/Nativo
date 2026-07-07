@@ -67,3 +67,8 @@ export function Loading({ className }: { className?: string }) {
     />
   );
 }
+
+/** 범용 스켈레톤 조각 — 목록/카드 자리표시용. */
+export function Skeleton({ className }: { className?: string }) {
+  return <div aria-hidden className={cn("animate-pulse rounded-lg bg-secondary", className)} />;
+}

@@ -2,7 +2,7 @@ import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
 import { isSupabaseConfigured } from "@/lib/supabase/env";
 import { SupabaseNotice } from "@/components/SupabaseNotice";
-import { AppHeader } from "@/components/AppHeader";
+import { AppShell } from "@/components/AppShell";
 import { createClient } from "@/lib/supabase/server";
 import { SESSION_SIZE, parseSessionCookie } from "@/lib/session-size";
 import { SettingsForm } from "./SettingsForm";
@@ -39,10 +39,14 @@ export default async function SettingsPage() {
   );
 
   return (
-    <>
-      <AppHeader />
-      <main className="container max-w-lg py-10">
-        <h1 className="mb-6 text-2xl font-bold">설정</h1>
+    <AppShell>
+      <main className="container max-w-2xl py-8 lg:py-10">
+        <header className="mb-6">
+          <h1 className="font-display text-2xl font-bold sm:text-3xl">설정</h1>
+          <p className="mt-1 text-sm text-muted-foreground">
+            학습 방식과 표시 방식을 내게 맞게 조정해요.
+          </p>
+        </header>
         <SettingsForm
           initial={{
             language: profile?.selected_language ?? "english",
@@ -52,6 +56,6 @@ export default async function SettingsPage() {
           }}
         />
       </main>
-    </>
+    </AppShell>
   );
 }

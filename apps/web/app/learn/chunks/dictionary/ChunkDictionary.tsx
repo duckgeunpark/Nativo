@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { Volume2, Trash2 } from "lucide-react";
 import type { Chunk, Language } from "@nativo/core";
 import { speak } from "@/lib/tts";
 import { CHUNK_COMPLETE_THRESHOLD } from "@/lib/chunk-review";
@@ -8,6 +9,7 @@ import { CATEGORY_LABEL } from "@/lib/chunks";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
+import { EmptyState, ErrorBanner } from "@/components/ui/states";
 import { HeartToggle } from "@/app/learn/flashcards/dictionary/HeartToggle";
 import { addToMyChunks, removeFromMyChunks, deleteChunk } from "./actions";
 
@@ -76,18 +78,18 @@ export function ChunkDictionary({
       />
       <p className="mb-3 text-sm text-muted-foreground">{filtered.length}개 청크</p>
 
-      {error && (
-        <p className="mb-3 rounded-lg bg-destructive/10 px-3 py-2 text-sm text-destructive">
-          {error}
-        </p>
-      )}
+      <ErrorBanner message={error} className="mb-3" />
 
       {filtered.length === 0 ? (
-        <Card>
-          <CardContent className="py-10 text-center text-sm text-muted-foreground">
-            {rows.length === 0 ? emptyText : "검색 결과가 없습니다."}
-          </CardContent>
-        </Card>
+        rows.length === 0 ? (
+          <EmptyState icon="📭" title={emptyText} />
+        ) : (
+          <EmptyState
+            icon="🔍"
+            title="검색 결과가 없어요"
+            description="다른 표현이나 뜻으로 다시 검색해 보세요."
+          />
+        )
       ) : (
         <ul className="space-y-2">
           {filtered.map((r) => (
@@ -98,64 +100,66 @@ export function ChunkDictionary({
                     type="button"
                     onClick={() => speak(r.expression, language)}
                     aria-label="발음 듣기"
-                    className="shrink-0 pt-0.5 text-lg"
+                    className="shrink-0 rounded-md p-1.5 text-muted-foreground transition hover:bg-secondary hover:text-foreground"
                   >
-                    🔊
+                    <Volume2 className="h-4 w-4" aria-hidden />
                   </button>
                   <div className="min-w-0 flex-1">
                     <div className="flex flex-wrap items-center gap-2">
-                      <span className="font-medium">{r.expression}</span>
+                      <span className="break-words font-medium">{r.expression}</span>
                       {r.category && (
                         <Badge variant="muted">
                           {CATEGORY_LABEL[r.category] ?? r.category}
                         </Badge>
                       )}
                       {r.review_count >= CHUNK_COMPLETE_THRESHOLD ? (
-                        <span className="rounded bg-green-100 px-1.5 py-0.5 text-xs font-medium text-green-700">
-                          ✓ 완료
-                        </span>
+                        <Badge variant="success">완료</Badge>
                       ) : (
                         <span className="text-xs text-muted-foreground">
                           복습 {r.review_count}회
                         </span>
                       )}
                     </div>
-                    <p className="text-sm text-muted-foreground">{r.translation_ko}</p>
+                    <p className="line-clamp-2 break-words text-sm text-muted-foreground">
+                      {r.translation_ko}
+                    </p>
                   </div>
-                  <HeartToggle
-                    initialActive={r.source === "manual"}
-                    onAdd={() =>
-                      addToMyChunks({
-                        language,
-                        expression: r.expression,
-                        translation_ko: r.translation_ko ?? r.expression,
-                        situation: r.situation,
-                        nuance: r.nuance,
-                        example_1: r.example_1,
-                        example_2: r.example_2,
-                        category: r.category,
-                        level: r.level,
-                      })
-                    }
-                    onRemove={() =>
-                      removeFromMyChunks({ language, expression: r.expression })
-                    }
-                    onToggled={(active) => {
-                      if (removeOnUnheart && !active) {
-                        setRows((prev) => prev.filter((x) => x.id !== r.id));
+                  <div className="flex shrink-0 items-center gap-1">
+                    <HeartToggle
+                      initialActive={r.source === "manual"}
+                      onAdd={() =>
+                        addToMyChunks({
+                          language,
+                          expression: r.expression,
+                          translation_ko: r.translation_ko ?? r.expression,
+                          situation: r.situation,
+                          nuance: r.nuance,
+                          example_1: r.example_1,
+                          example_2: r.example_2,
+                          category: r.category,
+                          level: r.level,
+                        })
                       }
-                    }}
-                  />
-                  <button
-                    type="button"
-                    onClick={() => remove(r.id)}
-                    disabled={busy === r.id}
-                    aria-label="청크 삭제"
-                    title="사전에서 완전히 삭제"
-                    className="shrink-0 rounded-md p-1.5 text-muted-foreground transition hover:bg-destructive/10 hover:text-destructive disabled:opacity-40"
-                  >
-                    🗑
-                  </button>
+                      onRemove={() =>
+                        removeFromMyChunks({ language, expression: r.expression })
+                      }
+                      onToggled={(active) => {
+                        if (removeOnUnheart && !active) {
+                          setRows((prev) => prev.filter((x) => x.id !== r.id));
+                        }
+                      }}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => remove(r.id)}
+                      disabled={busy === r.id}
+                      aria-label="청크 삭제"
+                      title="사전에서 완전히 삭제"
+                      className="flex h-9 w-9 items-center justify-center rounded-md text-muted-foreground transition hover:bg-destructive/10 hover:text-destructive disabled:opacity-40"
+                    >
+                      <Trash2 className="h-4 w-4" aria-hidden />
+                    </button>
+                  </div>
                 </CardContent>
               </Card>
             </li>

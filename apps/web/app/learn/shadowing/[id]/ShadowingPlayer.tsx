@@ -2,12 +2,25 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import YouTube, { type YouTubePlayer } from "react-youtube";
-import { Repeat } from "lucide-react";
+import {
+  ClipboardPaste,
+  FastForward,
+  Gauge,
+  Loader2,
+  Pause,
+  Play,
+  Repeat,
+  Repeat1,
+  Rewind,
+  Sparkles,
+  Upload,
+} from "lucide-react";
 import type { Language } from "@nativo/core";
 import type { TranscriptCue } from "@/lib/youtube";
 import { parseSubtitles } from "@/lib/subtitles";
 import { saveShadowingProgress, saveTranscript } from "./actions";
 import { Button } from "@/components/ui/button";
+import { ErrorBanner } from "@/components/ui/states";
 import { cn } from "@/lib/utils";
 
 interface Props {
@@ -210,6 +223,12 @@ export function ShadowingPlayer({
     playerRef.current?.setPlaybackRate(rate);
   }
 
+  function cycleSpeed() {
+    const idx = SPEEDS.indexOf(speed as (typeof SPEEDS)[number]);
+    const next = SPEEDS[(idx + 1) % SPEEDS.length] ?? SPEEDS[0];
+    changeSpeed(next);
+  }
+
   async function markPoint(which: "a" | "b") {
     const player = playerRef.current;
     if (!player) return;
@@ -236,11 +255,22 @@ export function ShadowingPlayer({
     seekTo(cue.start);
   }
 
+  /** 컨트롤 바의 "줄 반복" 토글 — 현재 재생 중인 줄 기준. */
+  function toggleActiveLineRepeat() {
+    const cue = cues[activeIdx];
+    if (!cue) return;
+    if (looping && pointA === cue.start) clearLoop();
+    else loopCue(activeIdx);
+  }
+
+  const activeCue = activeIdx >= 0 ? (cues[activeIdx] ?? null) : null;
+  const activeLineLooping = looping && activeCue !== null && pointA === activeCue.start;
+
   return (
-    <div className="grid gap-4 lg:grid-cols-[1fr_22rem]">
+    <div className="grid gap-4 lg:grid-cols-[1fr_22rem] lg:items-start">
       {/* 왼쪽: 영상 + 컨트롤 */}
       <div className="space-y-4">
-        <div className="overflow-hidden rounded-xl border bg-black">
+        <div className="overflow-hidden rounded-2xl border bg-black shadow-sm">
           <YouTube
             videoId={videoId}
             onReady={onReady}
@@ -258,104 +288,153 @@ export function ShadowingPlayer({
           />
         </div>
 
-        {/* 재생 컨트롤 */}
-        <div className="flex items-center justify-center gap-2">
-          <Button variant="outline" size="sm" onClick={() => seekBy(-3)}>
-            ◀ 3초
-          </Button>
-          <Button size="sm" onClick={togglePlay} className="min-w-20">
-            {playing ? "❚❚ 정지" : "▶ 재생"}
-          </Button>
-          <Button variant="outline" size="sm" onClick={() => seekBy(3)}>
-            3초 ▶
-          </Button>
-        </div>
+        {activeCue && (
+          <p className="rounded-xl border bg-card px-4 py-3 text-sm font-medium shadow-sm">
+            {activeCue.text}
+          </p>
+        )}
 
-        {/* 속도 */}
-        <div className="flex items-center justify-center gap-2 text-sm">
-          <span className="text-muted-foreground">속도</span>
-          {SPEEDS.map((r) => (
-            <button
-              key={r}
-              type="button"
-              onClick={() => changeSpeed(r)}
-              className={cn(
-                "rounded-md px-2 py-1 transition-colors",
-                speed === r ? "bg-primary text-primary-foreground" : "hover:bg-secondary",
-              )}
-            >
-              {r}x
-            </button>
-          ))}
-        </div>
+        {/* 우선순위 컨트롤 바: 재생/탐색이 항상 중앙, 나머지는 좁은 화면에서 줄바꿈 */}
+        <div className="flex flex-wrap items-center justify-center gap-2 rounded-2xl border bg-card p-3 shadow-sm">
+          <Button
+            variant="outline"
+            size="icon"
+            onClick={() => seekBy(-3)}
+            aria-label="3초 뒤로"
+            title="3초 뒤로"
+          >
+            <Rewind size={16} />
+          </Button>
+          <Button
+            size="icon"
+            onClick={togglePlay}
+            aria-label={playing ? "일시정지" : "재생"}
+            title={playing ? "일시정지" : "재생"}
+            className="h-12 w-12 rounded-full"
+          >
+            {playing ? <Pause size={20} /> : <Play size={20} />}
+          </Button>
+          <Button
+            variant="outline"
+            size="icon"
+            onClick={() => seekBy(3)}
+            aria-label="3초 앞으로"
+            title="3초 앞으로"
+          >
+            <FastForward size={16} />
+          </Button>
 
-        {/* A-B 구간 반복 */}
-        <div className="rounded-xl border p-3">
-          <div className="mb-2 flex items-center justify-between text-sm">
-            <span className="font-medium">구간 반복 (A-B)</span>
-            <span className="text-muted-foreground">현재 {fmt(current)}</span>
-          </div>
-          {pointA !== null && pointB !== null && (
-            <p className="mb-2 text-xs text-muted-foreground">
-              {fmt(pointA)} → {fmt(pointB)} 구간을 {looping ? "반복 중" : "반복 대기"}
-            </p>
-          )}
-          <div className="flex flex-wrap items-center gap-2">
-            <Button variant="outline" size="sm" onClick={() => markPoint("a")}>
-              A 지정 {pointA !== null && `(${fmt(pointA)})`}
-            </Button>
-            <Button variant="outline" size="sm" onClick={() => markPoint("b")}>
-              B 지정 {pointB !== null && `(${fmt(pointB)})`}
-            </Button>
-            <Button
-              size="sm"
-              variant={looping ? "default" : "secondary"}
-              disabled={pointA === null || pointB === null}
-              onClick={() => setLooping((v) => !v)}
-            >
-              {looping ? "반복 중" : "반복 시작"}
-            </Button>
-            {(pointA !== null || pointB !== null) && (
-              <Button size="sm" variant="ghost" onClick={clearLoop}>
-                초기화
-              </Button>
+          <button
+            type="button"
+            onClick={cycleSpeed}
+            className="flex h-10 items-center gap-1.5 rounded-md border border-input px-3 text-sm shadow-sm transition-colors hover:bg-secondary"
+            aria-label="재생 속도 변경"
+            title="재생 속도 변경"
+          >
+            <Gauge size={14} aria-hidden />
+            {speed}x
+          </button>
+
+          <Button
+            size="sm"
+            variant="outline"
+            disabled={pointA === null || pointB === null}
+            onClick={() => setLooping((v) => !v)}
+            className={cn(
+              looping && !activeLineLooping &&
+                "border-highlight bg-highlight/10 text-highlight hover:bg-highlight/15",
             )}
-          </div>
+          >
+            <Repeat size={14} /> A-B 반복
+          </Button>
+          <Button
+            size="sm"
+            variant="outline"
+            disabled={activeIdx < 0}
+            onClick={toggleActiveLineRepeat}
+            className={cn(
+              activeLineLooping && "border-highlight bg-highlight/10 text-highlight hover:bg-highlight/15",
+            )}
+          >
+            <Repeat1 size={14} /> 줄 반복
+          </Button>
+        </div>
+
+        {/* A-B 구간 상세: 지점 지정/초기화 (보조 행) */}
+        <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-xs text-muted-foreground">
+          <button type="button" onClick={() => markPoint("a")} className="hover:text-foreground">
+            A 지정 {pointA !== null && `(${fmt(pointA)})`}
+          </button>
+          <span aria-hidden>·</span>
+          <button type="button" onClick={() => markPoint("b")} className="hover:text-foreground">
+            B 지정 {pointB !== null && `(${fmt(pointB)})`}
+          </button>
+          {(pointA !== null || pointB !== null) && (
+            <>
+              <span aria-hidden>·</span>
+              <button type="button" onClick={clearLoop} className="hover:text-destructive">
+                초기화
+              </button>
+            </>
+          )}
+          <span aria-hidden>·</span>
+          <span>현재 {fmt(current)}</span>
         </div>
       </div>
 
       {/* 오른쪽: 시간별 자막 리스트 + 직접 입력 */}
-      <aside className="flex max-h-[70vh] flex-col rounded-xl border">
-        <div className="flex items-center justify-between border-b px-3 py-2 text-sm">
-          <span className="font-medium">자막</span>
+      <aside className="flex max-h-[70vh] flex-col rounded-2xl border bg-card shadow-sm lg:sticky lg:top-4">
+        <div className="flex items-center justify-between border-b px-3 py-2.5 text-sm">
           <div className="flex items-center gap-2">
+            <span className="font-semibold">자막</span>
             {cues.length > 0 && (
-              <span className="text-muted-foreground">{cues.length}줄</span>
+              <span className="text-xs text-muted-foreground">{cues.length}줄</span>
             )}
-            <button
-              type="button"
-              onClick={() => setEditingSub((v) => !v)}
-              className="text-xs text-primary hover:underline"
-            >
-              {editingSub ? "닫기" : cues.length > 0 ? "교체" : "자막 넣기"}
-            </button>
           </div>
+          <button
+            type="button"
+            onClick={() => setEditingSub((v) => !v)}
+            className="text-xs font-medium text-primary hover:underline"
+          >
+            {editingSub ? "닫기" : cues.length > 0 ? "교체" : "자막 넣기"}
+          </button>
         </div>
 
         {editingSub ? (
-          <div className="space-y-2 p-3">
-            <Button
-              size="sm"
-              className="w-full"
-              onClick={autoFetch}
-              disabled={autoLoading}
-            >
-              {autoLoading ? "자동 가져오는 중…" : "⚡ 자막 자동 가져오기 (yt-dlp)"}
-            </Button>
-            <p className="text-center text-[11px] text-muted-foreground">또는 직접 입력</p>
+          <div className="space-y-3 overflow-y-auto p-3">
+            <div className="grid grid-cols-3 gap-2">
+              <button
+                type="button"
+                onClick={autoFetch}
+                disabled={autoLoading}
+                className="flex flex-col items-center gap-1 rounded-xl border p-2.5 text-center text-[11px] transition-colors hover:bg-secondary disabled:opacity-50"
+              >
+                {autoLoading ? (
+                  <Loader2 size={18} className="animate-spin text-primary" />
+                ) : (
+                  <Sparkles size={18} className="text-primary" />
+                )}
+                <span className="font-medium">자동 가져오기</span>
+              </button>
+              <label className="flex cursor-pointer flex-col items-center gap-1 rounded-xl border p-2.5 text-center text-[11px] transition-colors hover:bg-secondary">
+                <Upload size={18} className="text-primary" />
+                <span className="font-medium">파일 업로드</span>
+                <input
+                  type="file"
+                  accept=".srt,.vtt,.txt,text/plain"
+                  className="hidden"
+                  onChange={onSubFile}
+                />
+              </label>
+              <div className="flex flex-col items-center gap-1 rounded-xl border p-2.5 text-center text-[11px]">
+                <ClipboardPaste size={18} className="text-primary" />
+                <span className="font-medium">붙여넣기</span>
+              </div>
+            </div>
+
             <p className="text-xs text-muted-foreground">
-              유튜브에서 <b>⋯ → 스크립트 표시</b>로 복사하거나 <b>.srt/.vtt</b> 파일을
-              올려 붙여넣으세요.
+              유튜브에서 <b>⋯ → 스크립트 표시</b>로 복사하거나 <b>.srt/.vtt</b> 내용을 아래에
+              붙여넣으세요.
             </p>
             <textarea
               value={rawSub}
@@ -364,32 +443,50 @@ export function ShadowingPlayer({
               placeholder={
                 "SRT / VTT / 유튜브 스크립트 붙여넣기\n\n예)\n00:00:01,000 --> 00:00:04,000\nHello world"
               }
-              className="w-full resize-y rounded-lg border bg-background p-2 text-xs outline-none focus:ring-1 focus:ring-primary"
+              className="w-full resize-y rounded-lg border bg-background p-2 text-xs outline-none focus:ring-2 focus:ring-ring"
             />
-            <div className="flex items-center justify-between gap-2">
-              <label className="cursor-pointer text-xs text-muted-foreground hover:text-foreground">
-                📎 파일 선택(.srt/.vtt)
-                <input
-                  type="file"
-                  accept=".srt,.vtt,.txt,text/plain"
-                  className="hidden"
-                  onChange={onSubFile}
-                />
-              </label>
-              <Button size="sm" onClick={applyTranscript} disabled={savingSub || !rawSub.trim()}>
-                {savingSub ? "적용 중…" : "자막 적용"}
+            <div className="flex items-center justify-end">
+              <Button
+                size="sm"
+                onClick={applyTranscript}
+                disabled={savingSub || !rawSub.trim()}
+                className="bg-highlight text-highlight-foreground hover:bg-highlight/90"
+              >
+                {savingSub ? (
+                  <>
+                    <Loader2 size={14} className="animate-spin" /> 적용 중…
+                  </>
+                ) : (
+                  "자막 적용"
+                )}
               </Button>
             </div>
-            {subError && <p className="text-xs text-destructive">{subError}</p>}
+            <ErrorBanner message={subError} />
           </div>
         ) : cues.length === 0 ? (
-          <p className="p-4 text-sm text-muted-foreground">
-            자막이 없습니다. 위 <b>자막 넣기</b>로 직접 추가할 수 있어요.
-          </p>
+          <div className="flex flex-1 items-center justify-center p-6 text-center text-sm text-muted-foreground">
+            <p>
+              자막이 없습니다.{" "}
+              <button
+                type="button"
+                onClick={() => setEditingSub(true)}
+                className="text-primary hover:underline"
+              >
+                자막 넣기
+              </button>
+            </p>
+          </div>
         ) : (
           <ol className="flex-1 overflow-y-auto p-2">
             {cues.map((cue, i) => {
               const active = i === activeIdx;
+              const inLoopRange =
+                !active &&
+                looping &&
+                pointA !== null &&
+                pointB !== null &&
+                cue.start >= pointA &&
+                cue.start < pointB;
               return (
                 <li key={i} className="group flex items-stretch gap-1">
                   <button
@@ -397,16 +494,21 @@ export function ShadowingPlayer({
                     ref={active ? activeRef : null}
                     onClick={() => seekTo(cue.start)}
                     className={cn(
-                      "flex-1 rounded-md px-2 py-1.5 text-left text-sm transition-colors",
-                      active ? "bg-primary/10 text-foreground" : "hover:bg-secondary",
+                      "flex-1 break-words rounded-lg border-l-2 border-transparent px-2 py-1.5 text-left text-sm transition-colors [overflow-wrap:anywhere]",
+                      active
+                        ? "border-highlight bg-highlight/10"
+                        : inLoopRange
+                          ? "border-primary/40 bg-primary/5"
+                          : "hover:bg-secondary",
                     )}
                   >
                     <span
                       className={cn(
-                        "mr-2 align-top text-xs tabular-nums",
-                        active ? "text-primary" : "text-muted-foreground",
+                        "mr-2 inline-flex items-center gap-1 align-top text-xs tabular-nums",
+                        active ? "text-highlight" : "text-muted-foreground",
                       )}
                     >
+                      {active && <Play size={9} className="fill-current" aria-hidden />}
                       {fmt(cue.start)}
                     </span>
                     <span>{cue.text}</span>

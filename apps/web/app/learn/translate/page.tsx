@@ -1,8 +1,8 @@
 import { redirect } from "next/navigation";
 import type { Language } from "@nativo/core";
+import { AppShell } from "@/components/AppShell";
 import { isSupabaseConfigured } from "@/lib/supabase/env";
 import { SupabaseNotice } from "@/components/SupabaseNotice";
-import { AppHeader } from "@/components/AppHeader";
 import { createClient } from "@/lib/supabase/server";
 import { Card, CardContent } from "@/components/ui/card";
 import { TranslateWorkbench } from "./TranslateWorkbench";
@@ -19,9 +19,11 @@ interface SessionRow {
 export default async function TranslatePage() {
   if (!isSupabaseConfigured()) {
     return (
-      <main className="flex min-h-screen items-center justify-center px-6">
-        <SupabaseNotice />
-      </main>
+      <AppShell>
+        <main className="container flex min-h-[60vh] items-center justify-center py-10">
+          <SupabaseNotice />
+        </main>
+      </AppShell>
     );
   }
 
@@ -48,11 +50,10 @@ export default async function TranslatePage() {
     .returns<SessionRow[]>();
 
   return (
-    <>
-      <AppHeader />
-      <main className="container max-w-2xl py-10">
+    <AppShell>
+      <main className="container max-w-2xl py-8 sm:py-10">
         <header className="mb-5">
-          <h1 className="text-2xl font-bold">번역가 모드</h1>
+          <h1 className="font-display text-2xl font-bold sm:text-3xl">번역가 모드</h1>
           <p className="mt-1 text-sm text-muted-foreground">
             원문을 한국어로 번역하고 AI 평가(정확·자연·뉘앙스)를 받아보세요.
           </p>
@@ -96,6 +97,6 @@ export default async function TranslatePage() {
           </section>
         )}
       </main>
-    </>
+    </AppShell>
   );
 }

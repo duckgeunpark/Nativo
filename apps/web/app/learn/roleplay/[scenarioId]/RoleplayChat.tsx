@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Mic, Square, Volume2, VolumeX } from "lucide-react";
+import { ChevronDown, LogOut, Mic, RotateCcw, Send, Square, Star, Volume2, VolumeX } from "lucide-react";
 import type { Language } from "@nativo/core";
 import {
   MISSION_COMPLETE_TOKEN,
@@ -15,6 +15,7 @@ import {
 } from "@/lib/speech";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Skeleton } from "@/components/ui/states";
 import { cn } from "@/lib/utils";
 
 interface Msg {
@@ -37,6 +38,7 @@ export function RoleplayChat({ scenarioId, custom, language, configured }: Props
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [ended, setEnded] = useState<EndReason | null>(null);
+  const [confirmingEnd, setConfirmingEnd] = useState(false);
   const [feedback, setFeedback] = useState<RoleplayCoachFeedback | null>(null);
   const [feedbackLoading, setFeedbackLoading] = useState(false);
   const [listening, setListening] = useState(false);
@@ -51,7 +53,7 @@ export function RoleplayChat({ scenarioId, custom, language, configured }: Props
 
   useEffect(() => {
     endRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages, loading, feedback]);
+  }, [messages, loading]);
 
   async function callApi(history: Msg[]): Promise<string | null> {
     const res = await fetch("/api/roleplay", {
@@ -73,15 +75,19 @@ export function RoleplayChat({ scenarioId, custom, language, configured }: Props
     if (done) endSession("mission", [...history, { role: "assistant", content: clean }]);
   }
 
-  // 첫 진입 시 AI가 먼저 인사
-  useEffect(() => {
-    if (!configured || startedRef.current) return;
-    startedRef.current = true;
+  function greet() {
     setLoading(true);
     void callApi([]).then((reply) => {
       if (reply) handleReply(reply, []);
       setLoading(false);
     });
+  }
+
+  // 첫 진입 시 AI가 먼저 인사
+  useEffect(() => {
+    if (!configured || startedRef.current) return;
+    startedRef.current = true;
+    greet();
   }, [configured]); // eslint-disable-line react-hooks/exhaustive-deps
 
   async function send(textArg?: string) {
@@ -106,6 +112,7 @@ export function RoleplayChat({ scenarioId, custom, language, configured }: Props
 
   function endSession(reason: EndReason, history: Msg[]) {
     stopListening();
+    setConfirmingEnd(false);
     setEnded(reason);
     void requestFeedback(history);
   }
@@ -123,6 +130,18 @@ export function RoleplayChat({ scenarioId, custom, language, configured }: Props
     } finally {
       setFeedbackLoading(false);
     }
+  }
+
+  /** 피드백 패널의 "다시 도전하기" — 대화를 처음부터 새로 시작. */
+  function retry() {
+    stopListening();
+    setMessages([]);
+    setInput("");
+    setEnded(null);
+    setConfirmingEnd(false);
+    setFeedback(null);
+    setFeedbackLoading(false);
+    greet();
   }
 
   // --- 음성 입력 ---
@@ -156,142 +175,227 @@ export function RoleplayChat({ scenarioId, custom, language, configured }: Props
 
   if (!configured) {
     return (
-      <div className="rounded-xl border bg-muted/40 p-8 text-center text-sm text-muted-foreground">
+      <div className="rounded-2xl border border-dashed bg-card p-8 text-center text-sm text-muted-foreground shadow-sm">
         OpenAI 키가 설정되면 이 화면에서 AI와 대화할 수 있어요.
       </div>
     );
   }
 
+  const showFeedbackPane = feedbackLoading || feedback !== null;
+
   return (
-    <div className="flex h-[70vh] flex-col rounded-xl border">
-      {/* 상단 바: 음성 출력 토글 + 종료 */}
-      <div className="flex items-center justify-between border-b px-3 py-2 text-sm">
-        <span className="text-muted-foreground">
-          {ended ? "대화 종료됨" : "대화 중 · /end 로 종료"}
-        </span>
-        <div className="flex items-center gap-2">
-          {voiceOutSupported && (
-            <button
-              type="button"
-              onClick={() => setAutoSpeak((v) => !v)}
-              className="flex items-center gap-1 rounded-md px-2 py-1 text-muted-foreground hover:bg-secondary"
-              title={autoSpeak ? "음성 응답 끄기" : "음성 응답 켜기"}
-            >
-              {autoSpeak ? <Volume2 size={16} /> : <VolumeX size={16} />}
-            </button>
-          )}
-          {!ended && messages.some((m) => m.role === "user") && (
-            <button
-              type="button"
-              onClick={() => endSession("manual", messages)}
-              className="rounded-md border px-2 py-1 text-muted-foreground hover:bg-secondary"
-            >
-              종료 & 피드백
-            </button>
+    <div className="grid gap-4 lg:grid-cols-[1fr_20rem] lg:items-start">
+      {/* 채팅 */}
+      <div className="flex h-[70vh] flex-col rounded-2xl border bg-card shadow-sm">
+        {/* 상단 바: 상태 + 음성 출력 토글 + 종료(확인 포함) */}
+        <div className="flex items-center justify-between gap-2 border-b px-3 py-2 text-sm">
+          {confirmingEnd ? (
+            <div className="flex w-full items-center justify-between gap-2">
+              <span className="text-muted-foreground">정말 대화를 종료할까요?</span>
+              <div className="flex items-center gap-2">
+                <Button size="sm" variant="ghost" onClick={() => setConfirmingEnd(false)}>
+                  취소
+                </Button>
+                <Button
+                  size="sm"
+                  variant="destructive"
+                  onClick={() => endSession("manual", messages)}
+                >
+                  종료
+                </Button>
+              </div>
+            </div>
+          ) : (
+            <>
+              <span className="text-muted-foreground">
+                {ended ? "대화 종료됨" : "대화 중 · /end 로 종료"}
+              </span>
+              <div className="flex items-center gap-1">
+                {voiceOutSupported && (
+                  <button
+                    type="button"
+                    onClick={() => setAutoSpeak((v) => !v)}
+                    className="flex items-center gap-1 rounded-md px-2 py-1 text-muted-foreground hover:bg-secondary"
+                    title={autoSpeak ? "음성 응답 끄기" : "음성 응답 켜기"}
+                  >
+                    {autoSpeak ? <Volume2 size={16} /> : <VolumeX size={16} />}
+                  </button>
+                )}
+                {!ended && messages.some((m) => m.role === "user") && (
+                  <button
+                    type="button"
+                    onClick={() => setConfirmingEnd(true)}
+                    className="flex items-center gap-1 rounded-md border px-2 py-1 text-xs text-muted-foreground hover:bg-secondary"
+                  >
+                    <LogOut size={13} aria-hidden /> 종료
+                  </button>
+                )}
+              </div>
+            </>
           )}
         </div>
+
+        <div className="flex-1 space-y-3 overflow-y-auto p-4">
+          {messages.map((m, i) => (
+            <div
+              key={i}
+              className={cn("flex", m.role === "user" ? "justify-end" : "justify-start")}
+            >
+              <div
+                className={cn(
+                  "max-w-[80%] whitespace-pre-wrap break-words rounded-2xl px-4 py-2 text-sm [overflow-wrap:anywhere]",
+                  m.role === "user" ? "bg-primary text-primary-foreground" : "bg-secondary",
+                )}
+              >
+                {m.content}
+                {m.role === "assistant" && (
+                  <button
+                    type="button"
+                    onClick={() => speak(m.content, language)}
+                    className="ml-2 align-middle opacity-70 hover:opacity-100"
+                    aria-label="발음 듣기"
+                  >
+                    🔊
+                  </button>
+                )}
+              </div>
+            </div>
+          ))}
+
+          {loading && (
+            <div className="flex justify-start">
+              <div className="rounded-2xl bg-secondary px-4 py-2 text-sm text-muted-foreground">
+                …
+              </div>
+            </div>
+          )}
+
+          {ended && (
+            <div className="rounded-xl border bg-muted/40 p-4 text-center text-sm">
+              {ended === "mission" ? (
+                <p className="font-semibold text-success">🎉 목표를 달성했습니다!</p>
+              ) : (
+                <p className="font-medium text-muted-foreground">대화를 종료했습니다.</p>
+              )}
+            </div>
+          )}
+
+          <div ref={endRef} />
+        </div>
+
+        {!ended && (
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              void send();
+            }}
+            className="border-t p-3"
+          >
+            {listening && (
+              <p className="mb-2 flex items-center gap-1.5 text-xs text-destructive">
+                <span className="h-2 w-2 animate-pulse rounded-full bg-destructive" aria-hidden />
+                듣고 있어요…
+              </p>
+            )}
+            <div className="flex gap-2">
+              {voiceInSupported && (
+                <Button
+                  type="button"
+                  variant={listening ? "destructive" : "secondary"}
+                  size="icon"
+                  onClick={toggleListening}
+                  disabled={loading}
+                  aria-label={listening ? "음성 입력 중지" : "음성으로 말하기"}
+                  title={listening ? "음성 입력 중지" : "음성으로 말하기"}
+                >
+                  {listening ? <Square size={18} /> : <Mic size={18} />}
+                </Button>
+              )}
+              <Input
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                placeholder={
+                  listening
+                    ? "듣고 있어요…"
+                    : loading
+                      ? "응답을 기다리는 중…"
+                      : "대화를 입력하세요… (/end 로 종료)"
+                }
+                disabled={loading}
+              />
+              <Button type="submit" disabled={loading || !input.trim()} aria-label="보내기">
+                <Send size={16} />
+              </Button>
+            </div>
+          </form>
+        )}
       </div>
 
-      <div className="flex-1 space-y-3 overflow-y-auto p-4">
-        {messages.map((m, i) => (
-          <div
-            key={i}
-            className={cn("flex", m.role === "user" ? "justify-end" : "justify-start")}
-          >
-            <div
-              className={cn(
-                "max-w-[80%] rounded-2xl px-4 py-2 text-sm",
-                m.role === "user" ? "bg-primary text-primary-foreground" : "bg-secondary",
-              )}
-            >
-              {m.content}
-              {m.role === "assistant" && (
-                <button
-                  type="button"
-                  onClick={() => speak(m.content, language)}
-                  className="ml-2 align-middle opacity-70 hover:opacity-100"
-                  aria-label="발음 듣기"
-                >
-                  🔊
-                </button>
-              )}
-            </div>
-          </div>
-        ))}
-
-        {loading && (
-          <div className="flex justify-start">
-            <div className="rounded-2xl bg-secondary px-4 py-2 text-sm text-muted-foreground">
-              …
-            </div>
-          </div>
-        )}
-
-        {ended && (
-          <div className="rounded-xl border bg-muted/40 p-4 text-center text-sm">
-            {ended === "mission" ? (
-              <p className="font-semibold text-success">🎉 목표를 달성했습니다!</p>
+      {/* 피드백 패널: 데스크톱은 옆 컬럼, 모바일은 채팅 아래 접히는 패널 */}
+      {showFeedbackPane && (
+        <>
+          <div className="hidden rounded-2xl border bg-card p-4 shadow-sm lg:sticky lg:top-4 lg:block">
+            {feedbackLoading ? (
+              <FeedbackSkeleton />
             ) : (
-              <p className="font-medium text-muted-foreground">대화를 종료했습니다.</p>
+              feedback && <FeedbackPanel feedback={feedback} onRetry={retry} />
             )}
           </div>
-        )}
 
-        {feedbackLoading && (
-          <p className="text-center text-sm text-muted-foreground">피드백을 작성하는 중…</p>
-        )}
-        {feedback && <FeedbackPanel feedback={feedback} />}
-
-        <div ref={endRef} />
-      </div>
-
-      {!ended && (
-        <form
-          onSubmit={(e) => {
-            e.preventDefault();
-            void send();
-          }}
-          className="flex gap-2 border-t p-3"
-        >
-          {voiceInSupported && (
-            <Button
-              type="button"
-              variant={listening ? "destructive" : "secondary"}
-              size="icon"
-              onClick={toggleListening}
-              disabled={loading}
-              aria-label={listening ? "음성 입력 중지" : "음성으로 말하기"}
-              title={listening ? "음성 입력 중지" : "음성으로 말하기"}
-            >
-              {listening ? <Square size={18} /> : <Mic size={18} />}
-            </Button>
-          )}
-          <Input
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            placeholder={listening ? "듣고 있어요…" : "대화를 입력하세요… (/end 로 종료)"}
-            disabled={loading}
-          />
-          <Button type="submit" disabled={loading || !input.trim()}>
-            보내기
-          </Button>
-        </form>
+          <details open className="group rounded-2xl border bg-card shadow-sm lg:hidden">
+            <summary className="flex cursor-pointer list-none items-center justify-between px-4 py-3 text-sm font-semibold">
+              <span className="flex items-center gap-1.5">
+                <Star size={14} className="text-highlight" aria-hidden /> 피드백
+              </span>
+              <ChevronDown size={16} className="transition-transform group-open:rotate-180" aria-hidden />
+            </summary>
+            <div className="border-t p-4">
+              {feedbackLoading ? (
+                <FeedbackSkeleton />
+              ) : (
+                feedback && <FeedbackPanel feedback={feedback} onRetry={retry} />
+              )}
+            </div>
+          </details>
+        </>
       )}
     </div>
   );
 }
 
-/** 종료 후 피드백 카드: 분야별 점수 + 표현별 평가 (모국어). */
-function FeedbackPanel({ feedback }: { feedback: RoleplayCoachFeedback }) {
+/** 피드백 패널 로딩 중 스켈레톤. */
+function FeedbackSkeleton() {
+  return (
+    <div className="space-y-4">
+      <Skeleton className="h-4 w-2/3" />
+      <div className="grid grid-cols-4 gap-2">
+        {Array.from({ length: 4 }).map((_, i) => (
+          <Skeleton key={i} className="h-14" />
+        ))}
+      </div>
+      <Skeleton className="h-24 w-full" />
+      <p className="text-center text-xs text-muted-foreground">피드백을 작성하는 중…</p>
+    </div>
+  );
+}
+
+/** 종료 후 피드백 카드: 분야별 점수 + 표현별 평가(모국어) + 재도전 CTA. */
+function FeedbackPanel({
+  feedback,
+  onRetry,
+}: {
+  feedback: RoleplayCoachFeedback;
+  onRetry: () => void;
+}) {
   const { scores, summary, expressions, next_recommendation } = feedback;
   const ratingStyle: Record<string, string> = {
     좋음: "bg-success/15 text-success",
-    어색: "bg-amber-100 text-amber-800",
-    개선: "bg-red-100 text-red-700",
+    어색: "bg-highlight/15 text-highlight",
+    개선: "bg-destructive/15 text-destructive",
   };
 
   return (
-    <div className="space-y-4 rounded-xl border bg-background p-4 text-left">
+    <div className="space-y-4 text-left">
       <div>
         <p className="text-sm font-semibold">총평</p>
         <p className="mt-1 text-sm text-muted-foreground">{summary}</p>
@@ -305,7 +409,7 @@ function FeedbackPanel({ feedback }: { feedback: RoleplayCoachFeedback }) {
           ["어휘", scores?.vocab],
         ].map(([label, val]) => (
           <div key={label as string} className="rounded-lg bg-secondary p-2">
-            <p className="text-lg font-bold">{val ?? "–"}</p>
+            <p className="text-lg font-bold tabular-nums">{val ?? "–"}</p>
             <p className="text-xs text-muted-foreground">{label as string}</p>
           </div>
         ))}
@@ -345,6 +449,13 @@ function FeedbackPanel({ feedback }: { feedback: RoleplayCoachFeedback }) {
           <p className="mt-1 text-sm text-muted-foreground">{next_recommendation}</p>
         </div>
       )}
+
+      <Button
+        onClick={onRetry}
+        className="w-full bg-highlight text-highlight-foreground hover:bg-highlight/90"
+      >
+        <RotateCcw size={14} /> 다시 도전하기
+      </Button>
     </div>
   );
 }

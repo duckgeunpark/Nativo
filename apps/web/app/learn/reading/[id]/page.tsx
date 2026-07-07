@@ -1,9 +1,10 @@
 import { redirect, notFound } from "next/navigation";
 import Link from "next/link";
+import { ChevronLeft } from "lucide-react";
 import type { Language } from "@nativo/core";
+import { AppShell } from "@/components/AppShell";
 import { isSupabaseConfigured } from "@/lib/supabase/env";
 import { SupabaseNotice } from "@/components/SupabaseNotice";
-import { AppHeader } from "@/components/AppHeader";
 import { createClient } from "@/lib/supabase/server";
 import { getBook, plainTextUrl, fetchBookPages } from "@/lib/gutenberg";
 import { Card, CardContent } from "@/components/ui/card";
@@ -18,9 +19,11 @@ export default async function BookReaderPage({
 }) {
   if (!isSupabaseConfigured()) {
     return (
-      <main className="flex min-h-screen items-center justify-center px-6">
-        <SupabaseNotice />
-      </main>
+      <AppShell>
+        <main className="container flex min-h-[60vh] items-center justify-center py-10">
+          <SupabaseNotice />
+        </main>
+      </AppShell>
     );
   }
 
@@ -69,11 +72,13 @@ export default async function BookReaderPage({
 
     if (total === 0) {
       return (
-        <>
-          <AppHeader />
+        <AppShell>
           <main className="container max-w-2xl py-10">
-            <Link href="/learn/reading" className="text-sm text-muted-foreground hover:text-foreground">
-              ← 목록
+            <Link
+              href="/learn/reading"
+              className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground"
+            >
+              <ChevronLeft className="h-4 w-4" aria-hidden /> 목록
             </Link>
             <Card className="mt-4">
               <CardContent className="py-12 text-center text-sm text-muted-foreground">
@@ -81,7 +86,7 @@ export default async function BookReaderPage({
               </CardContent>
             </Card>
           </main>
-        </>
+        </AppShell>
       );
     }
   }
@@ -125,13 +130,17 @@ export default async function BookReaderPage({
   const nextHref = page < total ? linkFor(page + 1) : null;
 
   return (
-    <>
-      <AppHeader />
-      <main className="container max-w-6xl py-8 pb-28">
-        <Link href="/learn/reading" className="text-sm text-muted-foreground hover:text-foreground">
-          ← 목록
+    <AppShell>
+      <main className="mx-auto max-w-[1360px] px-4 py-6 pb-40 sm:px-6 lg:pb-8">
+        <Link
+          href="/learn/reading"
+          className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground"
+        >
+          <ChevronLeft className="h-4 w-4" aria-hidden /> 목록
         </Link>
-        <h1 className="mb-1 mt-2 line-clamp-2 text-lg font-bold">{title}</h1>
+        <h1 className="mb-1 mt-2 line-clamp-2 font-display text-lg font-bold sm:text-xl">
+          {title}
+        </h1>
         <p className="mb-4 text-sm text-muted-foreground">
           {page} / {total} 쪽 · 읽으면서 문장을 번역해 보세요
         </p>
@@ -144,24 +153,7 @@ export default async function BookReaderPage({
           prevHref={prevHref}
           nextHref={nextHref}
         />
-
-        <nav className="mt-8 flex items-center justify-between">
-          {prevHref ? (
-            <Link href={prevHref} className="rounded-md border px-4 py-2 text-sm hover:bg-secondary">
-              ← 이전 쪽
-            </Link>
-          ) : (
-            <span />
-          )}
-          {nextHref ? (
-            <Link href={nextHref} className="rounded-md border px-4 py-2 text-sm hover:bg-secondary">
-              다음 쪽 →
-            </Link>
-          ) : (
-            <span className="text-sm text-muted-foreground">끝까지 읽었어요 🎉</span>
-          )}
-        </nav>
       </main>
-    </>
+    </AppShell>
   );
 }

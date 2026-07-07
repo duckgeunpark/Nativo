@@ -2,74 +2,89 @@
 @tailwind components;
 @tailwind utilities;
 
+/*
+ * Nativo 디자인 토큰 — warm editorial 브랜드
+ * 크림 서페이스 + 딥 틸 primary + 코랄 highlight(CTA·진행·피드백 전용)
+ * 근거: sample_img 01·02 무드보드, nativo_screens_classification.csv
+ */
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 240 10% 12%;
+    /* warm cream 서페이스 */
+    --background: 40 33% 96%;
+    --foreground: 187 32% 14%;
 
-    --card: 0 0% 100%;
-    --card-foreground: 240 10% 12%;
+    --card: 40 40% 99%;
+    --card-foreground: 187 32% 14%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 240 10% 12%;
+    --popover-foreground: 187 32% 14%;
 
-    /* 브랜드: 인디고 */
-    --primary: 243 75% 59%;
-    --primary-foreground: 0 0% 100%;
+    /* 브랜드: 딥 틸 */
+    --primary: 178 44% 19%;
+    --primary-foreground: 40 40% 98%;
 
-    --secondary: 240 5% 96%;
-    --secondary-foreground: 240 10% 12%;
+    /* warm neutral */
+    --secondary: 40 22% 91%;
+    --secondary-foreground: 187 28% 18%;
 
-    --muted: 240 5% 96%;
-    --muted-foreground: 240 4% 46%;
+    --muted: 40 20% 92%;
+    --muted-foreground: 190 10% 42%;
 
-    --accent: 243 75% 96%;
-    --accent-foreground: 243 75% 40%;
+    /* 은은한 hover 틴트 (코랄 아님 — 코랄은 highlight 전용) */
+    --accent: 168 22% 92%;
+    --accent-foreground: 178 40% 22%;
 
-    --destructive: 0 72% 51%;
+    /* 코랄: CTA·진행·피드백 등 의미 있는 상태에만 */
+    --highlight: 13 89% 63%;
+    --highlight-foreground: 0 0% 100%;
+
+    --destructive: 6 72% 50%;
     --destructive-foreground: 0 0% 100%;
 
-    --success: 142 71% 45%;
+    --success: 152 36% 37%;
     --success-foreground: 0 0% 100%;
 
-    --border: 240 6% 90%;
-    --input: 240 6% 90%;
-    --ring: 243 75% 59%;
+    --border: 40 16% 86%;
+    --input: 40 16% 83%;
+    --ring: 178 44% 30%;
 
-    --radius: 0.7rem;
+    --radius: 1rem;
   }
 
   .dark {
-    --background: 240 10% 8%;
-    --foreground: 0 0% 96%;
+    --background: 190 28% 9%;
+    --foreground: 40 30% 94%;
 
-    --card: 240 9% 11%;
-    --card-foreground: 0 0% 96%;
+    --card: 190 25% 12%;
+    --card-foreground: 40 30% 94%;
 
-    --popover: 240 9% 11%;
-    --popover-foreground: 0 0% 96%;
+    --popover: 190 25% 12%;
+    --popover-foreground: 40 30% 94%;
 
-    --primary: 243 75% 66%;
-    --primary-foreground: 240 10% 8%;
+    --primary: 172 34% 56%;
+    --primary-foreground: 190 30% 10%;
 
-    --secondary: 240 5% 18%;
-    --secondary-foreground: 0 0% 96%;
+    --secondary: 190 18% 17%;
+    --secondary-foreground: 40 25% 92%;
 
-    --muted: 240 5% 18%;
-    --muted-foreground: 240 5% 65%;
+    --muted: 190 18% 16%;
+    --muted-foreground: 40 10% 66%;
 
-    --accent: 243 40% 24%;
-    --accent-foreground: 0 0% 96%;
+    --accent: 178 22% 20%;
+    --accent-foreground: 40 25% 92%;
 
-    --destructive: 0 72% 51%;
+    --highlight: 13 85% 62%;
+    --highlight-foreground: 190 30% 10%;
+
+    --destructive: 6 72% 55%;
     --destructive-foreground: 0 0% 100%;
 
-    --success: 142 71% 45%;
-    --success-foreground: 0 0% 100%;
+    --success: 152 36% 45%;
+    --success-foreground: 190 30% 10%;
 
-    --border: 240 5% 22%;
-    --input: 240 5% 22%;
-    --ring: 243 75% 66%;
+    --border: 190 15% 21%;
+    --input: 190 15% 24%;
+    --ring: 172 34% 56%;
   }
 }
 
@@ -78,6 +93,6 @@
     @apply border-border;
   }
   body {
-    @apply bg-background text-foreground antialiased;
+    @apply bg-background font-sans text-foreground antialiased;
   }
 }

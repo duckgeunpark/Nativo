@@ -1,8 +1,9 @@
 import { redirect, notFound } from "next/navigation";
 import Link from "next/link";
+import { ArrowLeft } from "lucide-react";
 import { isSupabaseConfigured } from "@/lib/supabase/env";
 import { SupabaseNotice } from "@/components/SupabaseNotice";
-import { AppHeader } from "@/components/AppHeader";
+import { AppShell } from "@/components/AppShell";
 import { createClient } from "@/lib/supabase/server";
 import { fetchTranscript } from "@/lib/youtube";
 import { ShadowingPlayer } from "./ShadowingPlayer";
@@ -44,16 +45,15 @@ export default async function ShadowingVideoPage({
       : await fetchTranscript(video.youtube_video_id, video.language).catch(() => []);
 
   return (
-    <>
-      <AppHeader />
-      <main className="container max-w-5xl py-8">
+    <AppShell>
+      <main className="container max-w-6xl py-8">
         <Link
           href="/learn/shadowing"
-          className="text-sm text-muted-foreground hover:text-foreground"
+          className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground"
         >
-          ← 쉐도잉 목록
+          <ArrowLeft size={14} aria-hidden /> 쉐도잉 목록
         </Link>
-        <h1 className="mb-4 mt-2 line-clamp-2 text-lg font-bold">
+        <h1 className="mb-4 mt-2 line-clamp-2 font-display text-xl font-bold tracking-tight">
           {video.title ?? "쉐도잉"}
         </h1>
         <ShadowingPlayer
@@ -65,6 +65,6 @@ export default async function ShadowingVideoPage({
           transcript={transcript}
         />
       </main>
-    </>
+    </AppShell>
   );
 }

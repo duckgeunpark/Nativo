@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import { Sparkles, X } from "lucide-react";
 import type { CefrLevel, Language } from "@nativo/core";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -31,6 +32,7 @@ export function ChunkGenerator({
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<GeneratedChunk[] | null>(null);
   const [savedMsg, setSavedMsg] = useState<string | null>(null);
+  const composingRef = useRef(false);
 
   async function generate() {
     if (loading || situation.trim().length < 2) return;
@@ -82,9 +84,10 @@ export function ChunkGenerator({
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="mb-4 w-full rounded-lg border border-dashed px-4 py-3 text-sm font-medium text-muted-foreground transition hover:bg-secondary"
+        className="mb-4 flex w-full items-center justify-center gap-2 rounded-lg border border-dashed px-4 py-3 text-sm font-medium text-muted-foreground transition hover:bg-secondary hover:text-foreground"
       >
-        ✨ AI로 상황별 청크 생성
+        <Sparkles className="h-4 w-4" aria-hidden />
+        AI로 상황별 청크 생성
       </button>
     );
   }
@@ -93,13 +96,17 @@ export function ChunkGenerator({
     <Card className="mb-4">
       <CardContent className="space-y-3 py-4">
         <div className="flex items-center justify-between">
-          <p className="text-sm font-medium">✨ AI 청크 생성</p>
+          <p className="flex items-center gap-1.5 text-sm font-medium">
+            <Sparkles className="h-4 w-4 text-highlight" aria-hidden />
+            AI 청크 생성
+          </p>
           <button
             type="button"
             onClick={() => setOpen(false)}
-            className="text-sm text-muted-foreground hover:text-foreground"
+            aria-label="닫기"
+            className="rounded-md p-1 text-muted-foreground transition hover:bg-secondary hover:text-foreground"
           >
-            닫기
+            <X className="h-4 w-4" aria-hidden />
           </button>
         </div>
         <p className="text-xs text-muted-foreground">
@@ -110,7 +117,15 @@ export function ChunkGenerator({
             value={situation}
             onChange={(e) => setSituation(e.target.value)}
             placeholder="예: 호텔에서 체크인할 때"
-            onKeyDown={(e) => e.key === "Enter" && generate()}
+            onCompositionStart={() => {
+              composingRef.current = true;
+            }}
+            onCompositionEnd={() => {
+              composingRef.current = false;
+            }}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" && !composingRef.current) generate();
+            }}
           />
           <Button onClick={generate} disabled={loading || situation.trim().length < 2}>
             {loading ? "생성 중…" : "생성"}

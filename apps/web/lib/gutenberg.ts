@@ -22,22 +22,28 @@ interface GutendexList {
   results?: GutenbergBook[];
 }
 
+export interface BookSearchResult {
+  books: GutenbergBook[];
+  /** true면 네트워크/API 오류로 실패 — "결과 없음"과 구분해서 보여준다. */
+  failed: boolean;
+}
+
 /** 언어/검색어로 책 목록 조회 (인기순). */
 export async function searchBooks(
   language: Language,
   query: string,
-): Promise<GutenbergBook[]> {
+): Promise<BookSearchResult> {
   const params = new URLSearchParams({ languages: LANG_ISO[language] });
   if (query.trim()) params.set("search", query.trim());
   try {
     const res = await fetch(`https://gutendex.com/books?${params.toString()}`, {
       next: { revalidate: 3600 },
     });
-    if (!res.ok) return [];
+    if (!res.ok) return { books: [], failed: true };
     const data = (await res.json()) as GutendexList;
-    return (data.results ?? []).slice(0, 24);
+    return { books: (data.results ?? []).slice(0, 24), failed: false };
   } catch {
-    return [];
+    return { books: [], failed: true };
   }
 }
 

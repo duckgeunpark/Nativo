@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
+import { Volume2, Eye, EyeOff, CheckCircle2, XCircle, RotateCcw, PartyPopper } from "lucide-react";
 import { type StudyChunk } from "@/lib/chunk-review";
 import { gradeChunk } from "./actions";
 import { addToMyChunks, removeFromMyChunks } from "./dictionary/actions";
@@ -11,6 +12,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
+import { ProgressBar } from "@/components/ui/progress";
+import { SegmentedTabs, type SegmentedTabOption } from "@/components/ui/segmented-tabs";
 import { cn } from "@/lib/utils";
 import { HeartToggle } from "@/app/learn/flashcards/dictionary/HeartToggle";
 
@@ -73,6 +76,12 @@ export function ChunkReviewSession({ chunks }: { chunks: StudyChunk[] }) {
   const chunk = chunks[index];
   const done = index >= chunks.length;
 
+  const modeOptions: SegmentedTabOption[] = MODES.map((m) => ({
+    value: m.value,
+    label: m.label,
+    disabled: (m.value === "mc" && !mcAvailable) || (m.value === "nuance" && !nuanceAvailable),
+  }));
+
   async function advance(correct: boolean | null) {
     if (!chunk || saving) return;
     setSaving(true);
@@ -96,10 +105,13 @@ export function ChunkReviewSession({ chunks }: { chunks: StudyChunk[] }) {
   if (done) {
     return (
       <Card>
-        <CardContent className="py-12 text-center">
-          <p className="text-5xl">✅</p>
-          <p className="mt-3 font-semibold">{reviewed}개 청크 복습 완료!</p>
-          <div className="mt-5 flex justify-center gap-2">
+        <CardContent className="flex flex-col items-center gap-3 py-12 text-center">
+          <span className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 text-primary">
+            <PartyPopper className="h-7 w-7" aria-hidden />
+          </span>
+          <p className="font-semibold">{reviewed}개 청크 복습 완료!</p>
+          <p className="text-sm text-muted-foreground">오늘의 청크 복습을 모두 끝냈어요.</p>
+          <div className="mt-2 flex justify-center gap-2">
             <Button variant="outline" onClick={restart}>
               다시
             </Button>
@@ -114,34 +126,26 @@ export function ChunkReviewSession({ chunks }: { chunks: StudyChunk[] }) {
 
   return (
     <div>
-      <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
-        <div className="flex gap-1 rounded-lg border p-1">
-          {MODES.map((m) => {
-            const disabled =
-              (m.value === "mc" && !mcAvailable) || (m.value === "nuance" && !nuanceAvailable);
-            return (
-              <button
-                key={m.value}
-                type="button"
-                disabled={disabled}
-                onClick={() => setMode(m.value)}
-                title={disabled ? "이 모드는 청크 4개 이상 필요" : undefined}
-                className={cn(
-                  "rounded-md px-3 py-1 text-sm transition-colors disabled:opacity-40",
-                  mode === m.value
-                    ? "bg-primary text-primary-foreground"
-                    : "hover:bg-secondary",
-                )}
-              >
-                {m.label}
-              </button>
-            );
-          })}
-        </div>
-        <span className="text-sm text-muted-foreground">
+      <div className="mb-5 flex flex-col items-center gap-2">
+        <p className="text-sm font-semibold tabular-nums text-foreground">
           {index + 1} / {chunks.length}
-        </span>
+        </p>
+        <ProgressBar
+          value={index}
+          max={chunks.length}
+          tone="primary"
+          aria-label="복습 진행률"
+          className="max-w-xs"
+        />
       </div>
+
+      <SegmentedTabs
+        value={mode}
+        onValueChange={(v) => setMode(v as Mode)}
+        options={modeOptions}
+        aria-label="복습 모드"
+        className="mb-5"
+      />
 
       <ChunkRunner
         key={`${mode}-${index}`}
@@ -196,14 +200,10 @@ function ChunkRunner({
 
 function CategoryBadge({ chunk }: { chunk: StudyChunk }) {
   if (!chunk.category) return null;
-  return (
-    <div className="flex justify-end px-4 pt-3">
-      <Badge variant="muted">{CATEGORY_LABEL[chunk.category] ?? chunk.category}</Badge>
-    </div>
-  );
+  return <Badge variant="muted">{CATEGORY_LABEL[chunk.category] ?? chunk.category}</Badge>;
 }
 
-/** 로직1 — 인식: 표현 탭=발음 / 하단 탭=뜻·상황·뉘앙스. 무채점 진행. */
+/** 로직1 — 인식: 표현은 항상 보이고, 뜻·상황·뉘앙스는 탭해서 확인. 무채점 진행. */
 function FlipChunk({
   chunk,
   saving,
@@ -220,41 +220,58 @@ function FlipChunk({
 
   return (
     <>
-      <Card>
-        <CardContent className="min-h-56 p-0">
-          <CategoryBadge chunk={chunk} />
-          <button
-            type="button"
-            onClick={() => speak(chunk.expression, chunk.language)}
-            aria-label="발음 듣기"
-            className="flex w-full items-center justify-center gap-3 px-6 pb-4 pt-2 transition hover:bg-secondary/20"
-          >
-            <span className="text-2xl font-bold">{chunk.expression}</span>
-            <span className="text-xl">🔊</span>
-          </button>
-          <button
-            type="button"
-            onClick={() => setFlipped((f) => !f)}
-            aria-label="뜻 보기"
-            className="block min-h-24 w-full select-none border-t px-6 py-6 text-left transition hover:bg-secondary/30"
-          >
-            {flipped ? (
-              <div className="space-y-2 text-sm">
-                <p className="text-lg font-medium">{chunk.translation_ko}</p>
-                {chunk.situation && (
-                  <p className="text-muted-foreground">상황: {chunk.situation}</p>
-                )}
-                {chunk.nuance && <p className="text-muted-foreground">뉘앙스: {chunk.nuance}</p>}
-                {chunk.example_1 && <p className="text-muted-foreground">· {chunk.example_1}</p>}
-                {chunk.example_2 && <p className="text-muted-foreground">· {chunk.example_2}</p>}
-              </div>
-            ) : (
-              <p className="text-center text-sm text-muted-foreground">탭하여 뜻 보기</p>
-            )}
-          </button>
+      <Card className="relative">
+        <CardContent className="flex min-h-56 flex-col items-center justify-center gap-4 px-6 py-10 text-center">
+          <div className="absolute left-4 top-4">
+            <CategoryBadge chunk={chunk} />
+          </div>
+          <span className="rounded-full bg-secondary px-2.5 py-0.5 text-xs font-medium text-muted-foreground">
+            {flipped ? "Back" : "Front"}
+          </span>
+          <p className="line-clamp-2 max-w-full break-words text-[clamp(1.375rem,5.5vw,2rem)] font-bold leading-tight">
+            {chunk.expression}
+          </p>
+          {flipped && (
+            <div className="w-full max-w-md space-y-1.5 rounded-lg bg-secondary/60 p-4 text-left text-sm">
+              <p className="break-words text-lg font-semibold">{chunk.translation_ko}</p>
+              {chunk.situation && (
+                <p className="break-words text-muted-foreground">상황: {chunk.situation}</p>
+              )}
+              {chunk.nuance && (
+                <p className="break-words text-muted-foreground">뉘앙스: {chunk.nuance}</p>
+              )}
+              {chunk.example_1 && (
+                <p className="line-clamp-2 break-words text-muted-foreground">
+                  · {chunk.example_1}
+                </p>
+              )}
+              {chunk.example_2 && (
+                <p className="line-clamp-2 break-words text-muted-foreground">
+                  · {chunk.example_2}
+                </p>
+              )}
+            </div>
+          )}
+          <p className="text-xs text-muted-foreground">
+            {flipped ? "뜻이 표시됨" : "탭하여 뜻 보기"}
+          </p>
         </CardContent>
       </Card>
-      <div className="mt-4 flex items-center gap-2">
+      <div className="mt-4 grid grid-cols-2 gap-2">
+        <Button
+          type="button"
+          variant="outline"
+          onClick={() => speak(chunk.expression, chunk.language)}
+        >
+          <Volume2 className="h-4 w-4" aria-hidden />
+          듣기
+        </Button>
+        <Button type="button" variant="outline" onClick={() => setFlipped((f) => !f)}>
+          {flipped ? <EyeOff className="h-4 w-4" aria-hidden /> : <Eye className="h-4 w-4" aria-hidden />}
+          {flipped ? "뜻 숨기기" : "뜻 보기"}
+        </Button>
+      </div>
+      <div className="mt-3 flex items-center gap-2">
         <Button
           type="button"
           className="flex-1"
@@ -295,20 +312,22 @@ function McChunk({
   return (
     <>
       <Card>
-        <CardContent className="py-8 text-center">
+        <CardContent className="flex flex-col items-center gap-2 py-8 text-center">
           <CategoryBadge chunk={chunk} />
-          <div className="flex items-center justify-center gap-3">
-            <h2 className="text-2xl font-bold">{chunk.expression}</h2>
-          </div>
-          <p className="mt-2 text-sm text-muted-foreground">알맞은 뜻을 고르세요</p>
+          <h2 className="line-clamp-2 break-words text-[clamp(1.375rem,5vw,1.75rem)] font-bold">
+            {chunk.expression}
+          </h2>
+          <p className="text-sm text-muted-foreground">알맞은 뜻을 고르세요</p>
         </CardContent>
       </Card>
       <div className="mt-4 space-y-2">
         {options.map((opt) => {
+          const isAnswer = opt === answer;
+          const isPicked = opt === picked;
           let extra = "";
           if (picked) {
-            if (opt === answer) extra = "border-success bg-success/10";
-            else if (opt === picked) extra = "border-destructive bg-destructive/10";
+            if (isAnswer) extra = "border-success bg-success/10";
+            else if (isPicked) extra = "border-destructive bg-destructive/10";
           }
           return (
             <button
@@ -317,11 +336,17 @@ function McChunk({
               disabled={!!picked}
               onClick={() => setPicked(opt)}
               className={cn(
-                "w-full rounded-lg border px-4 py-3 text-left transition hover:bg-secondary disabled:hover:bg-transparent",
+                "flex w-full items-center justify-between gap-2 rounded-lg border px-4 py-3 text-left transition hover:bg-secondary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:hover:bg-transparent",
                 extra,
               )}
             >
-              {opt}
+              <span className="line-clamp-2 break-words">{opt}</span>
+              {picked && isAnswer && (
+                <CheckCircle2 className="h-4 w-4 shrink-0 text-success" aria-hidden />
+              )}
+              {picked && isPicked && !isAnswer && (
+                <XCircle className="h-4 w-4 shrink-0 text-destructive" aria-hidden />
+              )}
             </button>
           );
         })}
@@ -343,7 +368,7 @@ function McChunk({
   );
 }
 
-/** 로직3 — 생산: 상황/뜻 → 표현 주관식 입력. */
+/** 로직3 — 생산: 상황/뜻 → 표현 주관식 입력. 오답 시 다시 시도 가능. */
 function ProductionChunk({
   chunk,
   saving,
@@ -357,26 +382,25 @@ function ProductionChunk({
   const [checked, setChecked] = useState(false);
   const correct = norm(value) === norm(chunk.expression);
 
+  function retry() {
+    setChecked(false);
+    setValue("");
+  }
+
   return (
     <>
       <Card>
-        <CardContent className="py-8 text-center">
+        <CardContent className="flex flex-col items-center gap-2 py-8 text-center">
           <CategoryBadge chunk={chunk} />
-          <h2 className="text-xl font-bold">{chunk.translation_ko}</h2>
+          <h2 className="line-clamp-2 break-words text-[clamp(1.125rem,4.5vw,1.5rem)] font-bold">
+            {chunk.translation_ko}
+          </h2>
           {chunk.situation && (
-            <p className="mt-2 text-sm text-muted-foreground">상황: {chunk.situation}</p>
-          )}
-          <p className="mt-2 text-sm text-muted-foreground">이 상황의 표현을 입력하세요</p>
-          {checked && (
-            <p
-              className={cn(
-                "mt-4 text-base font-semibold",
-                correct ? "text-success" : "text-destructive",
-              )}
-            >
-              {correct ? "✓ 정답" : `✗ 정답: ${chunk.expression}`}
+            <p className="line-clamp-2 break-words text-sm text-muted-foreground">
+              상황: {chunk.situation}
             </p>
           )}
+          <p className="text-sm text-muted-foreground">이 상황의 표현을 입력하세요</p>
         </CardContent>
       </Card>
       <form
@@ -393,8 +417,31 @@ function ProductionChunk({
           placeholder="표현 입력"
           disabled={checked}
         />
+        {checked && (
+          <div
+            className={cn(
+              "flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium",
+              correct ? "bg-success/10 text-success" : "bg-destructive/10 text-destructive",
+            )}
+          >
+            {correct ? (
+              <CheckCircle2 className="h-4 w-4 shrink-0" aria-hidden />
+            ) : (
+              <XCircle className="h-4 w-4 shrink-0" aria-hidden />
+            )}
+            <span className="break-words">
+              {correct ? "정답이에요" : `정답: ${chunk.expression}`}
+            </span>
+          </div>
+        )}
         {checked ? (
           <div className="flex items-center gap-2">
+            {!correct && (
+              <Button type="button" variant="outline" className="flex-1" onClick={retry}>
+                <RotateCcw className="h-4 w-4" aria-hidden />
+                다시 시도
+              </Button>
+            )}
             <Button
               type="button"
               className="flex-1"
@@ -437,18 +484,20 @@ function NuanceChunk({
   return (
     <>
       <Card>
-        <CardContent className="py-8 text-center">
+        <CardContent className="flex flex-col items-center gap-2 py-8 text-center">
           <CategoryBadge chunk={chunk} />
           <p className="text-sm text-muted-foreground">이 상황에 가장 알맞은 표현은?</p>
-          <h2 className="mt-2 text-lg font-semibold">{prompt}</h2>
+          <h2 className="line-clamp-3 break-words text-lg font-semibold">{prompt}</h2>
         </CardContent>
       </Card>
       <div className="mt-4 space-y-2">
         {options.map((opt) => {
+          const isAnswer = opt === chunk.expression;
+          const isPicked = opt === picked;
           let extra = "";
           if (picked) {
-            if (opt === chunk.expression) extra = "border-success bg-success/10";
-            else if (opt === picked) extra = "border-destructive bg-destructive/10";
+            if (isAnswer) extra = "border-success bg-success/10";
+            else if (isPicked) extra = "border-destructive bg-destructive/10";
           }
           return (
             <button
@@ -460,11 +509,17 @@ function NuanceChunk({
                 speak(opt, chunk.language);
               }}
               className={cn(
-                "w-full rounded-lg border px-4 py-3 text-left transition hover:bg-secondary disabled:hover:bg-transparent",
+                "flex w-full items-center justify-between gap-2 rounded-lg border px-4 py-3 text-left transition hover:bg-secondary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:hover:bg-transparent",
                 extra,
               )}
             >
-              {opt}
+              <span className="line-clamp-2 break-words">{opt}</span>
+              {picked && isAnswer && (
+                <CheckCircle2 className="h-4 w-4 shrink-0 text-success" aria-hidden />
+              )}
+              {picked && isPicked && !isAnswer && (
+                <XCircle className="h-4 w-4 shrink-0 text-destructive" aria-hidden />
+              )}
             </button>
           );
         })}

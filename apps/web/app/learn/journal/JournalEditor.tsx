@@ -3,11 +3,14 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import type { Language } from "@nativo/core";
+import { Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { ErrorBanner } from "@/components/ui/states";
 import { countWords, type WritingFeedback } from "@/lib/ai-writing";
 import { saveJournalEntry } from "./actions";
+
+const MAX_CHARS = 5000;
 
 /**
  * 영작 일기 작성 → AI 첨삭 요청 → 첨삭 확인 후 저장.
@@ -53,6 +56,7 @@ export function JournalEditor({ language }: { language: Language }) {
     if (saving || content.trim().length < 1) return;
     setSaving(true);
     setError(null);
+    setSavedMsg(null);
     const res = await saveJournalEntry({
       language,
       content: content.trim(),
@@ -76,22 +80,23 @@ export function JournalEditor({ language }: { language: Language }) {
         <CardContent className="space-y-3 py-4">
           <textarea
             value={content}
-            onChange={(e) => setContent(e.target.value)}
+            onChange={(e) => setContent(e.target.value.slice(0, MAX_CHARS))}
             placeholder="오늘 있었던 일을 학습 언어로 적어 보세요…"
-            rows={7}
-            className="w-full resize-y rounded-lg border bg-background p-3 text-sm outline-none focus:ring-1 focus:ring-primary"
+            className="w-full min-h-[160px] max-h-[360px] overflow-y-auto resize-none rounded-lg border bg-background p-3 text-sm outline-none focus:ring-1 focus:ring-primary"
           />
           <div className="flex items-center justify-between gap-2">
-            <span className="text-xs text-muted-foreground">{countWords(content)} 단어</span>
+            <span className="text-xs tabular-nums text-muted-foreground">{countWords(content)} 단어</span>
             <div className="flex gap-2">
               <Button
                 variant="outline"
                 onClick={requestFeedback}
                 disabled={loading || content.trim().length < 5}
               >
+                {loading && <Loader2 className="h-4 w-4 animate-spin" aria-hidden />}
                 {loading ? "첨삭 중…" : "AI 첨삭"}
               </Button>
               <Button onClick={save} disabled={saving || content.trim().length < 1}>
+                {saving && <Loader2 className="h-4 w-4 animate-spin" aria-hidden />}
                 {saving ? "저장 중…" : "저장"}
               </Button>
             </div>
@@ -114,8 +119,8 @@ export function JournalEditor({ language }: { language: Language }) {
               <ul className="space-y-2">
                 {feedback.corrections.map((c, i) => (
                   <li key={i} className="rounded-lg border p-3 text-sm">
-                    <p className="text-destructive line-through">{c.original}</p>
-                    <p className="font-medium text-success">{c.corrected}</p>
+                    <p className="text-muted-foreground line-through">{c.original}</p>
+                    <p className="font-medium text-highlight">{c.corrected}</p>
                     <p className="mt-1 text-xs text-muted-foreground">{c.reason}</p>
                   </li>
                 ))}

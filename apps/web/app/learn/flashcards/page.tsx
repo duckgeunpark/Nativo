@@ -1,16 +1,17 @@
 import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
 import Link from "next/link";
+import { BookHeart } from "lucide-react";
 import { isSupabaseConfigured } from "@/lib/supabase/env";
 import { SupabaseNotice } from "@/components/SupabaseNotice";
-import { AppHeader } from "@/components/AppHeader";
+import { AppShell } from "@/components/AppShell";
 import type { TablesInsert } from "@nativo/core";
 import { createClient } from "@/lib/supabase/server";
 import { STUDY_CARD_COLUMNS, type StudyCard } from "@/lib/flashcards";
 import { nextNewWords } from "@/lib/word-db";
 import { SESSION_SIZE, parseSessionCookie } from "@/lib/session-size";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import { EmptyState } from "@/components/ui/states";
 import { StudySession } from "./StudySession";
 
 export default async function FlashcardsPage() {
@@ -88,43 +89,32 @@ export default async function FlashcardsPage() {
   }
 
   return (
-    <>
-      <AppHeader />
-      <main className="container max-w-xl py-10">
-        <div className="mb-5 flex items-center justify-between">
-          <h1 className="text-xl font-bold">플래시카드</h1>
-          <Link
-            href="/learn/flashcards/dictionary"
-            className="rounded-md border px-3 py-1.5 text-sm transition hover:bg-secondary"
-          >
-            내 단어 사전
-          </Link>
+    <AppShell>
+      <main className="container max-w-2xl py-8 md:py-10">
+        <div className="mb-6 flex items-center justify-between gap-3">
+          <h1 className="font-display text-2xl font-bold text-foreground">플래시카드</h1>
+          <Button asChild variant="outline" size="sm">
+            <Link href="/learn/flashcards/dictionary">
+              <BookHeart className="h-4 w-4" aria-hidden />
+              내 단어 사전
+            </Link>
+          </Button>
         </div>
         {cards.length > 0 ? (
           <StudySession cards={cards} />
         ) : (
-          <EmptyState />
+          <EmptyState
+            icon="🎉"
+            title="오늘 학습할 단어를 모두 끝냈어요!"
+            description="복습할 카드가 생기면 다시 채워집니다. 내 단어 사전에서 완료한 단어를 볼 수 있어요."
+            action={
+              <Button asChild variant="outline">
+                <Link href="/learn/flashcards/dictionary">내 단어 사전</Link>
+              </Button>
+            }
+          />
         )}
       </main>
-    </>
-  );
-}
-
-function EmptyState() {
-  return (
-    <Card>
-      <CardContent className="flex flex-col items-center gap-4 py-12 text-center">
-        <p className="text-5xl">🎉</p>
-        <div>
-          <p className="font-semibold">오늘 학습할 단어를 모두 끝냈어요!</p>
-          <p className="mt-1 text-sm text-muted-foreground">
-            복습할 카드가 생기면 다시 채워집니다. 내 단어 사전에서 완료한 단어를 볼 수 있어요.
-          </p>
-        </div>
-        <Button asChild variant="outline">
-          <Link href="/learn/flashcards/dictionary">내 단어 사전</Link>
-        </Button>
-      </CardContent>
-    </Card>
+    </AppShell>
   );
 }

@@ -3,7 +3,8 @@
 import { useState, useTransition } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Card, CardContent } from "@/components/ui/card";
+import { X } from "lucide-react";
+import { DocCover } from "./DocCover";
 import { deleteDocument } from "./actions";
 
 interface Props {
@@ -32,13 +33,14 @@ export function DocListItem({ id, title, totalPages }: Props) {
 
   return (
     <div className="relative">
-      <Link href={`/learn/reading/${id}`}>
-        <Card className="h-full transition-colors hover:bg-secondary/40">
-          <CardContent className="p-4">
-            <p className="line-clamp-2 pr-6 font-medium">{title}</p>
-            <p className="mt-1 text-sm text-muted-foreground">내 문서 · {totalPages}쪽</p>
-          </CardContent>
-        </Card>
+      <Link href={`/learn/reading/${id}`} className="block">
+        <DocCover
+          title={title}
+          badge="PDF"
+          className="shadow-sm transition-transform hover:-translate-y-0.5"
+        />
+        <p className="mt-2 line-clamp-2 pr-5 text-sm font-medium">{title}</p>
+        <p className="mt-0.5 text-xs text-muted-foreground">내 문서 · {totalPages}쪽</p>
       </Link>
       <button
         type="button"
@@ -46,9 +48,9 @@ export function DocListItem({ id, title, totalPages }: Props) {
         disabled={pending}
         aria-label="문서 삭제"
         title="삭제"
-        className="absolute right-2 top-2 z-10 flex h-7 w-7 items-center justify-center rounded-full bg-black/50 text-sm text-white transition hover:bg-destructive disabled:opacity-50"
+        className="absolute right-1.5 top-1.5 z-10 flex h-6 w-6 items-center justify-center rounded-full bg-background/80 text-muted-foreground shadow-sm transition hover:bg-destructive hover:text-destructive-foreground disabled:opacity-50"
       >
-        ✕
+        <X className="h-3.5 w-3.5" aria-hidden />
       </button>
       {error && <p className="mt-1 text-xs text-destructive">{error}</p>}
     </div>

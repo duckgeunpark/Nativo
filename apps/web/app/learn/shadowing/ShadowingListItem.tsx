@@ -3,7 +3,10 @@
 import { useState, useTransition } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Card, CardContent } from "@/components/ui/card";
+import { Film, X } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Skeleton } from "@/components/ui/states";
+import { cn } from "@/lib/utils";
 import { deleteShadowingVideo } from "./actions";
 
 interface Props {
@@ -26,6 +29,8 @@ export function ShadowingListItem({
   const router = useRouter();
   const [pending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
+  const [loaded, setLoaded] = useState(false);
+  const [broken, setBroken] = useState(false);
 
   function remove(e: React.MouseEvent) {
     e.preventDefault();
@@ -41,29 +46,51 @@ export function ShadowingListItem({
     });
   }
 
+  const src = thumbnailUrl ?? `https://i.ytimg.com/vi/${youtubeVideoId}/hqdefault.jpg`;
+
   return (
     <div className="relative">
       <Link href={`/learn/shadowing/${id}`}>
-        <Card className="overflow-hidden transition-colors hover:bg-secondary/40">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={thumbnailUrl ?? `https://i.ytimg.com/vi/${youtubeVideoId}/hqdefault.jpg`}
-            alt=""
-            className="aspect-video w-full object-cover"
-          />
-          <CardContent className="p-3">
+        <div className="overflow-hidden rounded-2xl border bg-card shadow-sm transition-colors hover:bg-secondary/40">
+          <div className="relative aspect-video w-full overflow-hidden bg-secondary">
+            {!loaded && !broken && <Skeleton className="absolute inset-0 rounded-none" />}
+            {broken ? (
+              <div className="flex h-full w-full items-center justify-center text-muted-foreground">
+                <Film size={28} aria-hidden />
+              </div>
+            ) : (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={src}
+                alt=""
+                onLoad={() => setLoaded(true)}
+                onError={() => setBroken(true)}
+                className={cn(
+                  "aspect-video w-full object-cover transition-opacity duration-300",
+                  loaded ? "opacity-100" : "opacity-0",
+                )}
+              />
+            )}
+            {completed && (
+              <Badge
+                variant="success"
+                className="absolute bottom-2 right-2 shadow-sm"
+              >
+                완료
+              </Badge>
+            )}
+          </div>
+          <div className="p-3">
             <p className="line-clamp-2 pr-6 text-sm font-medium">
               {title ?? "제목 없는 영상"}
             </p>
-            {lastPositionSec > 0 && (
+            {!completed && lastPositionSec > 0 && (
               <p className="mt-1 text-xs text-muted-foreground">
-                {completed
-                  ? "완료"
-                  : `${Math.floor(lastPositionSec / 60)}분 지점부터 이어보기`}
+                {Math.floor(lastPositionSec / 60)}분 지점부터 이어보기
               </p>
             )}
-          </CardContent>
-        </Card>
+          </div>
+        </div>
       </Link>
 
       <button
@@ -72,9 +99,9 @@ export function ShadowingListItem({
         disabled={pending}
         aria-label="영상 삭제"
         title="목록에서 삭제"
-        className="absolute right-2 top-2 z-10 flex h-7 w-7 items-center justify-center rounded-full bg-black/60 text-sm text-white transition hover:bg-destructive disabled:opacity-50"
+        className="absolute right-2 top-2 z-10 flex h-7 w-7 items-center justify-center rounded-full bg-foreground/60 text-background transition hover:bg-destructive hover:text-destructive-foreground disabled:opacity-50"
       >
-        ✕
+        <X size={14} />
       </button>
       {error && <p className="mt-1 text-xs text-destructive">{error}</p>}
     </div>

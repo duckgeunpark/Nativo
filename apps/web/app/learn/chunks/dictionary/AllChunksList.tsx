@@ -1,10 +1,12 @@
 "use client";
 
+import { Volume2 } from "lucide-react";
 import type { Language } from "@nativo/core";
 import { speak } from "@/lib/tts";
 import { CATEGORY_LABEL } from "@/lib/chunks";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { EmptyState } from "@/components/ui/states";
 import { HeartToggle } from "@/app/learn/flashcards/dictionary/HeartToggle";
 import { addToMyChunks, removeFromMyChunks } from "./actions";
 
@@ -24,21 +26,26 @@ export function AllChunksList({
   chunks,
   language,
   owned,
+  hasQuery = false,
 }: {
   chunks: AllChunk[];
   language: Language;
   /** 이미 '내 청크'인 표현들(소문자). */
   owned: string[];
+  /** 검색어/분류/레벨 필터가 걸려 있으면 "검색 결과 없음" 문구를 보여준다. */
+  hasQuery?: boolean;
 }) {
   const ownedSet = new Set(owned.map((w) => w.toLowerCase()));
 
   if (chunks.length === 0) {
-    return (
-      <Card>
-        <CardContent className="py-10 text-center text-sm text-muted-foreground">
-          조건에 맞는 청크가 없습니다.
-        </CardContent>
-      </Card>
+    return hasQuery ? (
+      <EmptyState
+        icon="🔍"
+        title="조건에 맞는 청크가 없어요"
+        description="검색어나 분류·레벨 필터를 조정해 보세요."
+      />
+    ) : (
+      <EmptyState icon="📭" title="표시할 청크가 없어요" />
     );
   }
 
@@ -52,13 +59,13 @@ export function AllChunksList({
                 type="button"
                 onClick={() => speak(c.expression, language)}
                 aria-label="발음 듣기"
-                className="shrink-0 pt-0.5 text-lg"
+                className="shrink-0 rounded-md p-1.5 text-muted-foreground transition hover:bg-secondary hover:text-foreground"
               >
-                🔊
+                <Volume2 className="h-4 w-4" aria-hidden />
               </button>
               <div className="min-w-0 flex-1">
                 <div className="flex flex-wrap items-center gap-2">
-                  <span className="font-medium">{c.expression}</span>
+                  <span className="break-words font-medium">{c.expression}</span>
                   {c.category && (
                     <Badge variant="muted">{CATEGORY_LABEL[c.category] ?? c.category}</Badge>
                   )}
@@ -68,9 +75,13 @@ export function AllChunksList({
                     </span>
                   )}
                 </div>
-                <p className="text-sm text-muted-foreground">{c.translation_ko}</p>
+                <p className="line-clamp-2 break-words text-sm text-muted-foreground">
+                  {c.translation_ko}
+                </p>
                 {c.example_1 && (
-                  <p className="truncate text-xs text-muted-foreground">· {c.example_1}</p>
+                  <p className="line-clamp-1 break-words text-xs text-muted-foreground">
+                    · {c.example_1}
+                  </p>
                 )}
               </div>
               <HeartToggle

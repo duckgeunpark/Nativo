@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Heart } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 export type ToggleResult = { ok: boolean; error?: string };
 
@@ -10,6 +11,7 @@ export type ToggleResult = { ok: boolean; error?: string };
  * - active(보유): 꽉찬 ♥, 호버 시 빈 ♡, 클릭 시 제거
  * - 비활성: 빈 ♡, 호버 시 꽉찬 ♥, 클릭 시 추가
  * 표시는 `hover ? !active : active` (호버하면 클릭 결과를 미리 보여줌).
+ * 삭제 버튼과 나란히 있어도 오클릭하지 않도록 최소 히트 영역을 40px 이상 확보한다.
  */
 export function HeartToggle({
   initialActive,
@@ -54,9 +56,12 @@ export function HeartToggle({
       aria-label={active ? "내 목록에서 제거" : "내 목록에 추가"}
       aria-pressed={active}
       title={active ? "내 목록에서 제거" : "내 목록에 추가"}
-      className="flex h-7 w-8 shrink-0 items-center justify-center rounded-md text-red-500 transition hover:scale-110 disabled:opacity-50"
+      className={cn(
+        "flex h-9 w-9 shrink-0 items-center justify-center rounded-md text-highlight transition hover:bg-highlight/10 disabled:opacity-50",
+        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+      )}
     >
-      <Heart size={20} fill={filled ? "currentColor" : "none"} />
+      <Heart size={20} fill={filled ? "currentColor" : "none"} aria-hidden />
     </button>
   );
 }

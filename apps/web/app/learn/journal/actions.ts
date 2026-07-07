@@ -43,3 +43,21 @@ export async function saveJournalEntry(input: {
   revalidatePath(JOURNAL_PATH);
   return { ok: true };
 }
+
+/** 지난 일기 한 편 삭제. */
+export async function deleteJournalEntry(id: string): Promise<{ ok: boolean; error?: string }> {
+  const supabase = createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { ok: false, error: "로그인이 필요합니다." };
+
+  const { error } = await supabase
+    .from("writing_journal")
+    .delete()
+    .eq("id", id)
+    .eq("user_id", user.id);
+  if (error) return { ok: false, error: error.message };
+  revalidatePath(JOURNAL_PATH);
+  return { ok: true };
+}

@@ -1,16 +1,17 @@
 import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
 import Link from "next/link";
+import { BookHeart } from "lucide-react";
 import type { CefrLevel, TablesInsert } from "@nativo/core";
 import { isSupabaseConfigured } from "@/lib/supabase/env";
 import { SupabaseNotice } from "@/components/SupabaseNotice";
-import { AppHeader } from "@/components/AppHeader";
+import { AppShell } from "@/components/AppShell";
 import { createClient } from "@/lib/supabase/server";
 import { STUDY_CHUNK_COLUMNS, isChunkDue, type StudyChunk } from "@/lib/chunk-review";
 import { nextNewChunks } from "@/lib/chunk-db";
 import { SESSION_SIZE, parseSessionCookie } from "@/lib/session-size";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import { EmptyState } from "@/components/ui/states";
 import { ChunkReviewSession } from "./ChunkReviewSession";
 
 export default async function ChunksPage() {
@@ -83,43 +84,38 @@ export default async function ChunksPage() {
   }
 
   return (
-    <>
-      <AppHeader />
-      <main className="container max-w-xl py-10">
-        <div className="mb-5 flex items-center justify-between">
+    <AppShell>
+      <main className="container max-w-2xl py-8 md:py-10">
+        <div className="mb-6 flex items-start justify-between gap-3">
           <div>
-            <h1 className="text-xl font-bold">청크 복습</h1>
+            <h1 className="font-display text-2xl font-bold text-foreground">청크 복습</h1>
             <p className="mt-1 text-sm text-muted-foreground">
               의미 덩어리를 카드로 복습하세요. 뜻을 떠올린 뒤 카드를 눌러 확인하고 다음으로.
             </p>
           </div>
-          <Link
-            href="/learn/chunks/dictionary"
-            className="shrink-0 rounded-md border px-3 py-1.5 text-sm transition hover:bg-secondary"
-          >
-            내 청크 사전
-          </Link>
+          <Button asChild variant="outline" size="sm" className="shrink-0">
+            <Link href="/learn/chunks/dictionary">
+              <BookHeart className="h-4 w-4" aria-hidden />
+              내 청크 사전
+            </Link>
+          </Button>
         </div>
 
         {cards.length > 0 ? (
           <ChunkReviewSession chunks={cards} />
         ) : (
-          <Card>
-            <CardContent className="flex flex-col items-center gap-4 py-12 text-center">
-              <p className="text-5xl">🎉</p>
-              <div>
-                <p className="font-semibold">복습할 청크가 없어요!</p>
-                <p className="mt-1 text-sm text-muted-foreground">
-                  전체 목록에서 새 표현을 하트로 담으면 복습에 들어옵니다.
-                </p>
-              </div>
+          <EmptyState
+            icon="🎉"
+            title="복습할 청크가 없어요!"
+            description="전체 목록에서 새 표현을 하트로 담으면 복습에 들어옵니다."
+            action={
               <Button asChild variant="outline">
                 <Link href="/learn/chunks/dictionary?tab=all">전체 청크 둘러보기</Link>
               </Button>
-            </CardContent>
-          </Card>
+            }
+          />
         )}
       </main>
-    </>
+    </AppShell>
   );
 }

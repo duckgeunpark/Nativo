@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
+import { Volume2, Eye, EyeOff, CheckCircle2, XCircle, RotateCcw, PartyPopper } from "lucide-react";
 import type { ReviewChoice } from "@nativo/utils";
 import { type StudyCard } from "@/lib/flashcards";
 import { gradeFlashcard } from "./actions";
@@ -10,6 +11,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { ErrorBanner } from "@/components/ui/states";
+import { ProgressBar } from "@/components/ui/progress";
+import { SegmentedTabs, type SegmentedTabOption } from "@/components/ui/segmented-tabs";
 import { cn } from "@/lib/utils";
 import { HeartToggle } from "./dictionary/HeartToggle";
 import { addToMyWords, removeFromMyWords } from "./dictionary/actions";
@@ -55,16 +58,18 @@ function NextBar({
   saving,
   disabled,
   onGrade,
+  className,
 }: {
   choice: ReviewChoice;
   saving: boolean;
   disabled?: boolean;
   onGrade: GradeFn;
+  className?: string;
 }) {
   return (
     <Button
       type="button"
-      className="w-full"
+      className={cn("w-full", className)}
       disabled={saving || disabled}
       onClick={() => onGrade(choice)}
     >
@@ -89,9 +94,15 @@ export function StudySession({ cards }: { cards: StudyCard[] }) {
   const card = cards[index];
   const done = index >= cards.length;
 
+  const modeOptions: SegmentedTabOption[] = MODES.map((m) => ({
+    value: m.value,
+    label: m.label,
+    disabled: m.value === "mc" && !mcAvailable,
+  }));
+
   // 모드 전환 — 진행 위치(index)·진행 수는 유지하고 출제 방식만 바꾼다.
-  function changeMode(next: Mode) {
-    setMode(next);
+  function changeMode(next: string) {
+    setMode(next as Mode);
   }
 
   // 처음부터 다시 — 현재 모드 유지, 위치만 초기화.
@@ -117,42 +128,40 @@ export function StudySession({ cards }: { cards: StudyCard[] }) {
 
   return (
     <div>
-      <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
-        <div className="flex gap-1 rounded-lg border p-1">
-          {MODES.map((m) => {
-            const disabled = m.value === "mc" && !mcAvailable;
-            return (
-              <button
-                key={m.value}
-                type="button"
-                disabled={disabled}
-                onClick={() => changeMode(m.value)}
-                title={disabled ? "객관식은 카드 4개 이상 필요" : undefined}
-                className={cn(
-                  "rounded-md px-3 py-1 text-sm transition-colors disabled:opacity-40",
-                  mode === m.value
-                    ? "bg-primary text-primary-foreground"
-                    : "hover:bg-secondary",
-                )}
-              >
-                {m.label}
-              </button>
-            );
-          })}
-        </div>
-        {!done && (
-          <span className="text-sm text-muted-foreground">
+      {!done && (
+        <div className="mb-5 flex flex-col items-center gap-2">
+          <p className="text-sm font-semibold tabular-nums text-foreground">
             {index + 1} / {cards.length}
-          </span>
-        )}
-      </div>
+          </p>
+          <ProgressBar
+            value={index}
+            max={cards.length}
+            tone="primary"
+            aria-label="학습 진행률"
+            className="max-w-xs"
+          />
+        </div>
+      )}
+
+      {!done && (
+        <SegmentedTabs
+          value={mode}
+          onValueChange={changeMode}
+          options={modeOptions}
+          aria-label="학습 모드"
+          className="mb-5"
+        />
+      )}
 
       {done ? (
         <Card>
-          <CardContent className="py-12 text-center">
-            <p className="text-5xl">✅</p>
-            <p className="mt-3 font-semibold">{reviewed}개 학습 완료!</p>
-            <div className="mt-5 flex justify-center gap-2">
+          <CardContent className="flex flex-col items-center gap-3 py-12 text-center">
+            <span className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 text-primary">
+              <PartyPopper className="h-7 w-7" aria-hidden />
+            </span>
+            <p className="font-semibold">{reviewed}개 학습 완료!</p>
+            <p className="text-sm text-muted-foreground">오늘의 플래시카드를 모두 끝냈어요.</p>
+            <div className="mt-2 flex justify-center gap-2">
               <Button variant="outline" onClick={restart}>
                 다시
               </Button>
@@ -198,23 +207,7 @@ function CardRunner({
   return <TypeCard card={card} mode={mode} saving={saving} onGrade={onGrade} />;
 }
 
-function Speaker({ card }: { card: StudyCard }) {
-  return (
-    <button
-      type="button"
-      onClick={(e) => {
-        e.stopPropagation(); // 카드 클릭(뒤집기)으로 전파 방지
-        speak(card.word, card.language);
-      }}
-      aria-label="발음 듣기"
-      className="text-2xl transition hover:scale-110"
-    >
-      🔊
-    </button>
-  );
-}
-
-/** 로직1 — 인식: 상단(단어) 탭=발음 / 하단 탭=뜻 보기, '다음'으로 넘어감. */
+/** 로직1 — 인식: 단어·발음·예문은 항상 보이고, 뜻만 탭해서 확인 후 '다음'으로 넘어감. */
 function FlipCard({
   card,
   saving,
@@ -229,46 +222,57 @@ function FlipCard({
   useEffect(() => {
     speak(card.word, card.language);
   }, [card.id, card.word, card.language]);
+
   return (
     <>
-      <div className="mb-2 flex justify-end">
-        <CardHeart card={card} />
-      </div>
-      <Card>
-        <CardContent className="min-h-56 p-0">
-          {/* 상단: 단어 — 탭하면 발음 듣기 */}
-          <button
-            type="button"
-            onClick={() => speak(card.word, card.language)}
-            aria-label="발음 듣기"
-            className="flex w-full items-center justify-center gap-3 px-6 pt-8 pb-4 transition hover:bg-secondary/20"
-          >
-            <span className="text-3xl font-bold">{card.word}</span>
-            <span className="text-xl">🔊</span>
-          </button>
-          {/* 하단: 탭하면 뜻 보기/숨기기 */}
-          <button
-            type="button"
-            onClick={() => setFlipped((f) => !f)}
-            aria-label="뜻 보기"
-            className="block min-h-24 w-full select-none border-t px-6 py-6 text-left transition hover:bg-secondary/30"
-          >
-            {flipped ? (
-              <div className="space-y-2 text-sm">
-                {card.pronunciation && (
-                  <p className="text-muted-foreground">{card.pronunciation}</p>
-                )}
-                <p className="text-lg font-medium">{card.meaning}</p>
-                {card.meaning_en && <p className="text-muted-foreground">{card.meaning_en}</p>}
-                {card.example_1 && <p className="text-muted-foreground">· {card.example_1}</p>}
-              </div>
-            ) : (
-              <p className="text-center text-sm text-muted-foreground">탭하여 뜻 보기</p>
+      <Card className="relative">
+        <CardContent className="flex min-h-56 flex-col items-center justify-center gap-4 overflow-hidden px-6 py-10 text-center">
+          <div className="absolute right-4 top-4">
+            <CardHeart card={card} />
+          </div>
+          <span className="rounded-full bg-secondary px-2.5 py-0.5 text-xs font-medium text-muted-foreground">
+            {flipped ? "Back" : "Front"}
+          </span>
+          <div className="max-w-full space-y-2">
+            <p className="line-clamp-2 break-words text-[clamp(1.5rem,6vw,2.25rem)] font-bold leading-tight">
+              {card.word}
+            </p>
+            {card.pronunciation && (
+              <p className="text-sm text-muted-foreground">{card.pronunciation}</p>
             )}
-          </button>
+          </div>
+          {card.example_1 && (
+            <p className="line-clamp-2 max-w-md break-words text-sm text-muted-foreground">
+              {card.example_1}
+            </p>
+          )}
+          {flipped && (
+            <div className="w-full max-w-md space-y-1 rounded-lg bg-secondary/60 p-4 text-left">
+              <p className="text-xs font-medium text-muted-foreground">뜻</p>
+              <p className="line-clamp-3 break-words text-lg font-semibold">{card.meaning}</p>
+              {card.meaning_en && (
+                <p className="line-clamp-2 break-words text-sm text-muted-foreground">
+                  {card.meaning_en}
+                </p>
+              )}
+            </div>
+          )}
+          <p className="text-xs text-muted-foreground">
+            {flipped ? "뜻이 표시됨" : "탭하여 뜻 보기"}
+          </p>
         </CardContent>
       </Card>
-      <div className="mt-4">
+      <div className="mt-4 grid grid-cols-2 gap-2">
+        <Button type="button" variant="outline" onClick={() => speak(card.word, card.language)}>
+          <Volume2 className="h-4 w-4" aria-hidden />
+          듣기
+        </Button>
+        <Button type="button" variant="outline" onClick={() => setFlipped((f) => !f)}>
+          {flipped ? <EyeOff className="h-4 w-4" aria-hidden /> : <Eye className="h-4 w-4" aria-hidden />}
+          {flipped ? "뜻 숨기기" : "뜻 보기"}
+        </Button>
+      </div>
+      <div className="mt-3">
         <NextBar choice="good" saving={saving} disabled={!flipped} onGrade={onGrade} />
       </div>
     </>
@@ -299,24 +303,28 @@ function McCard({
 
   return (
     <>
-      <div className="mb-2 flex justify-end">
-        <CardHeart card={card} />
-      </div>
       <Card>
-        <CardContent className="py-8 text-center">
+        <CardContent className="relative flex flex-col items-center gap-2 py-8 text-center">
+          <div className="absolute right-4 top-4">
+            <CardHeart card={card} />
+          </div>
           <div className="flex items-center justify-center gap-3">
-            <h2 className="text-3xl font-bold">{card.word}</h2>
+            <h2 className="line-clamp-2 break-words text-[clamp(1.5rem,5vw,1.875rem)] font-bold">
+              {card.word}
+            </h2>
             <Speaker card={card} />
           </div>
-          <p className="mt-2 text-sm text-muted-foreground">알맞은 뜻을 고르세요</p>
+          <p className="text-sm text-muted-foreground">알맞은 뜻을 고르세요</p>
         </CardContent>
       </Card>
       <div className="mt-4 space-y-2">
         {options.map((opt) => {
+          const isAnswer = opt === card.meaning;
+          const isPicked = opt === picked;
           let cls = "";
           if (picked) {
-            if (opt === card.meaning) cls = "border-success bg-success/10";
-            else if (opt === picked) cls = "border-destructive bg-destructive/10";
+            if (isAnswer) cls = "border-success bg-success/10";
+            else if (isPicked) cls = "border-destructive bg-destructive/10";
           }
           return (
             <button
@@ -325,11 +333,17 @@ function McCard({
               disabled={!!picked}
               onClick={() => setPicked(opt)}
               className={cn(
-                "w-full rounded-lg border px-4 py-3 text-left transition hover:bg-secondary disabled:hover:bg-transparent",
+                "flex w-full items-center justify-between gap-2 rounded-lg border px-4 py-3 text-left transition hover:bg-secondary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:hover:bg-transparent",
                 cls,
               )}
             >
-              {opt}
+              <span className="line-clamp-2 break-words">{opt}</span>
+              {picked && isAnswer && (
+                <CheckCircle2 className="h-4 w-4 shrink-0 text-success" aria-hidden />
+              )}
+              {picked && isPicked && !isAnswer && (
+                <XCircle className="h-4 w-4 shrink-0 text-destructive" aria-hidden />
+              )}
             </button>
           );
         })}
@@ -347,7 +361,7 @@ function McCard({
   );
 }
 
-/** 로직3/4 — 생산/청취: 뜻 또는 음성 → 단어 입력. */
+/** 로직3/4 — 생산/청취: 뜻 또는 음성 → 단어 입력. 오답 시 다시 시도 가능. */
 function TypeCard({
   card,
   mode,
@@ -367,13 +381,18 @@ function TypeCard({
     if (mode === "dictation") speak(card.word, card.language);
   }, [mode, card]);
 
+  function retry() {
+    setChecked(false);
+    setValue("");
+  }
+
   return (
     <>
-      <div className="mb-2 flex justify-end">
-        <CardHeart card={card} />
-      </div>
       <Card>
-        <CardContent className="py-8 text-center">
+        <CardContent className="relative flex flex-col items-center gap-2 py-8 text-center">
+          <div className="absolute right-4 top-4">
+            <CardHeart card={card} />
+          </div>
           {mode === "dictation" ? (
             <div className="flex items-center justify-center gap-3">
               <p className="text-sm text-muted-foreground">잘 듣고 받아쓰세요</p>
@@ -381,16 +400,11 @@ function TypeCard({
             </div>
           ) : (
             <>
-              <h2 className="text-2xl font-bold">{card.meaning}</h2>
-              <p className="mt-2 text-sm text-muted-foreground">
-                이 뜻의 단어를 입력하세요
-              </p>
+              <h2 className="line-clamp-2 break-words text-[clamp(1.25rem,4.5vw,1.75rem)] font-bold">
+                {card.meaning}
+              </h2>
+              <p className="text-sm text-muted-foreground">이 뜻의 단어를 입력하세요</p>
             </>
-          )}
-          {checked && (
-            <p className={cn("mt-4 text-lg font-semibold", correct ? "text-success" : "text-destructive")}>
-              {correct ? "✓ 정답" : `✗ 정답: ${card.word}`}
-            </p>
           )}
         </CardContent>
       </Card>
@@ -409,8 +423,36 @@ function TypeCard({
           placeholder="단어 입력"
           disabled={checked}
         />
+        {checked && (
+          <div
+            className={cn(
+              "flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium",
+              correct ? "bg-success/10 text-success" : "bg-destructive/10 text-destructive",
+            )}
+          >
+            {correct ? (
+              <CheckCircle2 className="h-4 w-4 shrink-0" aria-hidden />
+            ) : (
+              <XCircle className="h-4 w-4 shrink-0" aria-hidden />
+            )}
+            <span className="break-words">{correct ? "정답이에요" : `정답: ${card.word}`}</span>
+          </div>
+        )}
         {checked ? (
-          <NextBar choice={correct ? "good" : "hard"} saving={saving} onGrade={onGrade} />
+          <div className="flex gap-2">
+            {!correct && (
+              <Button type="button" variant="outline" className="flex-1" onClick={retry}>
+                <RotateCcw className="h-4 w-4" aria-hidden />
+                다시 시도
+              </Button>
+            )}
+            <NextBar
+              choice={correct ? "good" : "hard"}
+              saving={saving}
+              onGrade={onGrade}
+              className="flex-1"
+            />
+          </div>
         ) : (
           <Button type="submit" className="w-full" disabled={saving || !value.trim()}>
             확인
@@ -418,6 +460,22 @@ function TypeCard({
         )}
       </form>
     </>
+  );
+}
+
+function Speaker({ card }: { card: StudyCard }) {
+  return (
+    <button
+      type="button"
+      onClick={(e) => {
+        e.stopPropagation();
+        speak(card.word, card.language);
+      }}
+      aria-label="발음 듣기"
+      className="rounded-md p-1 text-muted-foreground transition hover:bg-secondary hover:text-foreground"
+    >
+      <Volume2 className="h-5 w-5" aria-hidden />
+    </button>
   );
 }
 

@@ -1,12 +1,15 @@
 "use client";
 
 import { useState } from "react";
+import { Volume2, Trash2 } from "lucide-react";
 import type { Flashcard, Language } from "@nativo/core";
 import { COMPLETE_THRESHOLD } from "@/lib/flashcards";
 import { speak } from "@/lib/tts";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { EmptyState, ErrorBanner } from "@/components/ui/states";
 import { cn } from "@/lib/utils";
 import { HeartToggle } from "./HeartToggle";
 import {
@@ -117,18 +120,18 @@ export function WordDictionary({
         )}
       </div>
 
-      {error && (
-        <p className="mb-3 rounded-lg bg-destructive/10 px-3 py-2 text-sm text-destructive">
-          {error}
-        </p>
-      )}
+      <ErrorBanner message={error} className="mb-3" />
 
       {filtered.length === 0 ? (
-        <Card>
-          <CardContent className="py-10 text-center text-sm text-muted-foreground">
-            {rows.length === 0 ? emptyText : "검색 결과가 없습니다."}
-          </CardContent>
-        </Card>
+        rows.length === 0 ? (
+          <EmptyState icon="📭" title={emptyText} />
+        ) : (
+          <EmptyState
+            icon="🔍"
+            title="검색 결과가 없어요"
+            description="다른 단어나 뜻으로 다시 검색해 보세요."
+          />
+        )
       ) : (
         <ul className="space-y-2">
           {filtered.map((r) => (
@@ -139,22 +142,16 @@ export function WordDictionary({
                     type="button"
                     onClick={() => speak(r.word, language)}
                     aria-label="발음 듣기"
-                    className="shrink-0"
+                    className="shrink-0 rounded-md p-1.5 text-muted-foreground transition hover:bg-secondary hover:text-foreground"
                   >
-                    🔊
+                    <Volume2 className="h-4 w-4" aria-hidden />
                   </button>
                   <div className="min-w-0 flex-1">
-                    <div className="flex items-center gap-2">
-                      <span className="font-medium">{r.word}</span>
-                      {r.difficulty && (
-                        <span className="rounded bg-secondary px-1.5 py-0.5 text-xs text-muted-foreground">
-                          {r.difficulty}
-                        </span>
-                      )}
+                    <div className="flex flex-wrap items-center gap-2">
+                      <span className="break-words font-medium">{r.word}</span>
+                      {r.difficulty && <Badge variant="muted">{r.difficulty}</Badge>}
                       {r.repetitions >= COMPLETE_THRESHOLD ? (
-                        <span className="rounded bg-green-100 px-1.5 py-0.5 text-xs font-medium text-green-700">
-                          ✓ 완료
-                        </span>
+                        <Badge variant="success">완료</Badge>
                       ) : (
                         <span className="text-xs text-muted-foreground">
                           복습 {r.repetitions}회
@@ -187,41 +184,43 @@ export function WordDictionary({
                           setEditing(r.id);
                           setDraft(r.meaning);
                         }}
-                        className="truncate text-left text-sm text-muted-foreground hover:text-foreground"
+                        className="line-clamp-2 break-words text-left text-sm text-muted-foreground hover:text-foreground"
                         title="클릭해서 뜻 수정"
                       >
                         {r.meaning}
                       </button>
                     )}
                   </div>
-                  <HeartToggle
-                    initialActive={r.source !== "curated"}
-                    onAdd={() =>
-                      addToMyWords({
-                        language,
-                        word: r.word,
-                        meaning: r.meaning,
-                        pronunciation: r.pronunciation,
-                        difficulty: r.difficulty,
-                      })
-                    }
-                    onRemove={() => removeFromMyWords({ language, word: r.word })}
-                    onToggled={(active) => {
-                      if (removeOnUnheart && !active) {
-                        setRows((prev) => prev.filter((x) => x.id !== r.id));
+                  <div className="flex shrink-0 items-center gap-1">
+                    <HeartToggle
+                      initialActive={r.source !== "curated"}
+                      onAdd={() =>
+                        addToMyWords({
+                          language,
+                          word: r.word,
+                          meaning: r.meaning,
+                          pronunciation: r.pronunciation,
+                          difficulty: r.difficulty,
+                        })
                       }
-                    }}
-                  />
-                  <button
-                    type="button"
-                    onClick={() => remove(r.id)}
-                    disabled={busy === r.id}
-                    aria-label="단어 삭제"
-                    title="사전에서 완전히 삭제"
-                    className="shrink-0 rounded-md p-1.5 text-muted-foreground transition hover:bg-destructive/10 hover:text-destructive disabled:opacity-40"
-                  >
-                    🗑
-                  </button>
+                      onRemove={() => removeFromMyWords({ language, word: r.word })}
+                      onToggled={(active) => {
+                        if (removeOnUnheart && !active) {
+                          setRows((prev) => prev.filter((x) => x.id !== r.id));
+                        }
+                      }}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => remove(r.id)}
+                      disabled={busy === r.id}
+                      aria-label="단어 삭제"
+                      title="사전에서 완전히 삭제"
+                      className="flex h-9 w-9 items-center justify-center rounded-md text-muted-foreground transition hover:bg-destructive/10 hover:text-destructive disabled:opacity-40"
+                    >
+                      <Trash2 className="h-4 w-4" aria-hidden />
+                    </button>
+                  </div>
                 </CardContent>
               </Card>
             </li>

@@ -2,9 +2,11 @@
 
 import { useState } from "react";
 import type { Language } from "@nativo/core";
+import { Info } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Card, CardContent } from "@/components/ui/card";
 import { RoleplayChat } from "../[scenarioId]/RoleplayChat";
 
 interface Props {
@@ -23,7 +25,7 @@ export function CustomRoleplaySetup({ language, configured }: Props) {
   if (started) {
     return (
       <>
-        <div className="mb-4 rounded-lg border bg-secondary/40 p-3 text-sm">
+        <div className="mb-4 rounded-2xl border bg-card p-4 text-sm shadow-sm">
           <p>
             <span className="text-muted-foreground">상대: </span>
             {started.aiRole}
@@ -46,7 +48,7 @@ export function CustomRoleplaySetup({ language, configured }: Props) {
         e.preventDefault();
         if (ready) setStarted({ aiRole: aiRole.trim(), userMission: userMission.trim() });
       }}
-      className="space-y-4 rounded-xl border p-5"
+      className="space-y-4 rounded-2xl border bg-card p-5 shadow-sm"
     >
       <div className="space-y-1.5">
         <Label htmlFor="aiRole">AI가 맡을 역할 (상황)</Label>
@@ -66,13 +68,20 @@ export function CustomRoleplaySetup({ language, configured }: Props) {
           placeholder="예: 월세를 5만원 깎아서 계약하기"
         />
       </div>
-      <Button type="submit" disabled={!ready || !configured}>
+      <Button
+        type="submit"
+        disabled={!ready || !configured}
+        className="bg-highlight text-highlight-foreground hover:bg-highlight/90"
+      >
         대화 시작
       </Button>
       {!configured && (
-        <p className="text-sm text-muted-foreground">
-          OpenAI 키가 설정되면 커스텀 상황으로 대화할 수 있어요.
-        </p>
+        <Card className="border-dashed">
+          <CardContent className="flex items-start gap-2 py-3 text-sm text-muted-foreground">
+            <Info size={16} className="mt-0.5 shrink-0 text-primary" aria-hidden />
+            OpenAI 키가 설정되면 커스텀 상황으로 대화할 수 있어요.
+          </CardContent>
+        </Card>
       )}
     </form>
   );
