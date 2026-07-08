@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { Search, ChevronLeft, ChevronRight } from "lucide-react";
-import type { Language } from "@nativo/core";
+import type { CefrLevel, Language } from "@nativo/core";
 import { isSupabaseConfigured } from "@/lib/supabase/env";
 import { SupabaseNotice } from "@/components/SupabaseNotice";
 import { AppShell } from "@/components/AppShell";
@@ -14,11 +14,12 @@ import { AllWordsList } from "./AllWordsList";
 import { SearchInput } from "./SearchInput";
 
 const BASE = "/learn/flashcards/dictionary";
+const LEVELS: CefrLevel[] = ["A1", "A2", "B1", "B2", "C1", "C2"];
 
 export default async function WordDictionaryPage({
   searchParams,
 }: {
-  searchParams: { tab?: string; q?: string; page?: string };
+  searchParams: { tab?: string; q?: string; level?: string; page?: string };
 }) {
   if (!isSupabaseConfigured()) {
     return (
@@ -50,7 +51,7 @@ export default async function WordDictionaryPage({
 
   return (
     <AppShell>
-      <main className="container max-w-2xl py-8 md:py-10">
+      <main className="container py-8 md:py-10">
         <header className="mb-5">
           <h1 className="font-display text-2xl font-bold text-foreground">내 단어 사전</h1>
           <p className="mt-1 text-sm text-muted-foreground">
@@ -78,6 +79,7 @@ export default async function WordDictionaryPage({
             userId={user.id}
             language={language}
             q={searchParams.q ?? ""}
+            level={searchParams.level}
             page={Math.max(1, Number(searchParams.page ?? "1") || 1)}
           />
         ) : (
@@ -171,11 +173,13 @@ async function AllTab({
   userId,
   language,
   q,
+  level,
   page,
 }: {
   userId: string;
   language: Language;
   q: string;
+  level?: string;
   page: number;
 }) {
   const supabase = createClient();
@@ -188,51 +192,93 @@ async function AllTab({
     .neq("source", "curated");
   const owned = (ownedRows ?? []).map((r) => r.word);
 
-  const result = getWordDbPage(language, { query: q, page });
+  const lv = (LEVELS.includes(level as CefrLevel) ? level : "all") as CefrLevel | "all";
+
+  const result = getWordDbPage(language, { query: q, level: lv, page });
   const totalPages = Math.max(1, Math.ceil(result.total / result.pageSize));
   const linkFor = (p: number) =>
-    `${BASE}?tab=all&q=${encodeURIComponent(q)}&page=${p}`;
+    `${BASE}?tab=all&q=${encodeURIComponent(q)}&level=${lv}&page=${p}`;
+
+  const hasFilter = !!q || lv !== "all";
 
   return (
     <div>
-      <form className="mb-4 flex gap-2" action={BASE} method="get">
+      <form className="mb-4 flex flex-wrap gap-2" action={BASE} method="get">
         <input type="hidden" name="tab" value="all" />
         <SearchInput name="q" defaultValue={q} placeholder="단어·뜻 검색…" />
+        <select
+          name="level"
+          defaultValue={lv}
+          className="rounded-md border border-input bg-background px-2 py-2 text-sm shadow-sm"
+        >
+          <option value="all">전체 레벨</option>
+          {LEVELS.map((l) => (
+            <option key={l} value={l}>
+              {l}
+            </option>
+          ))}
+        </select>
         <Button type="submit" variant="secondary" className="shrink-0">
           <Search className="h-4 w-4" aria-hidden />
           <span className="hidden sm:inline">검색</span>
         </Button>
       </form>
 
-      <p className="mb-3 text-sm text-muted-foreground">
-        {result.total.toLocaleString()}개 단어 · {page}/{totalPages} 페이지
-        {q ? "" : ` (전체 ${wordDbSize(language).toLocaleString()})`}
-      </p>
+      <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
+        <p className="text-sm text-muted-foreground">
+          {result.total.toLocaleString()}개 단어 · {page}/{totalPages} 페이지
+          {q ? "" : ` (전체 ${wordDbSize(language).toLocaleString()})`}
+        </p>
+        <PageNav page={page} totalPages={totalPages} linkFor={linkFor} />
+      </div>
 
-      <AllWordsList words={result.words} language={language} owned={owned} hasQuery={!!q} />
+      <AllWordsList words={result.words} language={language} owned={owned} hasQuery={hasFilter} />
 
-      <nav className="mt-6 flex items-center justify-between" aria-label="페이지 이동">
-        {page > 1 ? (
-          <Button asChild variant="outline" size="sm">
-            <Link href={linkFor(page - 1)}>
-              <ChevronLeft className="h-4 w-4" aria-hidden />
-              이전
-            </Link>
-          </Button>
-        ) : (
-          <span />
-        )}
-        {page < totalPages ? (
-          <Button asChild variant="outline" size="sm">
-            <Link href={linkFor(page + 1)}>
-              다음
-              <ChevronRight className="h-4 w-4" aria-hidden />
-            </Link>
-          </Button>
-        ) : (
-          <span />
-        )}
-      </nav>
+      <div className="mt-6 flex justify-end">
+        <PageNav page={page} totalPages={totalPages} linkFor={linkFor} />
+      </div>
     </div>
+  );
+}
+
+/** 이전/다음 페이지 버튼 쌍 — 목록 위(오른쪽)와 아래에 동일하게 노출. */
+function PageNav({
+  page,
+  totalPages,
+  linkFor,
+}: {
+  page: number;
+  totalPages: number;
+  linkFor: (p: number) => string;
+}) {
+  return (
+    <nav className="flex shrink-0 items-center gap-2" aria-label="페이지 이동">
+      {page > 1 ? (
+        <Button asChild variant="outline" size="sm">
+          <Link href={linkFor(page - 1)}>
+            <ChevronLeft className="h-4 w-4" aria-hidden />
+            이전
+          </Link>
+        </Button>
+      ) : (
+        <Button variant="outline" size="sm" disabled>
+          <ChevronLeft className="h-4 w-4" aria-hidden />
+          이전
+        </Button>
+      )}
+      {page < totalPages ? (
+        <Button asChild variant="outline" size="sm">
+          <Link href={linkFor(page + 1)}>
+            다음
+            <ChevronRight className="h-4 w-4" aria-hidden />
+          </Link>
+        </Button>
+      ) : (
+        <Button variant="outline" size="sm" disabled>
+          다음
+          <ChevronRight className="h-4 w-4" aria-hidden />
+        </Button>
+      )}
+    </nav>
   );
 }

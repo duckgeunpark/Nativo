@@ -3,7 +3,7 @@ import { Skeleton } from "@/components/ui/states";
 /** 문서 목록/Gutenberg 검색 결과를 새로 불러오는 동안의 로딩 스켈레톤. */
 export default function ReadingLoading() {
   return (
-    <div className="container max-w-5xl py-8 sm:py-10">
+    <div className="container py-8 sm:py-10">
       <div className="mb-8 flex items-start justify-between gap-4">
         <div>
           <Skeleton className="h-8 w-32" />

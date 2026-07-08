@@ -90,7 +90,7 @@ export default async function FlashcardsPage() {
 
   return (
     <AppShell>
-      <main className="container max-w-2xl py-8 md:py-10">
+      <main className="container py-8 md:py-10">
         <div className="mb-6 flex items-center justify-between gap-3">
           <h1 className="font-display text-2xl font-bold text-foreground">플래시카드</h1>
           <Button asChild variant="outline" size="sm">

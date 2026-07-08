@@ -85,7 +85,7 @@ export default async function ChunksPage() {
 
   return (
     <AppShell>
-      <main className="container max-w-2xl py-8 md:py-10">
+      <main className="container py-8 md:py-10">
         <div className="mb-6 flex items-start justify-between gap-3">
           <div>
             <h1 className="font-display text-2xl font-bold text-foreground">청크 복습</h1>

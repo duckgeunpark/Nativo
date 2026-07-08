@@ -87,6 +87,21 @@ export function Reader({ text, language, page, total, prevHref, nextHref }: Prop
   const [selected, setSelected] = useState<string | null>(null);
   // 드래그로 선택한 텍스트 위에 띄우는 "번역하기" 버튼 (없으면 null)
   const [selBtn, setSelBtn] = useState<{ x: number; y: number; text: string } | null>(null);
+  // 사용법 안내 토스트 — 세션당 한 번만 잠깐 보여주고 자동으로 사라짐
+  const [showTip, setShowTip] = useState(false);
+
+  useEffect(() => {
+    if (sessionStorage.getItem("reader-tip-seen")) return;
+    sessionStorage.setItem("reader-tip-seen", "1");
+    setShowTip(true);
+  }, []);
+
+  // 숨김 타이머는 별도 effect로 — Strict Mode의 이중 실행에서 타이머가 유실되지 않도록
+  useEffect(() => {
+    if (!showTip) return;
+    const t = setTimeout(() => setShowTip(false), 6000);
+    return () => clearTimeout(t);
+  }, [showTip]);
 
   const paragraphs = useMemo(() => splitParagraphs(text), [text]);
 
@@ -155,37 +170,6 @@ export function Reader({ text, language, page, total, prevHref, nextHref }: Prop
     <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_380px]">
       {/* 왼쪽: 읽기 */}
       <section className="min-w-0">
-        {total ? (
-          <div className="mb-3 hidden items-center justify-between gap-2 rounded-lg border bg-background/95 px-2 py-1.5 backdrop-blur lg:sticky lg:top-4 lg:z-20 lg:flex">
-            {prevHref ? (
-              <Link
-                href={prevHref}
-                className="inline-flex items-center gap-1 rounded-md px-3 py-1 text-sm font-medium hover:bg-secondary"
-              >
-                <ChevronLeft className="h-4 w-4" aria-hidden /> 이전
-              </Link>
-            ) : (
-              <span className="px-3 py-1 text-sm text-muted-foreground/40">← 이전</span>
-            )}
-            <span className="text-xs text-muted-foreground">
-              {page} / {total} 쪽
-            </span>
-            {nextHref ? (
-              <Link
-                href={nextHref}
-                className="inline-flex items-center gap-1 rounded-md px-3 py-1 text-sm font-medium hover:bg-secondary"
-              >
-                다음 <ChevronRight className="h-4 w-4" aria-hidden />
-              </Link>
-            ) : (
-              <span className="px-3 py-1 text-sm text-muted-foreground/40">다음 →</span>
-            )}
-          </div>
-        ) : null}
-        <p className="mb-4 rounded-lg bg-secondary/40 px-3 py-2 text-xs text-muted-foreground">
-          💡 <b>단어</b>를 누르면 뜻이 나오고, 번역할 부분을 <b>드래그</b>하면 뜨는{" "}
-          <b>번역하기</b> 버튼을 누르세요.
-        </p>
         <article
           lang={LANG_ISO[language]}
           onMouseUp={captureSelection}
@@ -214,6 +198,34 @@ export function Reader({ text, language, page, total, prevHref, nextHref }: Prop
             </p>
           ))}
         </article>
+        {/* 데스크톱 페이지 이동 바 — 본문을 다 읽고 만나도록 본문 아래에 배치 */}
+        {total ? (
+          <div className="mt-6 hidden items-center justify-between gap-2 rounded-lg border bg-background px-2 py-1.5 lg:flex">
+            {prevHref ? (
+              <Link
+                href={prevHref}
+                className="inline-flex items-center gap-1 rounded-md px-3 py-1 text-sm font-medium hover:bg-secondary"
+              >
+                <ChevronLeft className="h-4 w-4" aria-hidden /> 이전
+              </Link>
+            ) : (
+              <span className="px-3 py-1 text-sm text-muted-foreground/40">← 이전</span>
+            )}
+            <span className="text-xs text-muted-foreground">
+              {page} / {total} 쪽
+            </span>
+            {nextHref ? (
+              <Link
+                href={nextHref}
+                className="inline-flex items-center gap-1 rounded-md px-3 py-1 text-sm font-medium hover:bg-secondary"
+              >
+                다음 <ChevronRight className="h-4 w-4" aria-hidden />
+              </Link>
+            ) : (
+              <span className="px-3 py-1 text-sm text-muted-foreground/40">다음 →</span>
+            )}
+          </div>
+        ) : null}
       </section>
 
       {/* 오른쪽: 번역 패널 (데스크톱에서 좌측 구분선으로 시각적 분리) */}
@@ -229,6 +241,17 @@ export function Reader({ text, language, page, total, prevHref, nextHref }: Prop
           </Card>
         )}
       </section>
+
+      {/* 사용법 안내 토스트 — 세션당 한 번, 6초 뒤 자동으로 사라짐 */}
+      {showTip && (
+        <div
+          role="status"
+          className="fixed left-1/2 top-16 z-40 w-[calc(100vw-2rem)] max-w-md -translate-x-1/2 rounded-lg border bg-popover/95 px-3 py-2 text-center text-xs text-popover-foreground shadow-lg backdrop-blur animate-in fade-in slide-in-from-top-2 lg:top-6"
+        >
+          💡 <b>단어</b>를 누르면 뜻이 나오고, 번역할 부분을 <b>드래그</b>하면 뜨는{" "}
+          <b>번역하기</b> 버튼을 누르세요.
+        </div>
+      )}
 
       {/* 드래그 선택 위에 뜨는 "번역하기" 플로팅 버튼 — 선택 영역이 있을 때만 노출 */}
       {selBtn && (
@@ -321,7 +344,8 @@ export function Reader({ text, language, page, total, prevHref, nextHref }: Prop
       {total ? (
         <div
           className="fixed inset-x-0 z-30 border-t bg-card/95 px-3 py-2 backdrop-blur lg:hidden"
-          style={{ bottom: "calc(4rem + env(safe-area-inset-bottom))" }}
+          // 하단 탭바(AppShell, 3.25rem + safe-area) 바로 위에 틈 없이 붙인다
+          style={{ bottom: "calc(3.25rem + env(safe-area-inset-bottom))" }}
         >
           <div className="mb-1.5 flex items-center justify-between text-xs text-muted-foreground">
             <span>

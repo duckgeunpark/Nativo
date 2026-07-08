@@ -50,11 +50,11 @@ export function AllChunksList({
   }
 
   return (
-    <ul className="space-y-2">
+    <ul className="grid gap-2 sm:grid-cols-2 xl:grid-cols-3">
       {chunks.map((c) => (
         <li key={c.expression}>
-          <Card>
-            <CardContent className="flex items-start gap-3 p-3">
+          <Card className="h-full">
+            <CardContent className="flex h-full items-start gap-3 p-3">
               <button
                 type="button"
                 onClick={() => speak(c.expression, language)}

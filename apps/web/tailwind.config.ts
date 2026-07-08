@@ -7,8 +7,10 @@ const config: Config = {
   theme: {
     container: {
       center: true,
-      padding: "1.5rem",
-      screens: { "2xl": "1100px" },
+      padding: { DEFAULT: "1rem", sm: "1.5rem" },
+      // 읽기 페이지 기준 폭 — 모든 페이지의 좌우 여백을 이 폭으로 통일.
+      // 1536px 미만 화면의 고정 캡은 globals.css의 .container 규칙과 값을 맞출 것.
+      screens: { "2xl": "1360px" },
     },
     extend: {
       fontFamily: {

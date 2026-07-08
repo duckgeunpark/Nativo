@@ -73,7 +73,7 @@ export default async function BookReaderPage({
     if (total === 0) {
       return (
         <AppShell>
-          <main className="container max-w-2xl py-10">
+          <main className="container py-10">
             <Link
               href="/learn/reading"
               className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground"
@@ -131,7 +131,7 @@ export default async function BookReaderPage({
 
   return (
     <AppShell>
-      <main className="mx-auto max-w-[1360px] px-4 py-6 pb-40 sm:px-6 lg:pb-8">
+      <main className="container py-6 pb-40 lg:pb-8">
         <Link
           href="/learn/reading"
           className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground"

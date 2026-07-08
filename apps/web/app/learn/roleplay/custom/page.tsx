@@ -32,7 +32,7 @@ export default async function CustomRoleplayPage() {
 
   return (
     <AppShell>
-      <main className="container max-w-2xl py-6">
+      <main className="container py-6">
         <Link
           href="/learn/roleplay"
           className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground"

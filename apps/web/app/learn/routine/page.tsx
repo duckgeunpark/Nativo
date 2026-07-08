@@ -34,7 +34,7 @@ export default async function RoutinePage() {
 
   return (
     <AppShell>
-      <main className="container max-w-5xl py-8 lg:py-10">
+      <main className="container py-8 lg:py-10">
         <header className="mb-6">
           <h1 className="font-display text-2xl font-bold sm:text-3xl">오늘의 루틴</h1>
           <p className="mt-1 text-sm text-muted-foreground">

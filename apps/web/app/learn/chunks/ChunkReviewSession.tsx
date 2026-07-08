@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import { Volume2, Eye, EyeOff, CheckCircle2, XCircle, RotateCcw, PartyPopper } from "lucide-react";
+import { Volume2, CheckCircle2, XCircle, RotateCcw, PartyPopper } from "lucide-react";
 import { type StudyChunk } from "@/lib/chunk-review";
 import { gradeChunk } from "./actions";
 import { addToMyChunks, removeFromMyChunks } from "./dictionary/actions";
@@ -203,7 +203,24 @@ function CategoryBadge({ chunk }: { chunk: StudyChunk }) {
   return <Badge variant="muted">{CATEGORY_LABEL[chunk.category] ?? chunk.category}</Badge>;
 }
 
-/** 로직1 — 인식: 표현은 항상 보이고, 뜻·상황·뉘앙스는 탭해서 확인. 무채점 진행. */
+/** 표현 발음 듣기 아이콘 — 카드 클릭(뒤집기)과 겹치지 않게 전파를 막는다. */
+function ChunkSpeaker({ chunk }: { chunk: StudyChunk }) {
+  return (
+    <button
+      type="button"
+      onClick={(e) => {
+        e.stopPropagation();
+        speak(chunk.expression, chunk.language);
+      }}
+      aria-label="발음 듣기"
+      className="rounded-md p-1 text-muted-foreground transition hover:bg-secondary hover:text-foreground"
+    >
+      <Volume2 className="h-5 w-5" aria-hidden />
+    </button>
+  );
+}
+
+/** 로직1 — 인식: 카드를 탭하면 앞(표현)↔뒤(뜻·상황·뉘앙스)로 뒤집힌다. 무채점 진행. */
 function FlipChunk({
   chunk,
   saving,
@@ -220,67 +237,76 @@ function FlipChunk({
 
   return (
     <>
-      <Card className="relative">
-        <CardContent className="flex min-h-56 flex-col items-center justify-center gap-4 px-6 py-10 text-center">
-          <div className="absolute left-4 top-4">
+      <Card
+        role="button"
+        tabIndex={0}
+        aria-pressed={flipped}
+        aria-label={flipped ? "카드 앞면(표현) 보기" : "카드 뒷면(뜻) 보기"}
+        onClick={() => setFlipped((f) => !f)}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            setFlipped((f) => !f);
+          }
+        }}
+        className="relative cursor-pointer select-none transition-colors hover:bg-secondary/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+      >
+        {/* 앞/뒤 공통 고정 높이 — 뒤집을 때 카드 크기가 출렁이지 않게 한다 */}
+        <CardContent className="flex min-h-80 flex-col items-center justify-center gap-4 overflow-hidden px-6 py-10 text-center">
+          <div className="absolute left-4 top-4 flex items-center gap-2">
+            <span className="rounded-full bg-secondary px-2.5 py-0.5 text-xs font-medium text-muted-foreground">
+              {flipped ? "Back" : "Front"}
+            </span>
             <CategoryBadge chunk={chunk} />
           </div>
-          <span className="rounded-full bg-secondary px-2.5 py-0.5 text-xs font-medium text-muted-foreground">
-            {flipped ? "Back" : "Front"}
-          </span>
-          <p className="line-clamp-2 max-w-full break-words text-[clamp(1.375rem,5.5vw,2rem)] font-bold leading-tight">
-            {chunk.expression}
-          </p>
-          {flipped && (
-            <div className="w-full max-w-md space-y-1.5 rounded-lg bg-secondary/60 p-4 text-left text-sm">
-              <p className="break-words text-lg font-semibold">{chunk.translation_ko}</p>
-              {chunk.situation && (
-                <p className="break-words text-muted-foreground">상황: {chunk.situation}</p>
-              )}
-              {chunk.nuance && (
-                <p className="break-words text-muted-foreground">뉘앙스: {chunk.nuance}</p>
-              )}
-              {chunk.example_1 && (
-                <p className="line-clamp-2 break-words text-muted-foreground">
-                  · {chunk.example_1}
-                </p>
-              )}
-              {chunk.example_2 && (
-                <p className="line-clamp-2 break-words text-muted-foreground">
-                  · {chunk.example_2}
-                </p>
-              )}
+          <div className="absolute right-4 top-4" onClick={(e) => e.stopPropagation()}>
+            <ChunkHeart chunk={chunk} />
+          </div>
+          {flipped ? (
+            <>
+              <div className="flex max-w-full items-center justify-center gap-2">
+                <p className="line-clamp-1 break-words text-xl font-bold">{chunk.expression}</p>
+                <ChunkSpeaker chunk={chunk} />
+              </div>
+              <div className="w-full max-w-md space-y-1.5 rounded-lg bg-secondary/60 p-4 text-left text-sm">
+                <p className="break-words text-lg font-semibold">{chunk.translation_ko}</p>
+                {chunk.situation && (
+                  <p className="break-words text-muted-foreground">상황: {chunk.situation}</p>
+                )}
+                {chunk.nuance && (
+                  <p className="break-words text-muted-foreground">뉘앙스: {chunk.nuance}</p>
+                )}
+                {chunk.example_1 && (
+                  <p className="line-clamp-2 break-words text-muted-foreground">
+                    · {chunk.example_1}
+                  </p>
+                )}
+                {chunk.example_2 && (
+                  <p className="line-clamp-2 break-words text-muted-foreground">
+                    · {chunk.example_2}
+                  </p>
+                )}
+              </div>
+            </>
+          ) : (
+            <div className="flex max-w-full items-center justify-center gap-2">
+              <p className="line-clamp-2 break-words text-[clamp(1.5rem,6vw,2.25rem)] font-bold leading-tight">
+                {chunk.expression}
+              </p>
+              <ChunkSpeaker chunk={chunk} />
             </div>
           )}
-          <p className="text-xs text-muted-foreground">
-            {flipped ? "뜻이 표시됨" : "탭하여 뜻 보기"}
-          </p>
         </CardContent>
       </Card>
-      <div className="mt-4 grid grid-cols-2 gap-2">
+      <div className="mt-4">
         <Button
           type="button"
-          variant="outline"
-          onClick={() => speak(chunk.expression, chunk.language)}
-        >
-          <Volume2 className="h-4 w-4" aria-hidden />
-          듣기
-        </Button>
-        <Button type="button" variant="outline" onClick={() => setFlipped((f) => !f)}>
-          {flipped ? <EyeOff className="h-4 w-4" aria-hidden /> : <Eye className="h-4 w-4" aria-hidden />}
-          {flipped ? "뜻 숨기기" : "뜻 보기"}
-        </Button>
-      </div>
-      <div className="mt-3 flex items-center gap-2">
-        <Button
-          type="button"
-          className="flex-1"
+          className="w-full"
           disabled={saving || !flipped}
           onClick={() => onAdvance(null)}
         >
           다음
         </Button>
-        <ChunkHeart chunk={chunk} />
       </div>
     </>
   );
@@ -312,11 +338,17 @@ function McChunk({
   return (
     <>
       <Card>
-        <CardContent className="flex flex-col items-center gap-2 py-8 text-center">
+        <CardContent className="relative flex flex-col items-center gap-2 py-8 text-center">
+          <div className="absolute right-4 top-4">
+            <ChunkHeart chunk={chunk} />
+          </div>
           <CategoryBadge chunk={chunk} />
-          <h2 className="line-clamp-2 break-words text-[clamp(1.375rem,5vw,1.75rem)] font-bold">
-            {chunk.expression}
-          </h2>
+          <div className="flex max-w-full items-center justify-center gap-2">
+            <h2 className="line-clamp-2 break-words text-[clamp(1.375rem,5vw,1.75rem)] font-bold">
+              {chunk.expression}
+            </h2>
+            <ChunkSpeaker chunk={chunk} />
+          </div>
           <p className="text-sm text-muted-foreground">알맞은 뜻을 고르세요</p>
         </CardContent>
       </Card>
@@ -352,16 +384,15 @@ function McChunk({
         })}
       </div>
       {picked && (
-        <div className="mt-4 flex items-center gap-2">
+        <div className="mt-4">
           <Button
             type="button"
-            className="flex-1"
+            className="w-full"
             disabled={saving}
             onClick={() => onAdvance(picked === answer)}
           >
             다음
           </Button>
-          <ChunkHeart chunk={chunk} />
         </div>
       )}
     </>
@@ -390,7 +421,10 @@ function ProductionChunk({
   return (
     <>
       <Card>
-        <CardContent className="flex flex-col items-center gap-2 py-8 text-center">
+        <CardContent className="relative flex flex-col items-center gap-2 py-8 text-center">
+          <div className="absolute right-4 top-4">
+            <ChunkHeart chunk={chunk} />
+          </div>
           <CategoryBadge chunk={chunk} />
           <h2 className="line-clamp-2 break-words text-[clamp(1.125rem,4.5vw,1.5rem)] font-bold">
             {chunk.translation_ko}
@@ -450,7 +484,6 @@ function ProductionChunk({
             >
               다음
             </Button>
-            <ChunkHeart chunk={chunk} />
           </div>
         ) : (
           <Button type="submit" className="w-full" disabled={saving || !value.trim()}>
@@ -484,7 +517,10 @@ function NuanceChunk({
   return (
     <>
       <Card>
-        <CardContent className="flex flex-col items-center gap-2 py-8 text-center">
+        <CardContent className="relative flex flex-col items-center gap-2 py-8 text-center">
+          <div className="absolute right-4 top-4">
+            <ChunkHeart chunk={chunk} />
+          </div>
           <CategoryBadge chunk={chunk} />
           <p className="text-sm text-muted-foreground">이 상황에 가장 알맞은 표현은?</p>
           <h2 className="line-clamp-3 break-words text-lg font-semibold">{prompt}</h2>
@@ -525,16 +561,15 @@ function NuanceChunk({
         })}
       </div>
       {picked && (
-        <div className="mt-4 flex items-center gap-2">
+        <div className="mt-4">
           <Button
             type="button"
-            className="flex-1"
+            className="w-full"
             disabled={saving}
             onClick={() => onAdvance(picked === chunk.expression)}
           >
             다음
           </Button>
-          <ChunkHeart chunk={chunk} />
         </div>
       )}
     </>

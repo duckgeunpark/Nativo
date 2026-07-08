@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import { Volume2, Eye, EyeOff, CheckCircle2, XCircle, RotateCcw, PartyPopper } from "lucide-react";
+import { Volume2, CheckCircle2, XCircle, RotateCcw, PartyPopper } from "lucide-react";
 import type { ReviewChoice } from "@nativo/utils";
 import { type StudyCard } from "@/lib/flashcards";
 import { gradeFlashcard } from "./actions";
@@ -207,7 +207,7 @@ function CardRunner({
   return <TypeCard card={card} mode={mode} saving={saving} onGrade={onGrade} />;
 }
 
-/** 로직1 — 인식: 단어·발음·예문은 항상 보이고, 뜻만 탭해서 확인 후 '다음'으로 넘어감. */
+/** 로직1 — 인식: 카드를 탭하면 앞(단어)↔뒤(뜻)로 뒤집힌다. 뒤집어야 '다음' 진행. */
 function FlipCard({
   card,
   saving,
@@ -225,54 +225,67 @@ function FlipCard({
 
   return (
     <>
-      <Card className="relative">
-        <CardContent className="flex min-h-56 flex-col items-center justify-center gap-4 overflow-hidden px-6 py-10 text-center">
-          <div className="absolute right-4 top-4">
-            <CardHeart card={card} />
-          </div>
-          <span className="rounded-full bg-secondary px-2.5 py-0.5 text-xs font-medium text-muted-foreground">
+      <Card
+        role="button"
+        tabIndex={0}
+        aria-pressed={flipped}
+        aria-label={flipped ? "카드 앞면(단어) 보기" : "카드 뒷면(뜻) 보기"}
+        onClick={() => setFlipped((f) => !f)}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            setFlipped((f) => !f);
+          }
+        }}
+        className="relative cursor-pointer select-none transition-colors hover:bg-secondary/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+      >
+        {/* 앞/뒤 공통 고정 높이 — 뒤집을 때 카드 크기가 출렁이지 않게 한다 */}
+        <CardContent className="flex min-h-80 flex-col items-center justify-center gap-4 overflow-hidden px-6 py-10 text-center">
+          <span className="absolute left-4 top-4 rounded-full bg-secondary px-2.5 py-0.5 text-xs font-medium text-muted-foreground">
             {flipped ? "Back" : "Front"}
           </span>
-          <div className="max-w-full space-y-2">
-            <p className="line-clamp-2 break-words text-[clamp(1.5rem,6vw,2.25rem)] font-bold leading-tight">
-              {card.word}
-            </p>
-            {card.pronunciation && (
-              <p className="text-sm text-muted-foreground">{card.pronunciation}</p>
-            )}
+          <div className="absolute right-4 top-4" onClick={(e) => e.stopPropagation()}>
+            <CardHeart card={card} />
           </div>
-          {card.example_1 && (
-            <p className="line-clamp-2 max-w-md break-words text-sm text-muted-foreground">
-              {card.example_1}
-            </p>
-          )}
-          {flipped && (
-            <div className="w-full max-w-md space-y-1 rounded-lg bg-secondary/60 p-4 text-left">
-              <p className="text-xs font-medium text-muted-foreground">뜻</p>
-              <p className="line-clamp-3 break-words text-lg font-semibold">{card.meaning}</p>
-              {card.meaning_en && (
-                <p className="line-clamp-2 break-words text-sm text-muted-foreground">
-                  {card.meaning_en}
+          {flipped ? (
+            <>
+              <div className="flex max-w-full items-center justify-center gap-2">
+                <p className="line-clamp-1 break-words text-xl font-bold">{card.word}</p>
+                <Speaker card={card} />
+              </div>
+              <div className="w-full max-w-md space-y-1 rounded-lg bg-secondary/60 p-4 text-left">
+                <p className="text-xs font-medium text-muted-foreground">뜻</p>
+                <p className="line-clamp-3 break-words text-lg font-semibold">{card.meaning}</p>
+                {card.meaning_en && (
+                  <p className="line-clamp-2 break-words text-sm text-muted-foreground">
+                    {card.meaning_en}
+                  </p>
+                )}
+              </div>
+            </>
+          ) : (
+            <>
+              <div className="max-w-full space-y-2">
+                <div className="flex max-w-full items-center justify-center gap-2">
+                  <p className="line-clamp-2 break-words text-[clamp(1.5rem,6vw,2.25rem)] font-bold leading-tight">
+                    {card.word}
+                  </p>
+                  <Speaker card={card} />
+                </div>
+                {card.pronunciation && (
+                  <p className="text-sm text-muted-foreground">{card.pronunciation}</p>
+                )}
+              </div>
+              {card.example_1 && (
+                <p className="line-clamp-2 max-w-md break-words text-sm text-muted-foreground">
+                  {card.example_1}
                 </p>
               )}
-            </div>
+            </>
           )}
-          <p className="text-xs text-muted-foreground">
-            {flipped ? "뜻이 표시됨" : "탭하여 뜻 보기"}
-          </p>
         </CardContent>
       </Card>
-      <div className="mt-4 grid grid-cols-2 gap-2">
-        <Button type="button" variant="outline" onClick={() => speak(card.word, card.language)}>
-          <Volume2 className="h-4 w-4" aria-hidden />
-          듣기
-        </Button>
-        <Button type="button" variant="outline" onClick={() => setFlipped((f) => !f)}>
-          {flipped ? <EyeOff className="h-4 w-4" aria-hidden /> : <Eye className="h-4 w-4" aria-hidden />}
-          {flipped ? "뜻 숨기기" : "뜻 보기"}
-        </Button>
-      </div>
-      <div className="mt-3">
+      <div className="mt-4">
         <NextBar choice="good" saving={saving} disabled={!flipped} onGrade={onGrade} />
       </div>
     </>

@@ -3,6 +3,16 @@
 @tailwind utilities;
 
 /*
+ * 페이지 공통 폭 — Tailwind container의 max-width는 2xl(1536px) 미디어쿼리에서만
+ * 걸리므로, 그보다 좁은 화면(디스플레이 배율 포함)에서도 항상 1360px에서 멈추도록 고정.
+ */
+@layer components {
+  .container {
+    max-width: 1360px;
+  }
+}
+
+/*
  * Nativo 디자인 토큰 — warm editorial 브랜드
  * 크림 서페이스 + 딥 틸 primary + 코랄 highlight(CTA·진행·피드백 전용)
  * 근거: sample_img 01·02 무드보드, nativo_screens_classification.csv

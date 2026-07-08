@@ -67,7 +67,7 @@ export default async function ReadingPage({
 
   return (
     <AppShell>
-      <main className="container max-w-5xl py-8 sm:py-10">
+      <main className="container py-8 sm:py-10">
         <header className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
           <div>
             <h1 className="font-display text-2xl font-bold sm:text-3xl">읽기</h1>

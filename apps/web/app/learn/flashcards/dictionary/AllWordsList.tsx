@@ -49,11 +49,11 @@ export function AllWordsList({
   }
 
   return (
-    <ul className="space-y-2">
+    <ul className="grid gap-2 sm:grid-cols-2 xl:grid-cols-3">
       {words.map((w) => (
         <li key={w.word}>
-          <Card>
-            <CardContent className="flex items-center gap-3 p-3">
+          <Card className="h-full">
+            <CardContent className="flex h-full items-center gap-3 p-3">
               <button
                 type="button"
                 onClick={() => speak(w.word, language)}

@@ -46,7 +46,7 @@ export default async function ShadowingVideoPage({
 
   return (
     <AppShell>
-      <main className="container max-w-6xl py-8">
+      <main className="container py-8">
         <Link
           href="/learn/shadowing"
           className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground"

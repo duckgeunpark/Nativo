@@ -77,16 +77,19 @@ export interface WordDbPage {
  */
 export function getWordDbPage(
   language: Language,
-  opts: { query?: string; page?: number; pageSize?: number } = {},
+  opts: { query?: string; level?: CefrLevel | "all"; page?: number; pageSize?: number } = {},
 ): WordDbPage {
   const all = load(language).filter((w) => w?.word && w?.meaning);
   const q = (opts.query ?? "").trim().toLowerCase();
-  const filtered = q
+  let filtered = q
     ? all.filter(
         (w) =>
           w.word.toLowerCase().includes(q) || w.meaning.toLowerCase().includes(q),
       )
     : all;
+  if (opts.level && opts.level !== "all") {
+    filtered = filtered.filter((w) => w.difficulty === opts.level);
+  }
 
   const pageSize = opts.pageSize ?? 60;
   const page = Math.max(1, opts.page ?? 1);

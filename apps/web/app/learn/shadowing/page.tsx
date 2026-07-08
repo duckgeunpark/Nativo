@@ -32,7 +32,7 @@ export default async function ShadowingPage() {
 
   return (
     <AppShell>
-      <main className="container max-w-4xl py-10">
+      <main className="container py-10">
         <header className="mb-6">
           <h1 className="font-display text-2xl font-bold tracking-tight">쉐도잉</h1>
           <p className="mt-1 text-sm text-muted-foreground">

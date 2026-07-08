@@ -53,7 +53,7 @@ export default async function ChunkDictionaryPage({
 
   return (
     <AppShell>
-      <main className="container max-w-2xl py-8 md:py-10">
+      <main className="container py-8 md:py-10">
         <header className="mb-5">
           <h1 className="font-display text-2xl font-bold text-foreground">내 청크 사전</h1>
           <p className="mt-1 text-sm text-muted-foreground">
@@ -238,35 +238,61 @@ async function AllTab({
           <span className="hidden sm:inline">검색</span>
         </Button>
       </form>
-      <p className="mb-3 text-sm text-muted-foreground">
-        {result.total.toLocaleString()}개 · {page}/{totalPages} 페이지 (전체{" "}
-        {chunkDbSize(language).toLocaleString()})
-      </p>
+      <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
+        <p className="text-sm text-muted-foreground">
+          {result.total.toLocaleString()}개 · {page}/{totalPages} 페이지 (전체{" "}
+          {chunkDbSize(language).toLocaleString()})
+        </p>
+        <PageNav page={page} totalPages={totalPages} linkFor={linkFor} />
+      </div>
 
       <AllChunksList chunks={result.chunks} language={language} owned={owned} hasQuery={hasFilter} />
 
-      <nav className="mt-6 flex items-center justify-between" aria-label="페이지 이동">
-        {page > 1 ? (
-          <Button asChild variant="outline" size="sm">
-            <Link href={linkFor(page - 1)}>
-              <ChevronLeft className="h-4 w-4" aria-hidden />
-              이전
-            </Link>
-          </Button>
-        ) : (
-          <span />
-        )}
-        {page < totalPages ? (
-          <Button asChild variant="outline" size="sm">
-            <Link href={linkFor(page + 1)}>
-              다음
-              <ChevronRight className="h-4 w-4" aria-hidden />
-            </Link>
-          </Button>
-        ) : (
-          <span />
-        )}
-      </nav>
+      <div className="mt-6 flex justify-end">
+        <PageNav page={page} totalPages={totalPages} linkFor={linkFor} />
+      </div>
     </div>
+  );
+}
+
+/** 이전/다음 페이지 버튼 쌍 — 목록 위(오른쪽)와 아래에 동일하게 노출. */
+function PageNav({
+  page,
+  totalPages,
+  linkFor,
+}: {
+  page: number;
+  totalPages: number;
+  linkFor: (p: number) => string;
+}) {
+  return (
+    <nav className="flex shrink-0 items-center gap-2" aria-label="페이지 이동">
+      {page > 1 ? (
+        <Button asChild variant="outline" size="sm">
+          <Link href={linkFor(page - 1)}>
+            <ChevronLeft className="h-4 w-4" aria-hidden />
+            이전
+          </Link>
+        </Button>
+      ) : (
+        <Button variant="outline" size="sm" disabled>
+          <ChevronLeft className="h-4 w-4" aria-hidden />
+          이전
+        </Button>
+      )}
+      {page < totalPages ? (
+        <Button asChild variant="outline" size="sm">
+          <Link href={linkFor(page + 1)}>
+            다음
+            <ChevronRight className="h-4 w-4" aria-hidden />
+          </Link>
+        </Button>
+      ) : (
+        <Button variant="outline" size="sm" disabled>
+          다음
+          <ChevronRight className="h-4 w-4" aria-hidden />
+        </Button>
+      )}
+    </nav>
   );
 }

@@ -51,7 +51,7 @@ export default async function TranslatePage() {
 
   return (
     <AppShell>
-      <main className="container max-w-2xl py-8 sm:py-10">
+      <main className="container py-8 sm:py-10">
         <header className="mb-5">
           <h1 className="font-display text-2xl font-bold sm:text-3xl">번역가 모드</h1>
           <p className="mt-1 text-sm text-muted-foreground">

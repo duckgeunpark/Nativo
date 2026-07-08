@@ -6,8 +6,10 @@ import { SupabaseNotice } from "@/components/SupabaseNotice";
 import { AppShell } from "@/components/AppShell";
 import { createClient } from "@/lib/supabase/server";
 import { isChunkDue } from "@/lib/chunk-review";
+import { getRoutineTasks } from "@/lib/routine";
 import { StatCard } from "@/components/ui/stat-card";
 import { HeroRecommendCard, SecondaryRecommendCard } from "./RecommendCard";
+import { RoutineCard } from "./RoutineCard";
 
 const LANGUAGE_LABEL: Record<Language, string> = {
   english: "영어 🇺🇸",
@@ -204,7 +206,7 @@ export default async function DashboardPage() {
 
   return (
     <AppShell>
-      <main className="container max-w-5xl py-8 lg:py-10">
+      <main className="container py-8 lg:py-10">
         <header className="mb-6 flex flex-wrap items-center justify-between gap-3">
           <div>
             <h1 className="font-display text-2xl font-bold sm:text-3xl">
@@ -223,8 +225,10 @@ export default async function DashboardPage() {
             지금 이어서 하면 좋아요
           </h2>
           <div className="grid gap-3 lg:grid-cols-3">
-            <div className="lg:col-span-2">
+            <div className="space-y-3 lg:col-span-2">
               <HeroRecommendCard {...loops[heroKey]} />
+              {/* 히어로 아래 남는 공간 — 오늘의 루틴 요약으로 채운다 */}
+              <RoutineCard language={language} tasks={getRoutineTasks(language)} />
             </div>
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-3 lg:grid-cols-1">
               {secondaryKeys.map((key) => (

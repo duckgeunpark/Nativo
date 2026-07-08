@@ -41,7 +41,7 @@ export default async function RoleplayChatPage({
 
   return (
     <AppShell>
-      <main className="container max-w-4xl py-6">
+      <main className="container py-6">
         <Link
           href="/learn/roleplay"
           className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground"

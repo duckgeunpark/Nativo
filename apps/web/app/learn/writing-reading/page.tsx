@@ -64,7 +64,7 @@ export default async function WritingReadingHubPage() {
 
   return (
     <AppShell>
-      <main className="container max-w-3xl py-8 lg:py-10">
+      <main className="container py-8 lg:py-10">
         <header className="mb-6">
           <h1 className="font-display text-2xl font-bold sm:text-3xl">쓰기·읽기</h1>
           <p className="mt-1 text-sm text-muted-foreground">
