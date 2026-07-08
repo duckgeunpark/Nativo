@@ -125,21 +125,75 @@ const LANGUAGE_NAME: Record<Language, string> = {
 /** 미션 달성 시 AI 응답 끝에 붙는 신호 토큰 (클라이언트가 감지 후 제거). */
 export const MISSION_COMPLETE_TOKEN = "[[MISSION_COMPLETE]]";
 
+/** 사용자가 설정에서 고른 대화 스타일 (lib/prefs 와 값 일치, 서버 검증용). */
+export interface RoleplayStyleInput {
+  length: "short" | "normal";
+  difficulty: "match" | "challenge";
+}
+
+/** 요청 바디의 style 을 안전한 값으로 정규화. */
+export function sanitizeStyle(raw: unknown): RoleplayStyleInput {
+  const o = (raw ?? {}) as { length?: unknown; difficulty?: unknown };
+  return {
+    length: o.length === "short" ? "short" : "normal",
+    difficulty: o.difficulty === "challenge" ? "challenge" : "match",
+  };
+}
+
 /** GPT 시스템 프롬프트 (서버에서만 사용). */
 export function buildSystemPrompt(
   scenario: Scenario | CustomScenarioInput,
   language: Language,
+  style: RoleplayStyleInput = { length: "normal", difficulty: "match" },
 ): string {
   const lang = LANGUAGE_NAME[language];
+  const lengthRule =
+    style.length === "short"
+      ? `Keep replies very short (1 sentence), natural and in character.`
+      : `Keep replies short and natural (1-3 sentences), in character.`;
+  const difficultyRule =
+    style.difficulty === "challenge"
+      ? `Use slightly more advanced vocabulary and idioms to challenge the learner.`
+      : `Match your vocabulary and pace to the learner's apparent level.`;
   return [
     `You are a friendly language-practice partner for a learner of ${lang}.`,
     `Role-play strictly in character as: ${scenario.aiRole}.`,
-    `Speak ONLY in ${lang}. Keep replies short and natural (1-3 sentences), in character.`,
+    `Speak ONLY in ${lang}. ${lengthRule}`,
+    difficultyRule,
     `The learner's mission: ${scenario.userMission}.`,
     `Drive the scene forward and add mild, realistic friction so the conversation keeps going.`,
     `If the learner is stuck, switches to Korean, or makes a big mistake, gently help by offering a simpler ${lang} phrasing — but stay in character.`,
     `When the learner has clearly accomplished their mission, give a brief natural closing line in character, then append the exact token ${MISSION_COMPLETE_TOKEN} at the very end of that message (and only then).`,
     `Never break character or mention you are an AI.`,
+  ].join(" ");
+}
+
+/** 대화 중 표현 힌트. /api/roleplay/hint 응답 형태. */
+export interface RoleplayHint {
+  expressions: Array<{ text: string; meaning: string }>;
+}
+
+/** 대화 중 "이런 표현을 써보세요" 힌트 생성용 시스템 프롬프트 (서버 전용). */
+export function buildHintPrompt(
+  scenario: { aiRole: string; userMission: string },
+  language: Language,
+): string {
+  const lang = LANGUAGE_NAME[language];
+  return [
+    `You are a ${lang} speaking coach quietly observing a role-play.`,
+    `The partner plays: ${scenario.aiRole}. The learner's mission: ${scenario.userMission}.`,
+    `Based on the conversation so far, suggest 2-3 useful ${lang} expressions the learner could say NEXT to move toward the mission.`,
+    `Return strict JSON: {"expressions":[{"text":"${lang} 표현","meaning":"한국어 뜻"}]}.`,
+    `Keep each expression short and immediately usable.`,
+  ].join(" ");
+}
+
+/** 빠른 번역(한국어 → 학습 언어) 시스템 프롬프트 (서버 전용). */
+export function buildQuickTranslatePrompt(language: Language): string {
+  const lang = LANGUAGE_NAME[language];
+  return [
+    `Translate the learner's Korean text into natural, conversational spoken ${lang}.`,
+    `Return strict JSON: {"translation":"..."} with nothing else.`,
   ].join(" ");
 }
 

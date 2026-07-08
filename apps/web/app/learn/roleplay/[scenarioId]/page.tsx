@@ -73,6 +73,11 @@ export default async function RoleplayChatPage({
 
         <RoleplayChat
           scenarioId={scenario.id}
+          info={{
+            emoji: scenario.emoji,
+            aiRole: scenario.aiRole,
+            userMission: scenario.userMission,
+          }}
           language={language}
           configured={isOpenAIConfigured()}
         />

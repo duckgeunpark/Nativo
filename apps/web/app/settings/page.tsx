@@ -24,7 +24,7 @@ export default async function SettingsPage() {
 
   const { data: profile } = await supabase
     .from("users")
-    .select("selected_language, current_level")
+    .select("selected_language, current_level, display_name")
     .eq("id", user.id)
     .single();
 
@@ -51,6 +51,7 @@ export default async function SettingsPage() {
           initial={{
             language: profile?.selected_language ?? "english",
             level: profile?.current_level ?? "A2",
+            displayName: profile?.display_name ?? "",
             flashcardSize,
             chunkSize,
           }}

@@ -35,7 +35,12 @@ export function CustomRoleplaySetup({ language, configured }: Props) {
             {started.userMission}
           </p>
         </div>
-        <RoleplayChat custom={started} language={language} configured={configured} />
+        <RoleplayChat
+          custom={started}
+          info={{ aiRole: started.aiRole, userMission: started.userMission }}
+          language={language}
+          configured={configured}
+        />
       </>
     );
   }

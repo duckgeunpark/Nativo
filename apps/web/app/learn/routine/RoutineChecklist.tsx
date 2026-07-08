@@ -68,10 +68,11 @@ export function RoutineChecklist({ language, tasks, currentPhase }: Props) {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const weekDates = useMemo(
-    () => Array.from({ length: 7 }, (_, i) => localDate(i - 6)),
-    [],
-  );
+  // 이번 주 일요일~토요일 (달력 순서 고정: 일 월 화 수 목 금 토)
+  const weekDates = useMemo(() => {
+    const todayDow = new Date().getDay();
+    return Array.from({ length: 7 }, (_, i) => localDate(i - todayDow));
+  }, []);
 
   useEffect(() => {
     let active = true;
@@ -249,11 +250,15 @@ export function RoutineChecklist({ language, tasks, currentPhase }: Props) {
               {weekDates.map((d) => {
                 const count = week[d] ?? 0;
                 const isToday = d === localDate(0);
+                const isFuture = d > localDate(0);
                 const done = tasks.length > 0 && count >= tasks.length;
                 const partial = count > 0 && !done;
                 const weekday = WEEKDAY_LABEL[new Date(`${d}T00:00:00`).getDay()];
                 return (
-                  <div key={d} className="flex flex-col items-center gap-1">
+                  <div
+                    key={d}
+                    className={cn("flex flex-col items-center gap-1", isFuture && "opacity-40")}
+                  >
                     <span className="text-[10px] text-muted-foreground">{weekday}</span>
                     <span
                       className={cn(

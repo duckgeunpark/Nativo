@@ -125,7 +125,7 @@ export default async function SpeakingHubPage() {
                 className="block rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
               >
                 <Card className="h-full transition-colors hover:bg-secondary/50">
-                  <CardContent className="flex flex-col gap-2 p-4">
+                  <CardContent className="flex h-full flex-col justify-center gap-2 p-4">
                     <div className="flex items-center justify-between">
                       <p className="font-medium">{roleplayTitle}</p>
                       {roleplay.score_total !== null && (

@@ -1,13 +1,30 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import { ChevronDown, LogOut, Mic, RotateCcw, Send, Square, Star, Volume2, VolumeX } from "lucide-react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import {
+  ArrowRightLeft,
+  ChevronDown,
+  CornerDownLeft,
+  Lightbulb,
+  LogOut,
+  MessageCircle,
+  Mic,
+  RotateCcw,
+  Send,
+  Square,
+  Star,
+  Target,
+  Volume2,
+  VolumeX,
+} from "lucide-react";
 import type { Language } from "@nativo/core";
 import {
   MISSION_COMPLETE_TOKEN,
   type RoleplayCoachFeedback,
+  type RoleplayHint,
 } from "@/lib/roleplay";
 import { speak, isSpeechSupported } from "@/lib/tts";
+import { getAutoSpeak, getRoleplayStyle, setAutoSpeak as persistAutoSpeak } from "@/lib/prefs";
 import {
   isRecognitionSupported,
   startRecognition,
@@ -21,19 +38,33 @@ import { cn } from "@/lib/utils";
 interface Msg {
   role: "user" | "assistant";
   content: string;
+  /** 수신/발신 시각 (epoch ms) — 말풍선 타임스탬프 표시용. */
+  at: number;
+}
+
+/** 사이드 패널·아바타 표시용 시나리오 요약 (API 전송과는 무관). */
+interface ScenarioInfo {
+  emoji?: string;
+  aiRole: string;
+  userMission: string;
 }
 
 interface Props {
   /** 정적 시나리오 ID 또는 커스텀 상황 중 하나. */
   scenarioId?: string;
   custom?: { aiRole: string; userMission: string };
+  info?: ScenarioInfo;
   language: Language;
   configured: boolean;
 }
 
 type EndReason = "mission" | "manual";
 
-export function RoleplayChat({ scenarioId, custom, language, configured }: Props) {
+function formatTime(at: number): string {
+  return new Date(at).toLocaleTimeString("ko-KR", { hour: "2-digit", minute: "2-digit" });
+}
+
+export function RoleplayChat({ scenarioId, custom, info, language, configured }: Props) {
   const [messages, setMessages] = useState<Msg[]>([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
@@ -51,15 +82,33 @@ export function RoleplayChat({ scenarioId, custom, language, configured }: Props
   const voiceInSupported = isRecognitionSupported();
   const voiceOutSupported = isSpeechSupported();
 
+  // 설정 페이지에서 저장한 기기별 기본값 (SSR 하이드레이션 후 반영)
+  useEffect(() => {
+    setAutoSpeak(getAutoSpeak());
+  }, []);
+
   useEffect(() => {
     endRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, loading]);
+
+  function toggleAutoSpeak() {
+    setAutoSpeak((v) => {
+      persistAutoSpeak(!v);
+      return !v;
+    });
+  }
 
   async function callApi(history: Msg[]): Promise<string | null> {
     const res = await fetch("/api/roleplay", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ scenarioId, custom, language, messages: history }),
+      body: JSON.stringify({
+        scenarioId,
+        custom,
+        language,
+        style: getRoleplayStyle(),
+        messages: history.map((m) => ({ role: m.role, content: m.content })),
+      }),
     });
     if (!res.ok) return null;
     const data = (await res.json()) as { reply?: string };
@@ -70,9 +119,10 @@ export function RoleplayChat({ scenarioId, custom, language, configured }: Props
   function handleReply(reply: string, history: Msg[]) {
     const done = reply.includes(MISSION_COMPLETE_TOKEN);
     const clean = reply.replace(MISSION_COMPLETE_TOKEN, "").trim();
-    setMessages([...history, { role: "assistant", content: clean }]);
+    const next = [...history, { role: "assistant" as const, content: clean, at: Date.now() }];
+    setMessages(next);
     if (autoSpeak && clean) speak(clean, language);
-    if (done) endSession("mission", [...history, { role: "assistant", content: clean }]);
+    if (done) endSession("mission", next);
   }
 
   function greet() {
@@ -101,7 +151,7 @@ export function RoleplayChat({ scenarioId, custom, language, configured }: Props
       return;
     }
 
-    const next = [...messages, { role: "user" as const, content: text }];
+    const next = [...messages, { role: "user" as const, content: text, at: Date.now() }];
     setMessages(next);
     setInput("");
     setLoading(true);
@@ -124,7 +174,12 @@ export function RoleplayChat({ scenarioId, custom, language, configured }: Props
       const res = await fetch("/api/roleplay/feedback", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ scenarioId, custom, language, messages: history }),
+        body: JSON.stringify({
+          scenarioId,
+          custom,
+          language,
+          messages: history.map((m) => ({ role: m.role, content: m.content })),
+        }),
       });
       if (res.ok) setFeedback((await res.json()) as RoleplayCoachFeedback);
     } finally {
@@ -186,8 +241,8 @@ export function RoleplayChat({ scenarioId, custom, language, configured }: Props
   return (
     <div className="grid gap-4 lg:grid-cols-[1fr_20rem] lg:items-start">
       {/* 채팅 */}
-      <div className="flex h-[70vh] flex-col rounded-2xl border bg-card shadow-sm">
-        {/* 상단 바: 상태 + 음성 출력 토글 + 종료(확인 포함) */}
+      <div className="flex h-[70vh] flex-col overflow-hidden rounded-2xl border bg-card shadow-sm">
+        {/* 상단 바: 상태 + 종료(확인 포함) */}
         <div className="flex items-center justify-between gap-2 border-b px-3 py-2 text-sm">
           {confirmingEnd ? (
             <div className="flex w-full items-center justify-between gap-2">
@@ -207,71 +262,87 @@ export function RoleplayChat({ scenarioId, custom, language, configured }: Props
             </div>
           ) : (
             <>
-              <span className="text-muted-foreground">
-                {ended ? "대화 종료됨" : "대화 중 · /end 로 종료"}
+              <span className="flex min-w-0 items-center gap-2 text-muted-foreground">
+                <Avatar emoji={info?.emoji} />
+                <span className="truncate">
+                  {info?.aiRole ?? "대화 상대"}
+                  <span
+                    className={cn(
+                      "ml-2 text-xs",
+                      ended ? "text-muted-foreground" : "text-success",
+                    )}
+                  >
+                    {ended ? "대화 종료됨" : "● 대화 중"}
+                  </span>
+                </span>
               </span>
-              <div className="flex items-center gap-1">
-                {voiceOutSupported && (
-                  <button
-                    type="button"
-                    onClick={() => setAutoSpeak((v) => !v)}
-                    className="flex items-center gap-1 rounded-md px-2 py-1 text-muted-foreground hover:bg-secondary"
-                    title={autoSpeak ? "음성 응답 끄기" : "음성 응답 켜기"}
-                  >
-                    {autoSpeak ? <Volume2 size={16} /> : <VolumeX size={16} />}
-                  </button>
-                )}
-                {!ended && messages.some((m) => m.role === "user") && (
-                  <button
-                    type="button"
-                    onClick={() => setConfirmingEnd(true)}
-                    className="flex items-center gap-1 rounded-md border px-2 py-1 text-xs text-muted-foreground hover:bg-secondary"
-                  >
-                    <LogOut size={13} aria-hidden /> 종료
-                  </button>
-                )}
-              </div>
+              {!ended && messages.some((m) => m.role === "user") && (
+                <button
+                  type="button"
+                  onClick={() => setConfirmingEnd(true)}
+                  className="flex shrink-0 items-center gap-1 rounded-md border px-2 py-1 text-xs text-muted-foreground hover:bg-secondary"
+                >
+                  <LogOut size={13} aria-hidden /> 종료
+                </button>
+              )}
             </>
           )}
         </div>
 
-        <div className="flex-1 space-y-3 overflow-y-auto p-4">
+        <div className="flex-1 space-y-3 overflow-y-auto bg-muted/30 p-4">
           {messages.map((m, i) => (
             <div
               key={i}
-              className={cn("flex", m.role === "user" ? "justify-end" : "justify-start")}
+              className={cn(
+                "flex items-end gap-2",
+                m.role === "user" ? "justify-end" : "justify-start",
+              )}
             >
+              {m.role === "assistant" && <Avatar emoji={info?.emoji} />}
               <div
                 className={cn(
-                  "max-w-[80%] whitespace-pre-wrap break-words rounded-2xl px-4 py-2 text-sm [overflow-wrap:anywhere]",
-                  m.role === "user" ? "bg-primary text-primary-foreground" : "bg-secondary",
+                  "max-w-[80%] whitespace-pre-wrap break-words px-4 py-2 text-sm shadow-sm [overflow-wrap:anywhere]",
+                  m.role === "user"
+                    ? "rounded-2xl rounded-br-md bg-primary text-primary-foreground"
+                    : "rounded-2xl rounded-bl-md border bg-card",
                 )}
               >
                 {m.content}
-                {m.role === "assistant" && (
-                  <button
-                    type="button"
-                    onClick={() => speak(m.content, language)}
-                    className="ml-2 align-middle opacity-70 hover:opacity-100"
-                    aria-label="발음 듣기"
-                  >
-                    🔊
-                  </button>
-                )}
+                <span
+                  className={cn(
+                    "mt-1 flex items-center justify-end gap-1.5 text-[10px]",
+                    m.role === "user" ? "text-primary-foreground/70" : "text-muted-foreground",
+                  )}
+                >
+                  {m.role === "assistant" && (
+                    <button
+                      type="button"
+                      onClick={() => speak(m.content, language)}
+                      className="opacity-70 hover:opacity-100"
+                      aria-label="발음 듣기"
+                    >
+                      <Volume2 size={12} aria-hidden />
+                    </button>
+                  )}
+                  {formatTime(m.at)}
+                </span>
               </div>
             </div>
           ))}
 
           {loading && (
-            <div className="flex justify-start">
-              <div className="rounded-2xl bg-secondary px-4 py-2 text-sm text-muted-foreground">
-                …
+            <div className="flex items-end gap-2">
+              <Avatar emoji={info?.emoji} />
+              <div className="flex items-center gap-1 rounded-2xl rounded-bl-md border bg-card px-4 py-3 shadow-sm">
+                <TypingDot delay="0ms" />
+                <TypingDot delay="150ms" />
+                <TypingDot delay="300ms" />
               </div>
             </div>
           )}
 
           {ended && (
-            <div className="rounded-xl border bg-muted/40 p-4 text-center text-sm">
+            <div className="rounded-xl border bg-card p-4 text-center text-sm">
               {ended === "mission" ? (
                 <p className="font-semibold text-success">🎉 목표를 달성했습니다!</p>
               ) : (
@@ -297,12 +368,30 @@ export function RoleplayChat({ scenarioId, custom, language, configured }: Props
                 듣고 있어요…
               </p>
             )}
-            <div className="flex gap-2">
+            <div className="flex items-center gap-2">
+              {voiceOutSupported && (
+                <button
+                  type="button"
+                  onClick={toggleAutoSpeak}
+                  aria-pressed={autoSpeak}
+                  className={cn(
+                    "flex h-10 shrink-0 items-center gap-1.5 rounded-full border px-3 text-xs transition-colors",
+                    autoSpeak
+                      ? "border-primary/40 bg-primary/10 text-primary"
+                      : "text-muted-foreground hover:bg-secondary",
+                  )}
+                  title={autoSpeak ? "음성 응답 끄기" : "음성 응답 켜기"}
+                >
+                  {autoSpeak ? <Volume2 size={15} aria-hidden /> : <VolumeX size={15} aria-hidden />}
+                  <span className="hidden sm:inline">자동 재생</span>
+                </button>
+              )}
               {voiceInSupported && (
                 <Button
                   type="button"
                   variant={listening ? "destructive" : "secondary"}
                   size="icon"
+                  className="shrink-0 rounded-full"
                   onClick={toggleListening}
                   disabled={loading}
                   aria-label={listening ? "음성 입력 중지" : "음성으로 말하기"}
@@ -314,6 +403,7 @@ export function RoleplayChat({ scenarioId, custom, language, configured }: Props
               <Input
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
+                className="rounded-full"
                 placeholder={
                   listening
                     ? "듣고 있어요…"
@@ -323,7 +413,13 @@ export function RoleplayChat({ scenarioId, custom, language, configured }: Props
                 }
                 disabled={loading}
               />
-              <Button type="submit" disabled={loading || !input.trim()} aria-label="보내기">
+              <Button
+                type="submit"
+                size="icon"
+                className="shrink-0 rounded-full"
+                disabled={loading || !input.trim()}
+                aria-label="보내기"
+              >
                 <Send size={16} />
               </Button>
             </div>
@@ -331,8 +427,8 @@ export function RoleplayChat({ scenarioId, custom, language, configured }: Props
         )}
       </div>
 
-      {/* 피드백 패널: 데스크톱은 옆 컬럼, 모바일은 채팅 아래 접히는 패널 */}
-      {showFeedbackPane && (
+      {/* 오른쪽 컬럼: 대화 중엔 학습 도우미, 종료 후엔 피드백 */}
+      {showFeedbackPane ? (
         <>
           <div className="hidden rounded-2xl border bg-card p-4 shadow-sm lg:sticky lg:top-4 lg:block">
             {feedbackLoading ? (
@@ -358,7 +454,281 @@ export function RoleplayChat({ scenarioId, custom, language, configured }: Props
             </div>
           </details>
         </>
+      ) : (
+        <>
+          <div className="hidden rounded-2xl border bg-card p-4 shadow-sm lg:sticky lg:top-4 lg:block">
+            <AssistPanel
+              info={info}
+              scenarioId={scenarioId}
+              custom={custom}
+              language={language}
+              messages={messages}
+              disabled={!!ended}
+              onUse={(t) => setInput(t)}
+            />
+          </div>
+
+          <details className="group rounded-2xl border bg-card shadow-sm lg:hidden">
+            <summary className="flex cursor-pointer list-none items-center justify-between px-4 py-3 text-sm font-semibold">
+              <span className="flex items-center gap-1.5">
+                <Lightbulb size={14} className="text-highlight" aria-hidden /> 학습 도우미
+              </span>
+              <ChevronDown size={16} className="transition-transform group-open:rotate-180" aria-hidden />
+            </summary>
+            <div className="border-t p-4">
+              <AssistPanel
+                info={info}
+                scenarioId={scenarioId}
+                custom={custom}
+                language={language}
+                messages={messages}
+                disabled={!!ended}
+                onUse={(t) => setInput(t)}
+              />
+            </div>
+          </details>
+        </>
       )}
+    </div>
+  );
+}
+
+/** AI 파트너 아바타 — 시나리오 이모지가 있으면 사용, 없으면 기본 아이콘. */
+function Avatar({ emoji }: { emoji?: string }) {
+  return (
+    <span
+      className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border bg-secondary text-base"
+      aria-hidden
+    >
+      {emoji ?? <MessageCircle size={14} className="text-muted-foreground" />}
+    </span>
+  );
+}
+
+function TypingDot({ delay }: { delay: string }) {
+  return (
+    <span
+      className="h-1.5 w-1.5 animate-bounce rounded-full bg-muted-foreground/60"
+      style={{ animationDelay: delay }}
+      aria-hidden
+    />
+  );
+}
+
+/**
+ * 대화 중 학습 도우미: 미션 리마인더 + 표현 힌트 + 빠른 번역.
+ * 종료 후에는 피드백 패널이 이 자리를 대체한다.
+ */
+function AssistPanel({
+  info,
+  scenarioId,
+  custom,
+  language,
+  messages,
+  disabled,
+  onUse,
+}: {
+  info?: ScenarioInfo;
+  scenarioId?: string;
+  custom?: { aiRole: string; userMission: string };
+  language: Language;
+  messages: Msg[];
+  disabled: boolean;
+  onUse: (text: string) => void;
+}) {
+  const [hints, setHints] = useState<RoleplayHint["expressions"]>([]);
+  const [hintLoading, setHintLoading] = useState(false);
+  const [hintError, setHintError] = useState(false);
+  const [krText, setKrText] = useState("");
+  const [translation, setTranslation] = useState<string | null>(null);
+  const [translating, setTranslating] = useState(false);
+
+  // 메시지 개수를 문자열로 묶어 힌트 stale 여부 판단에 사용
+  const historyKey = useMemo(() => messages.length, [messages]);
+  const hintsAtRef = useRef(-1);
+  const hintsStale = hints.length > 0 && hintsAtRef.current !== historyKey;
+
+  async function fetchHints() {
+    setHintLoading(true);
+    setHintError(false);
+    try {
+      const res = await fetch("/api/roleplay/hint", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          scenarioId,
+          custom,
+          language,
+          messages: messages.map((m) => ({ role: m.role, content: m.content })),
+        }),
+      });
+      if (!res.ok) throw new Error();
+      const data = (await res.json()) as Partial<RoleplayHint>;
+      setHints(Array.isArray(data.expressions) ? data.expressions.slice(0, 3) : []);
+      hintsAtRef.current = historyKey;
+    } catch {
+      setHintError(true);
+    } finally {
+      setHintLoading(false);
+    }
+  }
+
+  async function translate() {
+    const text = krText.trim();
+    if (!text || translating) return;
+    setTranslating(true);
+    setTranslation(null);
+    try {
+      const res = await fetch("/api/roleplay/translate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ language, text }),
+      });
+      if (res.ok) {
+        const data = (await res.json()) as { translation?: string };
+        setTranslation(data.translation || null);
+      }
+    } finally {
+      setTranslating(false);
+    }
+  }
+
+  return (
+    <div className="space-y-5 text-left">
+      {/* 미션 리마인더 */}
+      {info && (
+        <div>
+          <p className="flex items-center gap-1.5 text-sm font-semibold">
+            <Target size={14} className="text-primary" aria-hidden /> 미션
+          </p>
+          <p className="mt-1 text-sm text-muted-foreground">{info.userMission}</p>
+        </div>
+      )}
+
+      {/* 표현 힌트 */}
+      <div className="space-y-2">
+        <p className="flex items-center gap-1.5 text-sm font-semibold">
+          <Lightbulb size={14} className="text-highlight" aria-hidden /> 표현 힌트
+        </p>
+        {hints.length === 0 && !hintLoading && (
+          <p className="text-xs text-muted-foreground">
+            뭐라고 말할지 막히면 힌트를 받아보세요.
+          </p>
+        )}
+        {hintLoading ? (
+          <div className="space-y-2">
+            <Skeleton className="h-12" />
+            <Skeleton className="h-12" />
+          </div>
+        ) : (
+          hints.map((h, i) => (
+            <button
+              key={i}
+              type="button"
+              onClick={() => onUse(h.text)}
+              disabled={disabled}
+              className="group w-full rounded-lg border p-2 text-left text-sm transition-colors hover:border-primary/40 hover:bg-secondary/50 disabled:opacity-60"
+              title="클릭하면 입력창에 들어가요"
+            >
+              <span className="flex items-start justify-between gap-2">
+                <span className="min-w-0 break-words font-medium">{h.text}</span>
+                <span className="flex shrink-0 items-center gap-1 text-muted-foreground">
+                  <span
+                    role="button"
+                    tabIndex={-1}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      speak(h.text, language);
+                    }}
+                    className="opacity-70 hover:opacity-100"
+                    aria-label="발음 듣기"
+                  >
+                    <Volume2 size={13} aria-hidden />
+                  </span>
+                  <CornerDownLeft size={12} className="opacity-0 transition-opacity group-hover:opacity-70" aria-hidden />
+                </span>
+              </span>
+              {h.meaning && (
+                <span className="mt-0.5 block text-xs text-muted-foreground">{h.meaning}</span>
+              )}
+            </button>
+          ))
+        )}
+        {hintError && (
+          <p className="text-xs text-destructive">힌트를 불러오지 못했어요. 다시 시도해주세요.</p>
+        )}
+        <Button
+          type="button"
+          size="sm"
+          variant="secondary"
+          className="w-full"
+          onClick={fetchHints}
+          disabled={hintLoading || disabled}
+        >
+          <Lightbulb size={13} aria-hidden />
+          {hints.length > 0 ? (hintsStale ? "새 힌트 받기" : "다시 받기") : "힌트 받기"}
+        </Button>
+      </div>
+
+      {/* 빠른 번역 */}
+      <div className="space-y-2">
+        <p className="flex items-center gap-1.5 text-sm font-semibold">
+          <ArrowRightLeft size={14} className="text-primary" aria-hidden /> 빠른 번역
+        </p>
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            void translate();
+          }}
+          className="flex gap-1.5"
+        >
+          <Input
+            value={krText}
+            onChange={(e) => setKrText(e.target.value)}
+            placeholder="한국어로 입력…"
+            className="h-9 text-sm"
+            disabled={translating || disabled}
+          />
+          <Button
+            type="submit"
+            size="sm"
+            variant="secondary"
+            className="h-9 shrink-0"
+            disabled={translating || disabled || !krText.trim()}
+            aria-label="번역하기"
+          >
+            {translating ? "…" : "번역"}
+          </Button>
+        </form>
+        {translation && (
+          <button
+            type="button"
+            onClick={() => onUse(translation)}
+            disabled={disabled}
+            className="group w-full rounded-lg border bg-secondary/40 p-2 text-left text-sm transition-colors hover:border-primary/40 disabled:opacity-60"
+            title="클릭하면 입력창에 들어가요"
+          >
+            <span className="flex items-start justify-between gap-2">
+              <span className="min-w-0 break-words">{translation}</span>
+              <span className="flex shrink-0 items-center gap-1 text-muted-foreground">
+                <span
+                  role="button"
+                  tabIndex={-1}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    speak(translation, language);
+                  }}
+                  className="opacity-70 hover:opacity-100"
+                  aria-label="발음 듣기"
+                >
+                  <Volume2 size={13} aria-hidden />
+                </span>
+                <CornerDownLeft size={12} className="opacity-0 transition-opacity group-hover:opacity-70" aria-hidden />
+              </span>
+            </span>
+          </button>
+        )}
+      </div>
     </div>
   );
 }
