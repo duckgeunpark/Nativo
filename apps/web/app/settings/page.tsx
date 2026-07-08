@@ -5,6 +5,7 @@ import { SupabaseNotice } from "@/components/SupabaseNotice";
 import { AppShell } from "@/components/AppShell";
 import { createClient } from "@/lib/supabase/server";
 import { SESSION_SIZE, parseSessionCookie } from "@/lib/session-size";
+import { OPENAI_KEY_COOKIE } from "@/lib/openai";
 import { SettingsForm } from "./SettingsForm";
 
 export default async function SettingsPage() {
@@ -38,6 +39,10 @@ export default async function SettingsPage() {
     SESSION_SIZE.chunk.default,
   );
 
+  // 개인 키는 httpOnly 쿠키 — 화면에는 마지막 4자리만 노출
+  const personalKey = jar.get(OPENAI_KEY_COOKIE)?.value ?? null;
+  const personalKeyMasked = personalKey ? `sk-…${personalKey.slice(-4)}` : null;
+
   return (
     <AppShell>
       <main className="container py-8 lg:py-10">
@@ -54,6 +59,8 @@ export default async function SettingsPage() {
             displayName: profile?.display_name ?? "",
             flashcardSize,
             chunkSize,
+            personalKeyMasked,
+            hasEnvKey: Boolean(process.env.OPENAI_API_KEY),
           }}
         />
       </main>

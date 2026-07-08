@@ -13,8 +13,12 @@ import {
   AlertCircle,
   Volume2,
   Play,
+  KeyRound,
+  Eye,
+  EyeOff,
+  Trash2,
 } from "lucide-react";
-import { saveSettings } from "./actions";
+import { saveSettings, saveApiKey, clearApiKey } from "./actions";
 import {
   SESSION_SIZE,
   SESSION_MIN,
@@ -79,6 +83,10 @@ interface Initial {
   displayName: string;
   flashcardSize: number;
   chunkSize: number;
+  /** 저장된 개인 API 키의 마스킹 표시 (예: "sk-…abcd"), 없으면 null. */
+  personalKeyMasked: string | null;
+  /** 서버 환경변수 키 존재 여부 — 개인 키가 없을 때의 폴백. */
+  hasEnvKey: boolean;
 }
 
 /** 기기별 환경설정(localStorage) 폼 값 — 저장 전까지는 상태로만 유지. */
@@ -245,6 +253,8 @@ export function SettingsForm({ initial }: { initial: Initial }) {
           </label>
         </CardContent>
       </Card>
+
+      <ApiKeyCard masked={initial.personalKeyMasked} hasEnvKey={initial.hasEnvKey} />
 
       <Card>
         <CardHeader>
@@ -430,6 +440,129 @@ export function SettingsForm({ initial }: { initial: Initial }) {
         </div>
       </div>
     </div>
+  );
+}
+
+/**
+ * 개인 OpenAI API 키 카드 — 즉시 저장/삭제 (메인 저장 버튼과 별개).
+ * 키 원문은 httpOnly 쿠키에만 있고 화면에는 마스킹 값만 내려온다.
+ */
+function ApiKeyCard({ masked, hasEnvKey }: { masked: string | null; hasEnvKey: boolean }) {
+  const router = useRouter();
+  const [key, setKey] = useState("");
+  const [show, setShow] = useState(false);
+  const [state, setState] = useState<SaveState>("idle");
+  const [error, setError] = useState<string | null>(null);
+
+  async function save() {
+    const trimmed = key.trim();
+    if (!trimmed || state === "saving") return;
+    setState("saving");
+    setError(null);
+    const res = await saveApiKey(trimmed);
+    if (!res.ok) {
+      setState("error");
+      setError(res.error ?? "알 수 없는 오류가 발생했어요.");
+      return;
+    }
+    setKey("");
+    setState("saved");
+    router.refresh();
+  }
+
+  async function remove() {
+    if (state === "saving") return;
+    setState("saving");
+    setError(null);
+    await clearApiKey();
+    setState("idle");
+    router.refresh();
+  }
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2 text-base">
+          <KeyRound className="h-4 w-4 text-muted-foreground" aria-hidden />
+          AI 서비스 (OpenAI API 키)
+        </CardTitle>
+        <p className="text-xs text-muted-foreground">
+          AI 대화·피드백·힌트·번역·음성에 사용돼요. 키는 이 브라우저에만 안전하게(httpOnly
+          쿠키) 저장되고, 서버 기본 키보다 우선 적용돼요.
+        </p>
+      </CardHeader>
+      <CardContent className="space-y-3">
+        {masked ? (
+          <div className="flex items-center justify-between gap-3 rounded-lg bg-success/10 px-3 py-2 text-sm">
+            <span className="flex items-center gap-2 text-success">
+              <CheckCircle2 className="h-4 w-4 shrink-0" aria-hidden />
+              개인 키 사용 중: <span className="font-mono">{masked}</span>
+            </span>
+            <Button
+              type="button"
+              size="sm"
+              variant="ghost"
+              onClick={remove}
+              disabled={state === "saving"}
+              className="shrink-0 text-destructive hover:bg-destructive/10 hover:text-destructive"
+            >
+              <Trash2 className="h-3.5 w-3.5" aria-hidden /> 삭제
+            </Button>
+          </div>
+        ) : (
+          <p className="text-sm text-muted-foreground">
+            {hasEnvKey
+              ? "지금은 서버 기본 키로 동작 중이에요. 개인 키를 저장하면 그 키를 대신 사용해요."
+              : "저장된 키가 없어 AI 기능이 꺼져 있어요. 키를 입력하면 AI 대화·피드백·음성이 켜져요."}
+          </p>
+        )}
+
+        <div className="flex items-center gap-2">
+          <div className="relative flex-1">
+            <Input
+              type={show ? "text" : "password"}
+              value={key}
+              onChange={(e) => {
+                setKey(e.target.value);
+                setState("idle");
+              }}
+              placeholder={masked ? "새 키로 교체하려면 입력…" : "sk-..."}
+              autoComplete="off"
+              className="pr-10"
+            />
+            <button
+              type="button"
+              onClick={() => setShow((v) => !v)}
+              className="absolute right-2 top-1/2 -translate-y-1/2 rounded p-1 text-muted-foreground hover:text-foreground"
+              aria-label={show ? "키 숨기기" : "키 표시"}
+            >
+              {show ? <EyeOff className="h-4 w-4" aria-hidden /> : <Eye className="h-4 w-4" aria-hidden />}
+            </button>
+          </div>
+          <Button
+            type="button"
+            onClick={save}
+            disabled={!key.trim() || state === "saving"}
+            className="shrink-0"
+          >
+            {state === "saving" ? "확인 중…" : "키 저장"}
+          </Button>
+        </div>
+
+        {state === "saved" && (
+          <p className="flex items-center gap-1.5 text-xs text-success">
+            <CheckCircle2 className="h-3.5 w-3.5 shrink-0" aria-hidden />
+            키를 확인하고 저장했어요. 이제 모든 AI 기능에 이 키가 쓰여요.
+          </p>
+        )}
+        {state === "error" && (
+          <p className="flex items-center gap-1.5 text-xs text-destructive">
+            <AlertCircle className="h-3.5 w-3.5 shrink-0" aria-hidden />
+            {error}
+          </p>
+        )}
+      </CardContent>
+    </Card>
   );
 }
 
