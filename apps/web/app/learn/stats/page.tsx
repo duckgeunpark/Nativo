@@ -15,6 +15,8 @@ import { SupabaseNotice } from "@/components/SupabaseNotice";
 import { AppShell } from "@/components/AppShell";
 import { createClient } from "@/lib/supabase/server";
 import { aggregateStats, type DailyLogRow } from "@/lib/stats";
+import { getLearnerSignals } from "@/lib/learner-signals";
+import { evaluatePhase, PHASE_LABEL, PHASES } from "@/lib/phases";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { StatCard } from "@/components/ui/stat-card";
 import { ProgressBar } from "@/components/ui/progress";
@@ -27,14 +29,6 @@ const LANGUAGE_LABEL: Record<Language, string> = {
   japanese: "일본어 🇯🇵",
 };
 
-const PHASE_LABEL: Record<Phase, string> = {
-  1: "시작하기",
-  2: "기초 다지기",
-  3: "유창성 확장",
-  4: "표현 다듬기",
-  5: "고급 숙달",
-};
-const PHASES: Phase[] = [1, 2, 3, 4, 5];
 
 /** YYYY-MM-DD, UTC 기준(daily_logs.log_date 와 동일 기준으로 비교). */
 function shiftDate(ymd: string, days: number): string {
@@ -99,6 +93,16 @@ export default async function StatsPage() {
     today,
   });
 
+  // 페이즈 졸업 조건 평가 + 졸업(완료) 기록
+  const signals = await getLearnerSignals(language, today);
+  const phaseEval = evaluatePhase(signals, currentPhase);
+  const { data: completions } = await supabase
+    .from("phase_completions")
+    .select("phase")
+    .eq("user_id", user.id)
+    .eq("language", language);
+  const graduatedPhases = (completions ?? []).length;
+
   const byDate = new Map(dailyLogs.map((l) => [l.log_date, l]));
   const hasHistory = dailyLogs.length > 0;
 
@@ -117,8 +121,6 @@ export default async function StatsPage() {
 
   const wordRate = stats.totalWords > 0 ? (stats.completedWords / stats.totalWords) * 100 : 0;
   const chunkRate = stats.totalChunks > 0 ? (stats.completedChunks / stats.totalChunks) * 100 : 0;
-  const currentPhaseProgress =
-    stats.totalWords + stats.totalChunks > 0 ? Math.round((wordRate + chunkRate) / 2) : 0;
 
   const monthPrefix = today.slice(0, 7);
   const monthMinutes = dailyLogs
@@ -189,7 +191,7 @@ export default async function StatsPage() {
                 {PHASES.map((phase) => {
                   const state =
                     phase < currentPhase ? "done" : phase === currentPhase ? "current" : "locked";
-                  const pct = state === "done" ? 100 : state === "current" ? currentPhaseProgress : 0;
+                  const pct = state === "done" ? 100 : state === "current" ? phaseEval.progressPct : 0;
                   return (
                     <div key={phase} className="flex flex-col items-center gap-2 text-center">
                       <span
@@ -228,7 +230,7 @@ export default async function StatsPage() {
             </CardHeader>
             <CardContent className="space-y-3">
               <p className="text-3xl font-bold tabular-nums">{routine30Rate}%</p>
-              <div className="grid grid-cols-10 gap-1">
+              <div className="grid grid-cols-7 gap-1">
                 {last30.map((d) => {
                   const row = byDate.get(d);
                   const active = (row?.study_minutes ?? 0) > 0 || (row?.streak_day ?? 0) > 0;
@@ -300,9 +302,9 @@ export default async function StatsPage() {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
-              <p className="text-3xl font-bold tabular-nums">{currentPhase - 1} / 5</p>
+              <p className="text-3xl font-bold tabular-nums">{graduatedPhases} / 5</p>
               <ProgressBar
-                value={currentPhase - 1}
+                value={graduatedPhases}
                 max={5}
                 tone="highlight"
                 aria-label="Phase 졸업 진행도"

@@ -9,6 +9,7 @@
 import { readFileSync, existsSync } from "node:fs";
 import path from "node:path";
 import type { CefrLevel, Language } from "@nativo/core";
+import { listCachedWords } from "./dictionary-cache";
 
 /** 뜻 포함 단어 1건 (data/word-db/{lang}.json 요소). */
 export interface SeedWord {
@@ -66,20 +67,21 @@ export function lookupWordDb(language: Language, word: string): SeedWord | null 
 
 export interface WordDbPage {
   words: SeedWord[];
-  total: number;
+  total: number; // 필터 적용 후 개수(페이지네이션 기준)
   page: number;
   pageSize: number;
+  grandTotal: number; // 필터 이전 전체 개수(정적 + 캐시)
 }
 
-/**
- * word-db 전체 목록(뜻 포함)을 단어·뜻 검색 + 페이지네이션해서 반환.
- * '내 단어 사전' 의 "전체 단어" 탭 출처.
- */
-export function getWordDbPage(
-  language: Language,
-  opts: { query?: string; level?: CefrLevel | "all"; page?: number; pageSize?: number } = {},
-): WordDbPage {
-  const all = load(language).filter((w) => w?.word && w?.meaning);
+interface PageOpts {
+  query?: string;
+  level?: CefrLevel | "all";
+  page?: number;
+  pageSize?: number;
+}
+
+/** 단어 목록에 검색·레벨 필터 + 페이지네이션 적용(정적/병합 공용). */
+function filterAndPaginate(all: SeedWord[], opts: PageOpts): WordDbPage {
   const q = (opts.query ?? "").trim().toLowerCase();
   let filtered = q
     ? all.filter(
@@ -100,7 +102,40 @@ export function getWordDbPage(
     total: filtered.length,
     page,
     pageSize,
+    grandTotal: all.length,
   };
+}
+
+/**
+ * 정적 word-db 목록(뜻 포함)만 검색 + 페이지네이션해서 반환(캐시 미포함).
+ */
+export function getWordDbPage(language: Language, opts: PageOpts = {}): WordDbPage {
+  const all = load(language).filter((w) => w?.word && w?.meaning);
+  return filterAndPaginate(all, opts);
+}
+
+/**
+ * '전체 목록' 탭 출처 — 정적 word-db + dictionary_cache(DeepL/사전으로 찾은 단어) 합집합.
+ * 정적 단어가 우선(중복 시 캐시 무시), 캐시 단어는 정적 뒤(빈도순 뒤)에 붙는다.
+ * 캐시 단어는 CEFR 난이도가 없어 특정 레벨 필터에서는 제외되고 '전체 레벨'에서만 보인다.
+ */
+export async function getWordDbPageWithCache(
+  language: Language,
+  opts: PageOpts = {},
+): Promise<WordDbPage> {
+  const staticWords = load(language).filter((w) => w?.word && w?.meaning);
+  const cached = await listCachedWords(language);
+
+  const seen = new Set(staticWords.map((w) => w.word.toLowerCase()));
+  const merged: SeedWord[] = [...staticWords];
+  for (const c of cached) {
+    const key = c.word.toLowerCase();
+    if (seen.has(key)) continue; // 정적 사전에 있으면 캐시 무시
+    seen.add(key);
+    merged.push(c); // CachedSeedWord 는 SeedWord 와 구조 호환(difficulty 없음)
+  }
+
+  return filterAndPaginate(merged, opts);
 }
 
 /**

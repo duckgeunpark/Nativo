@@ -46,6 +46,8 @@ const cleanWord = (raw: string) => raw.replace(/^[^\p{L}'-]+|[^\p{L}'-]+$/gu, ""
 
 const SOURCE_LABEL: Record<NonNullable<EnrichResult["source"]>, string> = {
   dictionary: "전체 사전",
+  cache: "저장된 사전",
+  deepl: "DeepL 번역",
   ai: "AI 검색",
   none: "",
 };

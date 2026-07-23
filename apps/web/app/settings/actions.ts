@@ -5,6 +5,7 @@ import OpenAI from "openai";
 import type { CefrLevel, Language } from "@nativo/core";
 import { createClient } from "@/lib/supabase/server";
 import { OPENAI_KEY_COOKIE } from "@/lib/openai";
+import { DEEPL_KEY_COOKIE, verifyDeepLKey } from "@/lib/deepl";
 import { LOCAL_USER_ID } from "@/lib/db";
 
 /** 학습 언어·레벨·닉네임 저장 (단일 사용자 로컬 모드). */
@@ -58,5 +59,35 @@ export async function saveApiKey(key: string): Promise<{ ok: boolean; error?: st
 /** 개인 API 키 삭제 — 이후에는 서버 환경변수 키(있다면)로 동작. */
 export async function clearApiKey(): Promise<{ ok: boolean }> {
   cookies().delete(OPENAI_KEY_COOKIE);
+  return { ok: true };
+}
+
+/**
+ * 개인 DeepL API 키 저장 — usage 엔드포인트로 유효성 확인 후 httpOnly 쿠키에 보관.
+ * 단어 조회 시 한국어 뜻(2차)에 사용된다 (lib/deepl.getDeepLKey).
+ */
+export async function saveDeepLKey(key: string): Promise<{ ok: boolean; error?: string }> {
+  const trimmed = (key ?? "").trim();
+  if (trimmed.length < 8) {
+    return { ok: false, error: "키가 너무 짧아요. DeepL 계정의 API 키를 확인해주세요." };
+  }
+
+  if (!(await verifyDeepLKey(trimmed))) {
+    return { ok: false, error: "키 확인에 실패했어요. 키가 유효한지 확인해주세요." };
+  }
+
+  cookies().set(DEEPL_KEY_COOKIE, trimmed, {
+    httpOnly: true,
+    sameSite: "lax",
+    secure: process.env.NODE_ENV === "production",
+    path: "/",
+    maxAge: 60 * 60 * 24 * 365,
+  });
+  return { ok: true };
+}
+
+/** 개인 DeepL 키 삭제 — 이후에는 서버 환경변수 키(있다면)로 동작. */
+export async function clearDeepLKey(): Promise<{ ok: boolean }> {
+  cookies().delete(DEEPL_KEY_COOKIE);
   return { ok: true };
 }

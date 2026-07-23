@@ -69,6 +69,31 @@ export async function POST(request: Request) {
     });
     const raw = completion.choices[0]?.message?.content ?? "{}";
     const parsed = JSON.parse(raw);
+
+    // 세션 기록 저장 → 말하기 "최근 활동"에 노출. 저장 실패해도 피드백 응답은 유지.
+    const scores = (parsed as { scores?: Record<string, number | undefined> }).scores;
+    await supabase
+      .from("roleplay_sessions")
+      .insert({
+        user_id: user.id,
+        scenario_id: body?.scenarioId ?? null,
+        language,
+        level: "normal",
+        mode: body?.scenarioId ? "scenario" : "custom",
+        messages: history,
+        score_total: scores?.total ?? null,
+        score_fluency: scores?.fluency ?? null,
+        score_accuracy: scores?.accuracy ?? null,
+        score_vocab: scores?.vocab ?? null,
+        passed: (scores?.total ?? 0) >= 70,
+        feedback: parsed,
+        exchange_count: history.filter((m) => m.role === "user").length,
+        evaluated_at: new Date().toISOString(),
+      })
+      .then(({ error }) => {
+        if (error) console.error("roleplay_sessions insert failed:", error.message);
+      });
+
     return NextResponse.json(parsed);
   } catch {
     return NextResponse.json({ error: "ai_error" }, { status: 502 });

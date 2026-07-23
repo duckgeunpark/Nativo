@@ -1,10 +1,10 @@
 import { redirect } from "next/navigation";
-import type { Phase } from "@nativo/core";
 import { isSupabaseConfigured } from "@/lib/supabase/env";
 import { SupabaseNotice } from "@/components/SupabaseNotice";
 import { AppShell } from "@/components/AppShell";
 import { createClient } from "@/lib/supabase/server";
 import { getRoutineTasks } from "@/lib/routine";
+import { checkAndAdvancePhase } from "./actions";
 import { RoutineChecklist } from "./RoutineChecklist";
 
 export default async function RoutinePage() {
@@ -24,13 +24,16 @@ export default async function RoutinePage() {
 
   const { data: profile } = await supabase
     .from("users")
-    .select("selected_language, current_phase")
+    .select("selected_language")
     .eq("id", user.id)
     .single();
 
   const language = profile?.selected_language ?? "english";
-  const currentPhase = (profile?.current_phase ?? 1) as Phase;
   const tasks = getRoutineTasks(language);
+
+  // 조건 충족 시 자동 진급 후, 현재 페이즈의 조건 평가 + 스킬 진단을 받아온다.
+  const today = new Date().toISOString().slice(0, 10);
+  const progress = await checkAndAdvancePhase(language, today);
 
   return (
     <AppShell>
@@ -42,7 +45,14 @@ export default async function RoutinePage() {
           </p>
         </header>
 
-        <RoutineChecklist language={language} tasks={tasks} currentPhase={currentPhase} />
+        <RoutineChecklist
+          language={language}
+          tasks={tasks}
+          currentPhase={progress.currentPhase}
+          evaluation={progress.evaluation}
+          skillProfile={progress.skillProfile}
+          justAdvancedTo={progress.advancedTo}
+        />
       </main>
     </AppShell>
   );

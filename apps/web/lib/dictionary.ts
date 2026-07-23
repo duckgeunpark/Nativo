@@ -6,6 +6,7 @@
  */
 
 import type { Language, TablesInsert } from "@nativo/core";
+import { translateToKorean } from "./deepl";
 
 /** 사전에서 채워줄 수 있는 카드 필드. */
 export type EnrichedFields = Pick<
@@ -24,6 +25,43 @@ export async function enrichWord(
   } catch {
     return {}; // 보강 실패해도 단어 자체는 추가 가능
   }
+}
+
+/** enrichWordFull 결과: 보강 필드 + DeepL 한국어 뜻 사용 여부. */
+export interface FullEnrichment {
+  fields: Partial<EnrichedFields>;
+  usedDeepL: boolean;
+}
+
+/**
+ * 사전 API(발음·예문·품사·영영뜻)와 DeepL(한국어 뜻)을 병렬 조회해 하나로 합친다.
+ *
+ * - meaning(한국어 뜻): DeepL 우선, 없으면 사전 API 의 뜻(영어는 영영정의)로 폴백
+ * - meaning_en / pronunciation / example_1 / part_of_speech: 사전 API 값 유지
+ *
+ * DeepL 키가 없으면 사전 API 결과만 돌려준다(usedDeepL=false).
+ */
+export async function enrichWordFull(
+  word: string,
+  language: Language,
+): Promise<FullEnrichment> {
+  const [fields, koMeaning] = await Promise.all([
+    enrichWord(word, language),
+    translateToKorean(word, language),
+  ]);
+
+  if (koMeaning) {
+    return {
+      fields: {
+        ...fields,
+        meaning: koMeaning, // 한국어 뜻으로 덮어씀
+        meaning_en: fields.meaning_en ?? fields.meaning ?? null, // 사전 뜻은 영영으로 보존
+      },
+      usedDeepL: true,
+    };
+  }
+
+  return { fields, usedDeepL: false };
 }
 
 /** 영어: Free Dictionary API (무료, 키 불필요) → 영영 정의. */

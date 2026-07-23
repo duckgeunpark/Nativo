@@ -6,7 +6,7 @@ import { isSupabaseConfigured } from "@/lib/supabase/env";
 import { SupabaseNotice } from "@/components/SupabaseNotice";
 import { AppShell } from "@/components/AppShell";
 import { createClient } from "@/lib/supabase/server";
-import { getWordDbPage, wordDbSize } from "@/lib/word-db";
+import { getWordDbPageWithCache } from "@/lib/word-db";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { WordDictionary, type WordRow } from "./WordDictionary";
@@ -168,7 +168,10 @@ async function FlashcardsTab({
   );
 }
 
-/** 전체 단어 = word-db/{language}.json (뜻 포함, 빈도순). 검색·페이지네이션 + 내 단어 추가. */
+/**
+ * 전체 목록 = 정적 word-db/{language}.json + dictionary_cache(DeepL/사전으로 찾은 단어).
+ * 검색·페이지네이션 + 내 단어 추가. 캐시 단어가 쌓일수록 목록이 자란다.
+ */
 async function AllTab({
   userId,
   language,
@@ -194,7 +197,7 @@ async function AllTab({
 
   const lv = (LEVELS.includes(level as CefrLevel) ? level : "all") as CefrLevel | "all";
 
-  const result = getWordDbPage(language, { query: q, level: lv, page });
+  const result = await getWordDbPageWithCache(language, { query: q, level: lv, page });
   const totalPages = Math.max(1, Math.ceil(result.total / result.pageSize));
   const linkFor = (p: number) =>
     `${BASE}?tab=all&q=${encodeURIComponent(q)}&level=${lv}&page=${p}`;
@@ -227,7 +230,7 @@ async function AllTab({
       <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
         <p className="text-sm text-muted-foreground">
           {result.total.toLocaleString()}개 단어 · {page}/{totalPages} 페이지
-          {q ? "" : ` (전체 ${wordDbSize(language).toLocaleString()})`}
+          {hasFilter ? "" : ` (전체 ${result.grandTotal.toLocaleString()})`}
         </p>
         <PageNav page={page} totalPages={totalPages} linkFor={linkFor} />
       </div>

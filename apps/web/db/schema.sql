@@ -188,7 +188,9 @@ CREATE TABLE IF NOT EXISTS roleplay_scenarios (
 CREATE TABLE IF NOT EXISTS roleplay_sessions (
   id              TEXT PRIMARY KEY,
   user_id         TEXT REFERENCES users(id) ON DELETE CASCADE,
-  scenario_id     TEXT REFERENCES roleplay_scenarios(id),
+  -- 시나리오는 앱 코드(lib/roleplay.ts)의 정적 상수라 DB 마스터가 비어 있다.
+  -- FK 를 걸면 세션 저장이 막히므로 코드 시나리오 id 를 담는 일반 텍스트로 둔다.
+  scenario_id     TEXT,
 
   language        TEXT NOT NULL,
   level           TEXT NOT NULL,
@@ -331,3 +333,28 @@ CREATE TABLE IF NOT EXISTS documents (
 );
 
 CREATE INDEX IF NOT EXISTS idx_documents_user ON documents(user_id);
+
+-- -----------------------------------------------------------------------------
+-- 14. dictionary_cache — 단어 조회 캐시 (DeepL/사전 API 결과 저장)
+--
+-- 조회 순서: 정적 word-db(JSON) → 이 캐시 → DeepL/사전 API → 결과를 여기 저장.
+-- 사용자 종속이 아닌 언어별 공용 캐시라 user_id 없음. word 는 소문자 정규화 키.
+-- -----------------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS dictionary_cache (
+  id              TEXT PRIMARY KEY,
+
+  language        TEXT NOT NULL,
+  word            TEXT NOT NULL,               -- 소문자 정규화된 조회 키
+
+  meaning         TEXT NOT NULL,               -- 한국어 뜻 (DeepL 우선)
+  meaning_en      TEXT,                        -- 영영 뜻 (사전 API)
+  pronunciation   TEXT,
+  example_1       TEXT,
+  part_of_speech  TEXT,
+
+  source          TEXT NOT NULL DEFAULT 'deepl',  -- 'deepl' | 'ai'
+
+  created_at      TEXT DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now')),
+
+  UNIQUE(language, word)
+);

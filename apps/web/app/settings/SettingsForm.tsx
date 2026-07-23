@@ -18,7 +18,13 @@ import {
   EyeOff,
   Trash2,
 } from "lucide-react";
-import { saveSettings, saveApiKey, clearApiKey } from "./actions";
+import {
+  saveSettings,
+  saveApiKey,
+  clearApiKey,
+  saveDeepLKey,
+  clearDeepLKey,
+} from "./actions";
 import {
   SESSION_SIZE,
   SESSION_MIN,
@@ -87,6 +93,10 @@ interface Initial {
   personalKeyMasked: string | null;
   /** 서버 환경변수 키 존재 여부 — 개인 키가 없을 때의 폴백. */
   hasEnvKey: boolean;
+  /** 저장된 개인 DeepL 키의 마스킹 표시 (예: "…abcd"), 없으면 null. */
+  deeplKeyMasked: string | null;
+  /** 서버 DeepL 환경변수 키 존재 여부. */
+  hasDeeplEnvKey: boolean;
 }
 
 /** 기기별 환경설정(localStorage) 폼 값 — 저장 전까지는 상태로만 유지. */
@@ -255,6 +265,8 @@ export function SettingsForm({ initial }: { initial: Initial }) {
       </Card>
 
       <ApiKeyCard masked={initial.personalKeyMasked} hasEnvKey={initial.hasEnvKey} />
+
+      <DeepLKeyCard masked={initial.deeplKeyMasked} hasEnvKey={initial.hasDeeplEnvKey} />
 
       <Card>
         <CardHeader>
@@ -553,6 +565,130 @@ function ApiKeyCard({ masked, hasEnvKey }: { masked: string | null; hasEnvKey: b
           <p className="flex items-center gap-1.5 text-xs text-success">
             <CheckCircle2 className="h-3.5 w-3.5 shrink-0" aria-hidden />
             키를 확인하고 저장했어요. 이제 모든 AI 기능에 이 키가 쓰여요.
+          </p>
+        )}
+        {state === "error" && (
+          <p className="flex items-center gap-1.5 text-xs text-destructive">
+            <AlertCircle className="h-3.5 w-3.5 shrink-0" aria-hidden />
+            {error}
+          </p>
+        )}
+      </CardContent>
+    </Card>
+  );
+}
+
+/**
+ * 개인 DeepL API 키 카드 — 단어 조회 시 한국어 뜻(2차)에 사용.
+ * ApiKeyCard 와 동일 구조이나 DeepL 키 형식/문구를 사용한다.
+ */
+function DeepLKeyCard({ masked, hasEnvKey }: { masked: string | null; hasEnvKey: boolean }) {
+  const router = useRouter();
+  const [key, setKey] = useState("");
+  const [show, setShow] = useState(false);
+  const [state, setState] = useState<SaveState>("idle");
+  const [error, setError] = useState<string | null>(null);
+
+  async function save() {
+    const trimmed = key.trim();
+    if (!trimmed || state === "saving") return;
+    setState("saving");
+    setError(null);
+    const res = await saveDeepLKey(trimmed);
+    if (!res.ok) {
+      setState("error");
+      setError(res.error ?? "알 수 없는 오류가 발생했어요.");
+      return;
+    }
+    setKey("");
+    setState("saved");
+    router.refresh();
+  }
+
+  async function remove() {
+    if (state === "saving") return;
+    setState("saving");
+    setError(null);
+    await clearDeepLKey();
+    setState("idle");
+    router.refresh();
+  }
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2 text-base">
+          <KeyRound className="h-4 w-4 text-muted-foreground" aria-hidden />
+          단어 번역 (DeepL API 키)
+        </CardTitle>
+        <p className="text-xs text-muted-foreground">
+          단어 조회 시 한국어 뜻을 채우는 데 써요. 내 사전에 없는 단어는 DeepL 로 번역해
+          자동 저장(캐시)되고, 다음부터는 저장된 뜻을 바로 보여줘요. 키는 이 브라우저에만
+          안전하게(httpOnly 쿠키) 저장돼요.
+        </p>
+      </CardHeader>
+      <CardContent className="space-y-3">
+        {masked ? (
+          <div className="flex items-center justify-between gap-3 rounded-lg bg-success/10 px-3 py-2 text-sm">
+            <span className="flex items-center gap-2 text-success">
+              <CheckCircle2 className="h-4 w-4 shrink-0" aria-hidden />
+              개인 키 사용 중: <span className="font-mono">{masked}</span>
+            </span>
+            <Button
+              type="button"
+              size="sm"
+              variant="ghost"
+              onClick={remove}
+              disabled={state === "saving"}
+              className="shrink-0 text-destructive hover:bg-destructive/10 hover:text-destructive"
+            >
+              <Trash2 className="h-3.5 w-3.5" aria-hidden /> 삭제
+            </Button>
+          </div>
+        ) : (
+          <p className="text-sm text-muted-foreground">
+            {hasEnvKey
+              ? "지금은 서버 기본 키로 동작 중이에요. 개인 키를 저장하면 그 키를 대신 사용해요."
+              : "키가 없으면 단어의 한국어 뜻은 영영정의/사전 API 로만 채워져요. DeepL 키를 넣으면 한국어 뜻이 보강돼요."}
+          </p>
+        )}
+
+        <div className="flex items-center gap-2">
+          <div className="relative flex-1">
+            <Input
+              type={show ? "text" : "password"}
+              value={key}
+              onChange={(e) => {
+                setKey(e.target.value);
+                setState("idle");
+              }}
+              placeholder={masked ? "새 키로 교체하려면 입력…" : "DeepL API 키 입력…"}
+              autoComplete="off"
+              className="pr-10"
+            />
+            <button
+              type="button"
+              onClick={() => setShow((v) => !v)}
+              className="absolute right-2 top-1/2 -translate-y-1/2 rounded p-1 text-muted-foreground hover:text-foreground"
+              aria-label={show ? "키 숨기기" : "키 표시"}
+            >
+              {show ? <EyeOff className="h-4 w-4" aria-hidden /> : <Eye className="h-4 w-4" aria-hidden />}
+            </button>
+          </div>
+          <Button
+            type="button"
+            onClick={save}
+            disabled={!key.trim() || state === "saving"}
+            className="shrink-0"
+          >
+            {state === "saving" ? "확인 중…" : "키 저장"}
+          </Button>
+        </div>
+
+        {state === "saved" && (
+          <p className="flex items-center gap-1.5 text-xs text-success">
+            <CheckCircle2 className="h-3.5 w-3.5 shrink-0" aria-hidden />
+            키를 확인하고 저장했어요. 이제 단어 뜻을 DeepL 로 보강해요.
           </p>
         )}
         {state === "error" && (

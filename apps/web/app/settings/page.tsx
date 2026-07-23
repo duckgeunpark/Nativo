@@ -6,6 +6,7 @@ import { AppShell } from "@/components/AppShell";
 import { createClient } from "@/lib/supabase/server";
 import { SESSION_SIZE, parseSessionCookie } from "@/lib/session-size";
 import { OPENAI_KEY_COOKIE } from "@/lib/openai";
+import { DEEPL_KEY_COOKIE } from "@/lib/deepl";
 import { SettingsForm } from "./SettingsForm";
 
 export default async function SettingsPage() {
@@ -43,6 +44,9 @@ export default async function SettingsPage() {
   const personalKey = jar.get(OPENAI_KEY_COOKIE)?.value ?? null;
   const personalKeyMasked = personalKey ? `sk-…${personalKey.slice(-4)}` : null;
 
+  const deeplKey = jar.get(DEEPL_KEY_COOKIE)?.value ?? null;
+  const deeplKeyMasked = deeplKey ? `…${deeplKey.slice(-4)}` : null;
+
   return (
     <AppShell>
       <main className="container py-8 lg:py-10">
@@ -61,6 +65,8 @@ export default async function SettingsPage() {
             chunkSize,
             personalKeyMasked,
             hasEnvKey: Boolean(process.env.OPENAI_API_KEY),
+            deeplKeyMasked,
+            hasDeeplEnvKey: Boolean(process.env.DEEPL_API_KEY),
           }}
         />
       </main>
